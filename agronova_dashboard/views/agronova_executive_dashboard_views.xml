@@ -12,17 +12,5 @@
             <field name="tag">agronova_executive_dashboard</field>
         </record>
 
-        <!-- Yem zavodi ilovasidan ochilganda panel darhol shu bo'limda turadi. -->
-        <record id="action_agronova_dashboard_yem" model="ir.actions.client">
-            <field name="name">Yem zavodi — boshqaruv paneli</field>
-            <field name="tag">agronova_executive_dashboard</field>
-            <field name="context">{'agronova_section': 'yem_zavodi'}</field>
-        </record>
-
-        <menuitem id="menu_agronova_dashboard_yem" name="Boshqaruv paneli"
-                  parent="agronova_yem_zavodi.menu_yem_root" sequence="5"
-                  action="action_agronova_dashboard_yem"
-                  groups="agronova_dashboard.group_agronova_dashboard_user"/>
-
     </data>
 </odoo>
