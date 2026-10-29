@@ -3,19 +3,7 @@
     <data>
 
         <!--
-            Eski `action_agronova_executive_dashboard` — `ir.actions.server` bo'lib,
-            form ko'rinishidagi dashboardni ochardi. Endi dashboard OWL mijoz
-            amali; Odoo esa bitta XML ID ostida yozuv MODELINI almashtirishga
-            ruxsat bermaydi ("found record of different model"). Shuning uchun
-            yangi amal boshqa ID oladi, eskisi esa shu yerda o'chiriladi.
-
-            Bu qator idempotent: XML ID topilmasa (yangi baza yoki allaqachon
-            o'chirilgan bo'lsa) Odoo uni jimgina o'tkazib yuboradi.
-        -->
-        <delete model="ir.actions.server" id="action_agronova_executive_dashboard"/>
-
-        <!--
-            Rahbar Dashboardi — OWL mijoz amali.
+            Rahbar paneli — OWL mijoz amali.
             Ko'rinish `static/src/dashboard/` da (dashboard.js / .xml / .scss),
             ma'lumot esa `agronova.executive.dashboard.get_dashboard_data()` dan keladi.
         -->
@@ -23,6 +11,18 @@
             <field name="name">Rahbar paneli</field>
             <field name="tag">agronova_executive_dashboard</field>
         </record>
+
+        <!-- Yem zavodi ilovasidan ochilganda panel darhol shu bo'limda turadi. -->
+        <record id="action_agronova_dashboard_yem" model="ir.actions.client">
+            <field name="name">Yem zavodi — boshqaruv paneli</field>
+            <field name="tag">agronova_executive_dashboard</field>
+            <field name="context">{'agronova_section': 'yem_zavodi'}</field>
+        </record>
+
+        <menuitem id="menu_agronova_dashboard_yem" name="Boshqaruv paneli"
+                  parent="agronova_yem_zavodi.menu_yem_root" sequence="5"
+                  action="action_agronova_dashboard_yem"
+                  groups="agronova_dashboard.group_agronova_dashboard_user"/>
 
     </data>
 </odoo>

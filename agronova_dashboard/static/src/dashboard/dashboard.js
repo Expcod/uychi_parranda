@@ -82,6 +82,7 @@ export class AgroNovaExecutiveDashboard extends Component {
             // Tafsilot oynasi: stack — ichma-ich ochilgan oynalar (orqaga qaytish uchun).
             detail: { open: false, loading: false, stack: [] },
             ...this._restoreState(),
+            ...(this._forcedSection() ? { section: this._forcedSection() } : {}),
         });
         useExternalListener(window, "keydown", (ev) => {
             if (ev.key === "Escape" && this.state.detail.open) {
@@ -169,6 +170,13 @@ export class AgroNovaExecutiveDashboard extends Component {
             delete restored.period;
         }
         return restored;
+    }
+
+    /** Menyudan ochilganda bo'lim majburan tanlanishi mumkin
+     *  (masalan Yem zavodi ilovasidagi «Boshqaruv paneli»). */
+    _forcedSection() {
+        const code = this.props.action?.context?.agronova_section;
+        return SECTIONS.some((s) => s.code === code) ? code : null;
     }
 
     _isIsoDate(value) {

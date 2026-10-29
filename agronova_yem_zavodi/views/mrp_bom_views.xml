@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Retseptura: holat, versiya, me'yorlar. Tasdiqlangani o'zgarmaydi. -->
+    <record id="mrp_bom_form_agronova_yem" model="ir.ui.view">
+        <field name="name">mrp.bom.form.agronova.yem</field>
+        <field name="model">mrp.bom</field>
+        <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_agronova_tasdiqlash" type="object" string="Tasdiqlash" class="btn-primary"
+                            groups="agronova_yem_zavodi.group_yem_texnolog" invisible="agronova_holat != 'loyiha'"
+                            confirm="Tasdiqlangan retseptura o'zgartirilmaydi. Shu mahsulotning avvalgi versiyasi arxivga tushadi. Davom etasizmi?"/>
+                    <button name="action_agronova_yangi_versiya" type="object" string="Yangi versiya"
+                            groups="agronova_yem_zavodi.group_yem_texnolog" invisible="agronova_holat == 'loyiha'"/>
+                    <field name="agronova_holat" widget="statusbar" statusbar_visible="loyiha,tasdiqlangan,arxiv"/>
+                </header>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_agronova_versiyalar" type="object" class="oe_stat_button" icon="fa-history">
+                    <div class="o_stat_info">
+                        <field name="agronova_versiya_nomi" class="o_stat_value"/>
+                        <span class="o_stat_text">Versiyalar</span>
+                    </div>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='code']" position="after">
+                <field name="agronova_versiya" readonly="1"/>
+                <field name="agronova_yoqotish_foiz" readonly="agronova_holat != 'loyiha'"/>
+                <field name="agronova_chiqim_foiz"/>
+                <field name="agronova_partiya_kg"/>
+                <field name="agronova_komponent_kg"/>
+                <field name="agronova_tasdiqlagan_id" invisible="not agronova_tasdiqlagan_id"/>
+                <field name="agronova_tasdiq_sana" invisible="not agronova_tasdiq_sana"/>
+                <field name="agronova_avvalgi_id" invisible="not agronova_avvalgi_id"/>
+            </xpath>
+            <xpath expr="//field[@name='bom_line_ids']/list/field[@name='product_uom_id']" position="after">
+                <field name="agronova_ulush" optional="show"/>
+                <field name="agronova_ogish_foiz" optional="show"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Texnolog izohi" name="agronova_izoh">
+                    <field name="agronova_izoh" placeholder="Texnologik talablar, namlik, granula o'lchami..."/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="mrp_bom_list_agronova_yem" model="ir.ui.view">
+        <field name="name">mrp.bom.list.agronova.yem</field>
+        <field name="model">mrp.bom</field>
+        <field name="inherit_id" ref="mrp.mrp_bom_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='code']" position="after">
+                <field name="agronova_versiya_nomi" string="Versiya"/>
+                <field name="agronova_holat" widget="badge" decoration-success="agronova_holat == 'tasdiqlangan'"
+                       decoration-muted="agronova_holat == 'arxiv'" decoration-info="agronova_holat == 'loyiha'"/>
+                <field name="agronova_yoqotish_foiz" optional="show"/>
+                <field name="agronova_tasdiqlagan_id" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_agronova_yem_retseptura" model="ir.actions.act_window">
+        <field name="name">Retsepturalar</field>
+        <field name="res_model">mrp.bom</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('product_tmpl_id.agronova_yem_turi', '=', 'yem')]</field>
+        <field name="context">{'default_type': 'normal', 'default_consumption': 'flexible'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Yem retsepturasini yarating</p>
+            <p>Retsepturani texnolog tasdiqlaydi. Tasdiqlangan retseptura o'zgarmaydi — me'yor o'zgarsa yangi versiya ochiladi, eskisi arxivda saqlanadi.</p>
+        </field>
+    </record>
+
+</odoo>

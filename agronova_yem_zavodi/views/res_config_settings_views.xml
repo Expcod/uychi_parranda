@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_agronova_yem" model="ir.ui.view">
+        <field name="name">res.config.settings.agronova.yem</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Yem zavodi" string="Yem zavodi" name="agronova_yem_zavodi"
+                     groups="agronova_yem_zavodi.group_yem_direktor">
+                    <block title="Qadoqlash" name="agronova_yem_qadoq">
+                        <setting string="Qop og'irligi" help="Bo'sh qoplar og'irligi qanday aniqlanadi (TZ 4.2).">
+                            <field name="agronova_yem_qop_usul" widget="radio"/>
+                        </setting>
+                        <setting string="To'ldirish chegarasi" help="Sof yem nominaldan shu foizgacha farq qilsa — me'yorda.">
+                            <field name="agronova_yem_toldirish_tolerans"/> %
+                        </setting>
+                        <setting string="Qadoq materiallari ombori" help="Qoplar qadoqlashda shu ombordan hisobdan chiqadi.">
+                            <field name="agronova_yem_qadoq_location_id"/>
+                        </setting>
+                    </block>
+                    <block title="Jo'natma" name="agronova_yem_jonatma">
+                        <setting string="Tortish majburiy" help="Jo'natma tarozida tortilmaguncha yopilmaydi.">
+                            <field name="agronova_yem_tortish_majburiy"/>
+                        </setting>
+                        <setting string="Ichki xo'jaliklar omborlari" help="Ichki jo'natma qaysi omborga ko'chiriladi.">
+                            <div class="content-group">
+                                <div class="row mt8">
+                                    <label for="agronova_yem_ona_tovuq_location_id" class="col-lg-5 o_light_label"/>
+                                    <field name="agronova_yem_ona_tovuq_location_id"/>
+                                </div>
+                                <div class="row mt8">
+                                    <label for="agronova_yem_boquv_location_id" class="col-lg-5 o_light_label"/>
+                                    <field name="agronova_yem_boquv_location_id"/>
+                                </div>
+                                <div class="row mt8">
+                                    <label for="agronova_yem_ichki_location_id" class="col-lg-5 o_light_label"/>
+                                    <field name="agronova_yem_ichki_location_id"/>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="Energiya" name="agronova_yem_energiya">
+                        <setting string="Narxlar">
+                            <div class="content-group">
+                                <div class="row mt8">
+                                    <label for="agronova_yem_elektr_narx" class="col-lg-5 o_light_label"/>
+                                    <field name="agronova_yem_elektr_narx"/>
+                                </div>
+                                <div class="row mt8">
+                                    <label for="agronova_yem_gaz_narx" class="col-lg-5 o_light_label"/>
+                                    <field name="agronova_yem_gaz_narx"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting string="Elektr me'yori" help="Bir tonna yemga kVt·soat. Fakt shundan oshsa hisobot qizil ko'rsatadi.">
+                            <field name="agronova_yem_kwh_norma"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_agronova_yem_sozlamalar" model="ir.actions.act_window">
+        <field name="name">Sozlamalar</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="context">{'module': 'agronova_yem_zavodi', 'bin_size': False}</field>
+    </record>
+
+</odoo>

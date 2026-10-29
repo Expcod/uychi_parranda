@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_agronova_yem_toxtash_list" model="ir.ui.view">
+        <field name="name">agronova.yem.toxtash.list</field>
+        <field name="model">agronova.yem.toxtash</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="davom_etmoqda">
+                <field name="boshlanish"/>
+                <field name="tugash"/>
+                <field name="liniya_id"/>
+                <field name="smena_id" optional="show"/>
+                <field name="sabab"/>
+                <field name="uskuna"/>
+                <field name="davomiylik_min" sum="Jami"/>
+                <field name="masul_id" optional="show"/>
+                <field name="davom_etmoqda" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_agronova_yem_toxtash_form" model="ir.ui.view">
+        <field name="name">agronova.yem.toxtash.form</field>
+        <field name="model">agronova.yem.toxtash</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_tugatish" type="object" string="Liniya ishga tushdi" class="btn-success"
+                            invisible="not davom_etmoqda"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Davom etmoqda" bg_color="text-bg-danger" invisible="not davom_etmoqda"/>
+                    <group>
+                        <group>
+                            <field name="liniya_id"/>
+                            <field name="smena_id"/>
+                            <field name="production_id"/>
+                            <field name="sabab"/>
+                            <field name="uskuna"/>
+                        </group>
+                        <group>
+                            <field name="boshlanish"/>
+                            <field name="tugash"/>
+                            <field name="davomiylik_min"/>
+                            <field name="davom_etmoqda" invisible="1"/>
+                            <field name="masul_id"/>
+                        </group>
+                    </group>
+                    <field name="izoh" placeholder="Nima bo'ldi, qanday tuzatildi..."/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_agronova_yem_toxtash_search" model="ir.ui.view">
+        <field name="name">agronova.yem.toxtash.search</field>
+        <field name="model">agronova.yem.toxtash</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="liniya_id"/>
+                <field name="uskuna"/>
+                <filter name="davom" string="Davom etmoqda" domain="[('davom_etmoqda', '=', True)]"/>
+                <filter name="sana" string="Sana" date="boshlanish"/>
+                <group>
+                    <filter name="g_sabab" string="Sabab" context="{'group_by': 'sabab'}"/>
+                    <filter name="g_liniya" string="Liniya" context="{'group_by': 'liniya_id'}"/>
+                    <filter name="g_uskuna" string="Uskuna" context="{'group_by': 'uskuna'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_agronova_yem_toxtash_pivot" model="ir.ui.view">
+        <field name="name">agronova.yem.toxtash.pivot</field>
+        <field name="model">agronova.yem.toxtash</field>
+        <field name="arch" type="xml">
+            <pivot string="To'xtashlar" sample="1">
+                <field name="sabab" type="row"/>
+                <field name="liniya_id" type="col"/>
+                <field name="davomiylik_min" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_agronova_yem_toxtash" model="ir.actions.act_window">
+        <field name="name">Liniya to'xtashlari</field>
+        <field name="res_model">agronova.yem.toxtash</field>
+        <field name="view_mode">list,form,pivot</field>
+        <field name="search_view_id" ref="view_agronova_yem_toxtash_search"/>
+    </record>
+
+</odoo>

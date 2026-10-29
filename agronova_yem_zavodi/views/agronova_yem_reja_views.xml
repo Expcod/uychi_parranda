@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_agronova_yem_reja_list" model="ir.ui.view">
+        <field name="name">agronova.yem.reja.list</field>
+        <field name="model">agronova.yem.reja</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="kechikkan_soni &gt; 0" decoration-muted="state == 'bekor'">
+                <field name="name"/>
+                <field name="davr"/>
+                <field name="sana_dan"/>
+                <field name="sana_gacha"/>
+                <field name="reja_kg" sum="Jami"/>
+                <field name="fakt_kg" sum="Jami"/>
+                <field name="bajarilish" widget="progressbar"/>
+                <field name="kechikkan_soni" optional="show"/>
+                <field name="yetishmaydi" optional="show"/>
+                <field name="state" widget="badge" decoration-success="state == 'yakunlangan'"
+                       decoration-info="state in ('tasdiqlangan', 'jarayonda')"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_agronova_yem_reja_form" model="ir.ui.view">
+        <field name="name">agronova.yem.reja.form</field>
+        <field name="model">agronova.yem.reja</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_xomashyo_tekshir" type="object" string="Xomashyoni tekshirish" icon="fa-search"
+                            invisible="state in ('yakunlangan', 'bekor')"/>
+                    <button name="action_tasdiqlash" type="object" string="Tasdiqlash" class="btn-primary"
+                            groups="agronova_yem_zavodi.group_yem_boshliq" invisible="state != 'draft'"/>
+                    <button name="action_buyurtmalar_yarat" type="object" string="Buyurtmalar yaratish" class="btn-primary"
+                            groups="agronova_yem_zavodi.group_yem_boshliq" invisible="state not in ('tasdiqlangan', 'jarayonda')"/>
+                    <button name="action_xarid_talabi" type="object" string="Xarid talabi" icon="fa-shopping-cart"
+                            invisible="not yetishmaydi or state in ('yakunlangan', 'bekor')"/>
+                    <button name="action_loyiha" type="object" string="Loyihaga qaytarish"
+                            groups="agronova_yem_zavodi.group_yem_boshliq" invisible="state not in ('tasdiqlangan', 'bekor')"/>
+                    <button name="action_bekor" type="object" string="Bekor qilish" invisible="state in ('yakunlangan', 'bekor')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,tasdiqlangan,jarayonda,yakunlangan"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_buyurtmalar" type="object" class="oe_stat_button" icon="fa-industry">
+                            <div class="o_stat_info"><span class="o_stat_text">Buyurtmalar</span></div>
+                        </button>
+                    </div>
+                    <div class="alert alert-danger" role="alert" invisible="not yetishmaydi">
+                        Reja uchun xomashyo yetishmaydi — «Xomashyo ehtiyoji» bo'limiga qarang va xarid talabini yarating.
+                    </div>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="davr" readonly="state != 'draft'"/>
+                            <label for="sana_dan" string="Davr"/>
+                            <div class="o_row">
+                                <field name="sana_dan" readonly="state != 'draft'"/> — <field name="sana_gacha" readonly="state != 'draft'"/>
+                            </div>
+                            <field name="warehouse_id" readonly="state != 'draft'"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="reja_kg"/>
+                            <field name="fakt_kg"/>
+                            <field name="bajarilish" widget="progressbar"/>
+                            <field name="yuklama" widget="progressbar"/>
+                            <field name="kechikkan_soni" invisible="not kechikkan_soni"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Reja" name="qatorlar">
+                            <field name="qator_ids" readonly="state in ('yakunlangan', 'bekor')">
+                                <list editable="bottom" decoration-danger="holat == 'kechikmoqda'" decoration-success="holat == 'bajarildi'">
+                                    <field name="ustuvorlik" widget="priority"/>
+                                    <field name="product_id"/>
+                                    <field name="product_tmpl_id" column_invisible="1"/>
+                                    <field name="bom_id"/>
+                                    <field name="miqdor_kg" sum="Jami"/>
+                                    <field name="muddat"/>
+                                    <field name="liniya_id"/>
+                                    <field name="smena_turi_id" optional="show"/>
+                                    <field name="soat" optional="show"/>
+                                    <field name="fakt_kg" sum="Jami"/>
+                                    <field name="bajarilish" widget="progressbar"/>
+                                    <field name="holat" widget="badge" decoration-success="holat == 'bajarildi'"
+                                           decoration-danger="holat == 'kechikmoqda'" decoration-info="holat == 'jarayonda'"
+                                           decoration-warning="holat == 'toxtatilgan'"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Xomashyo ehtiyoji" name="ehtiyoj">
+                            <p class="text-muted" invisible="ehtiyoj_tekshirildi">«Xomashyoni tekshirish» tugmasini bosing.</p>
+                            <field name="ehtiyoj_tekshirildi" invisible="not ehtiyoj_tekshirildi"/>
+                            <field name="ehtiyoj_ids" readonly="1">
+                                <list decoration-danger="holat == 'yoq'" decoration-warning="holat == 'xarid'">
+                                    <field name="product_id"/>
+                                    <field name="kerak_kg" sum="Jami"/>
+                                    <field name="mavjud_kg"/>
+                                    <field name="kutilayotgan_kg"/>
+                                    <field name="yetishmaydi_kg" sum="Jami"/>
+                                    <field name="holat" widget="badge" decoration-success="holat == 'yetarli'"
+                                           decoration-warning="holat == 'xarid'" decoration-danger="holat == 'yoq'"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Izoh" name="izoh">
+                            <field name="izoh"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_agronova_yem_reja_search" model="ir.ui.view">
+        <field name="name">agronova.yem.reja.search</field>
+        <field name="model">agronova.yem.reja</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <filter name="faol" string="Faol" domain="[('state', 'in', ('tasdiqlangan', 'jarayonda'))]"/>
+                <filter name="kechikkan" string="Kechikayotgan" domain="[('kechikkan_soni', '&gt;', 0)]"/>
+                <filter name="yetishmaydi" string="Xomashyo yetishmaydi" domain="[('yetishmaydi', '=', True)]"/>
+                <filter name="sana" string="Sana" date="sana_dan"/>
+                <group>
+                    <filter name="g_davr" string="Davr" context="{'group_by': 'davr'}"/>
+                    <filter name="g_state" string="Holat" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_agronova_yem_reja" model="ir.actions.act_window">
+        <field name="name">Ishlab chiqarish rejasi</field>
+        <field name="res_model">agronova.yem.reja</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_agronova_yem_reja_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Ishlab chiqarish rejasini tuzing</p>
+            <p>Mahsulot, hajm (kg), muddat va liniyani kiriting. Tizim retseptura bo'yicha xomashyo ehtiyojini hisoblab, ombordagi qoldiq bilan solishtiradi.</p>
+        </field>
+    </record>
+
+    <!-- Reja-fakt: qatorlar kesimida -->
+    <record id="view_agronova_yem_reja_qator_pivot" model="ir.ui.view">
+        <field name="name">agronova.yem.reja.qator.pivot</field>
+        <field name="model">agronova.yem.reja.qator</field>
+        <field name="arch" type="xml">
+            <pivot string="Reja va fakt">
+                <field name="product_id" type="row"/>
+                <field name="miqdor_kg" type="measure"/>
+                <field name="fakt_kg" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_agronova_yem_reja_fakt" model="ir.actions.act_window">
+        <field name="name">Reja va fakt</field>
+        <field name="res_model">agronova.yem.reja.qator</field>
+        <field name="view_mode">pivot,list</field>
+        <field name="domain">[('reja_id.state', '!=', 'bekor')]</field>
+    </record>
+
+</odoo>

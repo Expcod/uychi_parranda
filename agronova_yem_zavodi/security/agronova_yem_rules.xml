@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Ko'p korxonali o'rnatish: har korxona faqat o'zinikini ko'radi. -->
+        <record id="rule_yem_liniya_company" model="ir.rule">
+            <field name="name">Yem liniya: korxona</field>
+            <field name="model_id" ref="model_agronova_yem_liniya"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_yem_reja_company" model="ir.rule">
+            <field name="name">Yem reja: korxona</field>
+            <field name="model_id" ref="model_agronova_yem_reja"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_yem_smena_company" model="ir.rule">
+            <field name="name">Yem smena: korxona</field>
+            <field name="model_id" ref="model_agronova_yem_smena"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_yem_qadoqlash_company" model="ir.rule">
+            <field name="name">Yem qadoqlash: korxona</field>
+            <field name="model_id" ref="model_agronova_yem_qadoqlash"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_yem_jonatma_company" model="ir.rule">
+            <field name="name">Yem jo'natma: korxona</field>
+            <field name="model_id" ref="model_agronova_yem_jonatma"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_yem_yoqotish_company" model="ir.rule">
+            <field name="name">Yem yo'qotish: korxona</field>
+            <field name="model_id" ref="model_agronova_yem_yoqotish"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_yem_toxtash_company" model="ir.rule">
+            <field name="name">Yem to'xtash: korxona</field>
+            <field name="model_id" ref="model_agronova_yem_toxtash"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_yem_energiya_company" model="ir.rule">
+            <field name="name">Yem energiya: korxona</field>
+            <field name="model_id" ref="model_agronova_yem_energiya"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_yem_zaxira_company" model="ir.rule">
+            <field name="name">Yem zaxira: korxona</field>
+            <field name="model_id" ref="model_agronova_yem_zaxira"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_yem_xarajat_company" model="ir.rule">
+            <field name="name">Yem xarajat: korxona</field>
+            <field name="model_id" ref="model_agronova_yem_xarajat"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+    </data>
+</odoo>

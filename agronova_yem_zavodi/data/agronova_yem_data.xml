@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_yem_reja" model="ir.sequence">
+            <field name="name">Yem — ishlab chiqarish rejasi</field>
+            <field name="code">agronova.yem.reja</field>
+            <field name="prefix">RJ/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+        <record id="seq_yem_qadoqlash" model="ir.sequence">
+            <field name="name">Yem — qadoqlash</field>
+            <field name="code">agronova.yem.qadoqlash</field>
+            <field name="prefix">QD/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+        <record id="seq_yem_jonatma" model="ir.sequence">
+            <field name="name">Yem — jo'natma</field>
+            <field name="code">agronova.yem.jonatma</field>
+            <field name="prefix">JN/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+        <record id="seq_yem_yoqotish" model="ir.sequence">
+            <field name="name">Yem — yo'qotish</field>
+            <field name="code">agronova.yem.yoqotish</field>
+            <field name="prefix">YQ/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Standart smenalar: ikki smena, 12 soatdan. -->
+        <record id="smena_kunduzgi" model="agronova.yem.smena.turi">
+            <field name="name">1-smena (kunduzgi)</field>
+            <field name="sequence">10</field>
+            <field name="boshlanish">8.0</field>
+            <field name="tugash">20.0</field>
+        </record>
+        <record id="smena_tungi" model="agronova.yem.smena.turi">
+            <field name="name">2-smena (tungi)</field>
+            <field name="sequence">20</field>
+            <field name="boshlanish">20.0</field>
+            <field name="tugash">8.0</field>
+        </record>
+    </data>
+
+    <data noupdate="1">
+        <record id="cron_yem_zaxira" model="ir.cron">
+            <field name="name">Yem zavodi: xomashyo zaxirasini yangilash</field>
+            <field name="model_id" ref="model_agronova_yem_zaxira"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_yangilash()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+        </record>
+        <record id="cron_yem_reja_kechikish" model="ir.cron">
+            <field name="name">Yem zavodi: kechikayotgan reja</field>
+            <field name="model_id" ref="model_agronova_yem_reja"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_kechikish()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+        </record>
+    </data>
+</odoo>

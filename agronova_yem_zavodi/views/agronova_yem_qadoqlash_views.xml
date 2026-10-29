@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_agronova_yem_qadoqlash_list" model="ir.ui.view">
+        <field name="name">agronova.yem.qadoqlash.list</field>
+        <field name="model">agronova.yem.qadoqlash</field>
+        <field name="arch" type="xml">
+            <list decoration-warning="toldirish_holat != 'normal'" decoration-muted="state == 'bekor'">
+                <field name="name"/>
+                <field name="sana"/>
+                <field name="liniya_id" optional="show"/>
+                <field name="production_id" optional="show"/>
+                <field name="product_id"/>
+                <field name="qop_soni" sum="Jami"/>
+                <field name="brutto_kg" sum="Jami"/>
+                <field name="qoplar_kg" sum="Jami" optional="show"/>
+                <field name="netto_kg" sum="Jami"/>
+                <field name="nominal_kg" sum="Jami" optional="show"/>
+                <field name="toldirish_farq_kg" sum="Jami"/>
+                <field name="toldirish_pct" optional="show"/>
+                <field name="toldirish_holat" widget="badge" decoration-success="toldirish_holat == 'normal'"
+                       decoration-warning="toldirish_holat != 'normal'"/>
+                <field name="state" widget="badge" decoration-success="state == 'tasdiqlangan'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_agronova_yem_qadoqlash_form" model="ir.ui.view">
+        <field name="name">agronova.yem.qadoqlash.form</field>
+        <field name="model">agronova.yem.qadoqlash</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_tarozidan" type="object" string="Brutto: tarozidan olish" icon="fa-balance-scale"
+                            class="btn-primary" invisible="state != 'draft' or not tarozi_id"/>
+                    <button name="action_tasdiqlash" type="object" string="Tasdiqlash" class="btn-success"
+                            invisible="state != 'draft'"/>
+                    <button name="action_bekor" type="object" string="Bekor qilish" invisible="state != 'draft'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,tasdiqlangan"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="sana" readonly="state != 'draft'"/>
+                            <field name="production_id" readonly="state != 'draft'"/>
+                            <field name="product_id" readonly="state != 'draft'"/>
+                            <field name="lot_id" readonly="state != 'draft'"/>
+                            <field name="liniya_id" readonly="state != 'draft'"/>
+                            <field name="smena_id" readonly="state != 'draft'"/>
+                        </group>
+                        <group string="Qop">
+                            <field name="qop_product_id" readonly="state != 'draft'"/>
+                            <field name="qop_soni" readonly="state != 'draft'"/>
+                            <field name="qop_sigim_kg" readonly="state != 'draft'"/>
+                            <field name="qop_usul" readonly="state != 'draft'"/>
+                            <field name="qop_vazn_kg" invisible="qop_usul != 'standart'" readonly="state != 'draft'"/>
+                            <field name="haqiqiy_qoplar_kg" invisible="qop_usul != 'haqiqiy'" readonly="state != 'draft'"/>
+                        </group>
+                    </group>
+                    <group string="Og'irlik">
+                        <group>
+                            <field name="tarozi_id" readonly="state != 'draft'"/>
+                            <label for="brutto_kg"/>
+                            <div class="o_row">
+                                <field name="brutto_kg" readonly="state != 'draft'"/>
+                                <field name="brutto_manba" widget="badge" invisible="not brutto_manba"/>
+                            </div>
+                            <field name="qoplar_kg"/>
+                            <field name="netto_kg" class="fw-bold fs-4"/>
+                        </group>
+                        <group>
+                            <field name="nominal_kg"/>
+                            <field name="toldirish_farq_kg" decoration-danger="toldirish_holat == 'kam'"
+                                   decoration-warning="toldirish_holat == 'ortiqcha'"/>
+                            <field name="toldirish_pct"/>
+                            <field name="toldirish_holat" widget="badge" decoration-success="toldirish_holat == 'normal'"
+                                   decoration-warning="toldirish_holat != 'normal'"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="qop_qiymat" invisible="not qop_qiymat"/>
+                            <field name="qop_move_id" invisible="not qop_move_id"/>
+                        </group>
+                    </group>
+                    <field name="izoh" placeholder="Izoh..."/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_agronova_yem_qadoqlash_search" model="ir.ui.view">
+        <field name="name">agronova.yem.qadoqlash.search</field>
+        <field name="model">agronova.yem.qadoqlash</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="product_id"/>
+                <field name="production_id"/>
+                <filter name="tafovut" string="To'ldirishda tafovut" domain="[('toldirish_holat', '!=', 'normal')]"/>
+                <filter name="tasdiqlangan" string="Tasdiqlangan" domain="[('state', '=', 'tasdiqlangan')]"/>
+                <filter name="sana" string="Sana" date="sana"/>
+                <group>
+                    <filter name="g_product" string="Mahsulot" context="{'group_by': 'product_id'}"/>
+                    <filter name="g_liniya" string="Liniya" context="{'group_by': 'liniya_id'}"/>
+                    <filter name="g_kun" string="Kun" context="{'group_by': 'sana:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_agronova_yem_qadoqlash_pivot" model="ir.ui.view">
+        <field name="name">agronova.yem.qadoqlash.pivot</field>
+        <field name="model">agronova.yem.qadoqlash</field>
+        <field name="arch" type="xml">
+            <pivot string="Qadoqlash" sample="1">
+                <field name="product_id" type="row"/>
+                <field name="qop_soni" type="measure"/>
+                <field name="netto_kg" type="measure"/>
+                <field name="toldirish_farq_kg" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_agronova_yem_qadoqlash" model="ir.actions.act_window">
+        <field name="name">Qadoqlash</field>
+        <field name="res_model">agronova.yem.qadoqlash</field>
+        <field name="view_mode">list,form,pivot</field>
+        <field name="search_view_id" ref="view_agronova_yem_qadoqlash_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Qadoqlashni qayd eting</p>
+            <p>Qoplar soni va brutto og'irlikni kiriting — bo'sh qoplar og'irligi ayrilib, sof yem va kam/ortiqcha to'ldirish hisoblanadi.</p>
+        </field>
+    </record>
+
+</odoo>

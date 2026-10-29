@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Ombor ilovasida: operatsiyalar ichida tortish, sozlamada tarozilar.
+         Yem zavodi moduli o'z menyusiga ham shu amallarni ulaydi. -->
+    <menuitem id="menu_agronova_tortish" name="Tarozi"
+              parent="stock.menu_stock_warehouse_mgmt" sequence="40"
+              action="action_agronova_tarozi_tortish"
+              groups="agronova_tarozi.group_tarozi_operator"/>
+
+    <menuitem id="menu_agronova_tarozi" name="Tarozilar"
+              parent="stock.menu_stock_config_settings" sequence="60"
+              action="action_agronova_tarozi"
+              groups="agronova_tarozi.group_tarozi_masul"/>
+
+</odoo>

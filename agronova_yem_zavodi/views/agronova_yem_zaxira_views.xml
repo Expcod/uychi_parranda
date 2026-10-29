@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_agronova_yem_zaxira_list" model="ir.ui.view">
+        <field name="name">agronova.yem.zaxira.list</field>
+        <field name="model">agronova.yem.zaxira</field>
+        <field name="arch" type="xml">
+            <list create="false" edit="false" delete="false"
+                  decoration-danger="holat == 'kritik'" decoration-warning="holat == 'kam'" decoration-info="holat == 'ortiqcha'">
+                <header>
+                    <button name="action_yangilash_btn" type="object" string="Yangilash" icon="fa-refresh" display="always"/>
+                    <button name="action_xarid_talabi" type="object" string="Xarid talabi" icon="fa-shopping-cart"/>
+                </header>
+                <field name="product_id"/>
+                <field name="yem_turi" optional="show"/>
+                <field name="warehouse_id" optional="hide"/>
+                <field name="qoldiq_kg"/>
+                <field name="min_kg"/>
+                <field name="max_kg" optional="show"/>
+                <field name="kunlik_kg"/>
+                <field name="yetadi_kun"/>
+                <field name="rejadagi_kg" optional="show"/>
+                <field name="kutilayotgan_kg"/>
+                <field name="xarid_kerak_kg"/>
+                <field name="holat" widget="badge" decoration-danger="holat == 'kritik'" decoration-warning="holat == 'kam'"
+                       decoration-success="holat == 'normal'" decoration-info="holat == 'ortiqcha'"/>
+                <field name="yangilangan" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_agronova_yem_zaxira_search" model="ir.ui.view">
+        <field name="name">agronova.yem.zaxira.search</field>
+        <field name="model">agronova.yem.zaxira</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="product_id"/>
+                <filter name="xavf" string="Minimumdan past yoki tugash arafasida" domain="[('holat', 'in', ('kritik', 'kam'))]"/>
+                <filter name="kritik" string="Minimumdan past" domain="[('holat', '=', 'kritik')]"/>
+                <group>
+                    <filter name="g_holat" string="Holati" context="{'group_by': 'holat'}"/>
+                    <filter name="g_turi" string="Turi" context="{'group_by': 'yem_turi'}"/>
+                    <filter name="g_ombor" string="Ombor" context="{'group_by': 'warehouse_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_agronova_yem_zaxira" model="ir.actions.act_window">
+        <field name="name">Xomashyo zaxirasi</field>
+        <field name="res_model">agronova.yem.zaxira</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id" ref="view_agronova_yem_zaxira_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">«Yangilash» tugmasini bosing</p>
+            <p>Minimum va maksimum ombordagi qayta buyurtma qoidalaridan olinadi. Jadval har soatda o'zi yangilanadi.</p>
+        </field>
+    </record>
+
+    <record id="action_agronova_yem_orderpoint" model="ir.actions.act_window">
+        <field name="name">Minimum / maksimum qoidalari</field>
+        <field name="res_model">stock.warehouse.orderpoint</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('product_id.agronova_yem_turi', 'in', ('xomashyo', 'premiks', 'qadoq'))]</field>
+        <field name="context">{'search_default_trigger': False}</field>
+    </record>
+
+</odoo>

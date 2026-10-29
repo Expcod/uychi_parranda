@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_agronova_yem_energiya_list" model="ir.ui.view">
+        <field name="name">agronova.yem.energiya.list</field>
+        <field name="model">agronova.yem.energiya</field>
+        <field name="arch" type="xml">
+            <list editable="top" decoration-danger="farq_pct &gt; 10">
+                <field name="sana"/>
+                <field name="liniya_id"/>
+                <field name="smena_id" optional="show"/>
+                <field name="elektr_kwh" sum="Jami"/>
+                <field name="gaz_m3" sum="Jami"/>
+                <field name="ishlab_chiqarilgan_t" sum="Jami"/>
+                <field name="kwh_t"/>
+                <field name="gaz_t" optional="show"/>
+                <field name="reja_kwh_t" optional="show"/>
+                <field name="farq_pct"/>
+                <field name="elektr_narx" optional="hide"/>
+                <field name="gaz_narx" optional="hide"/>
+                <field name="summa" sum="Jami"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_agronova_yem_energiya_pivot" model="ir.ui.view">
+        <field name="name">agronova.yem.energiya.pivot</field>
+        <field name="model">agronova.yem.energiya</field>
+        <field name="arch" type="xml">
+            <pivot string="Energiya sarfi" sample="1">
+                <field name="liniya_id" type="row"/>
+                <field name="sana" interval="month" type="col"/>
+                <field name="elektr_kwh" type="measure"/>
+                <field name="gaz_m3" type="measure"/>
+                <field name="ishlab_chiqarilgan_t" type="measure"/>
+                <field name="summa" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_agronova_yem_energiya_graph" model="ir.ui.view">
+        <field name="name">agronova.yem.energiya.graph</field>
+        <field name="model">agronova.yem.energiya</field>
+        <field name="arch" type="xml">
+            <graph string="Energiya" type="line" sample="1">
+                <field name="sana" interval="day"/>
+                <field name="kwh_t" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_agronova_yem_energiya_search" model="ir.ui.view">
+        <field name="name">agronova.yem.energiya.search</field>
+        <field name="model">agronova.yem.energiya</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="liniya_id"/>
+                <filter name="meyordan" string="Me'yordan ortiq" domain="[('farq_pct', '&gt;', 0)]"/>
+                <filter name="sana" string="Sana" date="sana"/>
+                <group>
+                    <filter name="g_liniya" string="Liniya" context="{'group_by': 'liniya_id'}"/>
+                    <filter name="g_kun" string="Kun" context="{'group_by': 'sana:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_agronova_yem_energiya" model="ir.actions.act_window">
+        <field name="name">Energiya sarfi</field>
+        <field name="res_model">agronova.yem.energiya</field>
+        <field name="view_mode">list,pivot,graph</field>
+        <field name="search_view_id" ref="view_agronova_yem_energiya_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Hisoblagich ko'rsatkichlarini kiriting</p>
+            <p>Elektr va gaz sarfi smenada ishlab chiqarilgan hajmga bog'lanadi: bir tonnaga kVt·soat va me'yordan farq.</p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_agronova_yem_yoqotish_list" model="ir.ui.view">
+        <field name="name">agronova.yem.yoqotish.list</field>
+        <field name="model">agronova.yem.yoqotish</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="meyordan_ortiq and state != 'rad'" decoration-muted="state == 'rad'">
+                <field name="name"/>
+                <field name="sana"/>
+                <field name="turi"/>
+                <field name="product_id"/>
+                <field name="production_id" optional="show"/>
+                <field name="liniya_id" optional="show"/>
+                <field name="smena_id" optional="hide"/>
+                <field name="miqdor_kg" sum="Jami"/>
+                <field name="meyoriy_kg" sum="Jami"/>
+                <field name="ortiqcha_kg" sum="Jami"/>
+                <field name="qiymat" sum="Jami"/>
+                <field name="masul_id" optional="show"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="meyordan_ortiq" column_invisible="1"/>
+                <field name="state" widget="badge" decoration-success="state == 'tasdiqlangan'"
+                       decoration-warning="state == 'tekshiruvda'" decoration-danger="state == 'rad'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_agronova_yem_yoqotish_form" model="ir.ui.view">
+        <field name="name">agronova.yem.yoqotish.form</field>
+        <field name="model">agronova.yem.yoqotish</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_tekshiruvga" type="object" string="Tekshiruvga yuborish" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_tasdiqlash" type="object" string="Tasdiqlash" class="btn-success"
+                            groups="agronova_yem_zavodi.group_yem_boshliq" invisible="state not in ('draft', 'tekshiruvda')"/>
+                    <button name="action_rad" type="object" string="Rad etish"
+                            groups="agronova_yem_zavodi.group_yem_boshliq" invisible="state not in ('draft', 'tekshiruvda')"/>
+                    <button name="action_loyiha" type="object" string="Qayta ochish"
+                            groups="agronova_yem_zavodi.group_yem_boshliq" invisible="state not in ('tasdiqlangan', 'rad')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,tekshiruvda,tasdiqlangan"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Me'yordan ortiq" bg_color="text-bg-danger"
+                            invisible="not meyordan_ortiq or state == 'rad'"/>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="sana" readonly="state != 'draft'"/>
+                            <field name="turi" readonly="state != 'draft'"/>
+                            <field name="production_id" readonly="state != 'draft'"/>
+                            <field name="product_id" readonly="state != 'draft'"/>
+                            <field name="liniya_id" readonly="state != 'draft'"/>
+                            <field name="smena_id" readonly="state != 'draft'"/>
+                            <field name="avtomatik" invisible="not avtomatik"/>
+                        </group>
+                        <group string="Miqdor">
+                            <field name="miqdor_kg" readonly="state != 'draft'"/>
+                            <field name="meyoriy_kg" readonly="state != 'draft'"/>
+                            <field name="meyorda_kg"/>
+                            <field name="ortiqcha_kg" decoration-danger="ortiqcha_kg &gt; 0"/>
+                            <field name="meyordan_ortiq" invisible="1"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="birlik_narx"/>
+                            <field name="qiymat" class="fw-bold"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Mas'uliyat">
+                            <field name="masul_id"/>
+                            <field name="dalolatnoma"/>
+                            <field name="dalolatnoma_fayl" filename="dalolatnoma_nomi"/>
+                            <field name="dalolatnoma_nomi" invisible="1"/>
+                            <field name="tasdiqlagan_id" invisible="not tasdiqlagan_id"/>
+                        </group>
+                    </group>
+                    <field name="sabab" placeholder="Yo'qotish qanday yuz berdi, qanday chora ko'rildi..."/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_agronova_yem_yoqotish_search" model="ir.ui.view">
+        <field name="name">agronova.yem.yoqotish.search</field>
+        <field name="model">agronova.yem.yoqotish</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="product_id"/>
+                <field name="production_id"/>
+                <field name="masul_id"/>
+                <filter name="hisobotga" string="Hisobotga kiradi" domain="[('state', '!=', 'rad')]"/>
+                <filter name="ortiq" string="Me'yordan ortiq" domain="[('meyordan_ortiq', '=', True)]"/>
+                <filter name="tekshiruvda" string="Tekshiruvda" domain="[('state', '=', 'tekshiruvda')]"/>
+                <separator/>
+                <filter name="sana" string="Sana" date="sana"/>
+                <group>
+                    <filter name="g_turi" string="Sabab" context="{'group_by': 'turi'}"/>
+                    <filter name="g_liniya" string="Liniya" context="{'group_by': 'liniya_id'}"/>
+                    <filter name="g_smena" string="Smena" context="{'group_by': 'smena_id'}"/>
+                    <filter name="g_product" string="Mahsulot" context="{'group_by': 'product_id'}"/>
+                    <filter name="g_masul" string="Mas'ul" context="{'group_by': 'masul_id'}"/>
+                    <filter name="g_oy" string="Oy" context="{'group_by': 'sana:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_agronova_yem_yoqotish_pivot" model="ir.ui.view">
+        <field name="name">agronova.yem.yoqotish.pivot</field>
+        <field name="model">agronova.yem.yoqotish</field>
+        <field name="arch" type="xml">
+            <pivot string="Haqiqiy yo'qotish" sample="1">
+                <field name="turi" type="row"/>
+                <field name="liniya_id" type="col"/>
+                <field name="miqdor_kg" type="measure"/>
+                <field name="meyorda_kg" type="measure"/>
+                <field name="ortiqcha_kg" type="measure"/>
+                <field name="qiymat" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_agronova_yem_yoqotish_graph" model="ir.ui.view">
+        <field name="name">agronova.yem.yoqotish.graph</field>
+        <field name="model">agronova.yem.yoqotish</field>
+        <field name="arch" type="xml">
+            <graph string="Yo'qotish" type="bar" stacked="1" sample="1">
+                <field name="sana" interval="day"/>
+                <field name="turi"/>
+                <field name="miqdor_kg" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_agronova_yem_yoqotish" model="ir.actions.act_window">
+        <field name="name">Yo'qotishlar reyestri</field>
+        <field name="res_model">agronova.yem.yoqotish</field>
+        <field name="view_mode">list,form,pivot,graph</field>
+        <field name="search_view_id" ref="view_agronova_yem_yoqotish_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Yo'qotishlar shu yerda</p>
+            <p>Buyurtma yopilganda texnologik yo'qotish avtomatik yoziladi. To'kilish, brak, namlik va boshqa sabablar qo'lda yoki Telegram botdan kiritiladi.</p>
+        </field>
+    </record>
+
+    <!-- TZ 5.3 B: haqiqiy yo'qotish hisoboti -->
+    <record id="action_agronova_yem_haqiqiy_yoqotish" model="ir.actions.act_window">
+        <field name="name">Haqiqiy yo'qotish hisoboti</field>
+        <field name="res_model">agronova.yem.yoqotish</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="search_view_id" ref="view_agronova_yem_yoqotish_search"/>
+        <field name="context">{'search_default_hisobotga': 1}</field>
+    </record>
+
+</odoo>

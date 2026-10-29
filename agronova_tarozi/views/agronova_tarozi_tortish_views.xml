@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_agronova_tortish_list" model="ir.ui.view">
+        <field name="name">agronova.tarozi.tortish.list</field>
+        <field name="model">agronova.tarozi.tortish</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="tafovut == 'kritik'" decoration-warning="tafovut in ('tasdiq', 'ogohlantirish')"
+                  decoration-muted="state == 'cancel'">
+                <field name="name"/>
+                <field name="sana"/>
+                <field name="yonalish"/>
+                <field name="avto_raqam"/>
+                <field name="partner_id" optional="show"/>
+                <field name="product_id"/>
+                <field name="brutto" optional="hide" sum="Jami"/>
+                <field name="tara" optional="hide" sum="Jami"/>
+                <field name="netto" sum="Jami"/>
+                <field name="hujjat_netto" optional="show" sum="Jami"/>
+                <field name="farq_kg" sum="Jami"/>
+                <field name="farq_pct" optional="show"/>
+                <field name="tafovut" widget="badge"
+                       decoration-success="tafovut == 'normal'" decoration-warning="tafovut in ('ogohlantirish', 'tasdiq')"
+                       decoration-danger="tafovut == 'kritik'"/>
+                <field name="tarozi_id" optional="hide"/>
+                <field name="picking_id" optional="hide"/>
+                <field name="state" widget="badge" decoration-success="state == 'done'" decoration-info="state == 'vazn1'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_agronova_tortish_form" model="ir.ui.view">
+        <field name="name">agronova.tarozi.tortish.form</field>
+        <field name="model">agronova.tarozi.tortish</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_vazn1" type="object" string="1-tortish: tarozidan olish" class="btn-primary"
+                            icon="fa-download" invisible="state != 'draft'"/>
+                    <button name="action_vazn2" type="object" string="2-tortish: tarozidan olish" class="btn-primary"
+                            icon="fa-download" invisible="state != 'vazn1' or vazn2"/>
+                    <button name="action_tafovut_tasdiq" type="object" string="Tafovutni tasdiqlash"
+                            class="btn-warning" groups="agronova_tarozi.group_tarozi_masul"
+                            invisible="state in ('done', 'cancel') or tafovut not in ('tasdiq', 'kritik') or tasdiqlagan_id"/>
+                    <button name="action_yakunlash" type="object" string="Yakunlash" class="btn-success"
+                            invisible="state != 'vazn1' or not vazn2"/>
+                    <button name="action_qayta_ochish" type="object" string="Qayta ochish"
+                            groups="agronova_tarozi.group_tarozi_masul" invisible="state != 'done'"
+                            confirm="Varaqa qayta ochiladi. Ombor hujjati allaqachon tasdiqlangan bo'lsa, u o'zgarmaydi."/>
+                    <button name="action_bekor" type="object" string="Bekor qilish"
+                            invisible="state in ('cancel',)"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,vazn1,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_picking" type="object" class="oe_stat_button" icon="fa-truck"
+                                invisible="not picking_id">
+                            <div class="o_stat_info"><span class="o_stat_text">Ombor hujjati</span></div>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Kritik tafovut" bg_color="text-bg-danger"
+                            invisible="tafovut != 'kritik'"/>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Tortish">
+                            <field name="yonalish" readonly="state != 'draft'"/>
+                            <field name="tarozi_id" readonly="state != 'draft'"/>
+                            <field name="sana"/>
+                            <field name="operator_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Transport va yuk">
+                            <field name="avto_raqam" placeholder="01 A 123 BC"/>
+                            <field name="haydovchi"/>
+                            <field name="partner_id"/>
+                            <field name="product_id"/>
+                            <field name="picking_id" readonly="state == 'done'"/>
+                            <field name="purchase_id" invisible="not purchase_id"/>
+                            <field name="sale_id" invisible="not sale_id"/>
+                        </group>
+                    </group>
+                    <group string="Vaznlar">
+                        <group>
+                            <label for="vazn1"/>
+                            <div class="o_row">
+                                <field name="vazn1" readonly="state in ('done', 'cancel')"/>
+                                <field name="vazn1_manba" widget="badge" decoration-success="vazn1_manba == 'tarozi'"
+                                       decoration-warning="vazn1_manba == 'qolda'" invisible="not vazn1_manba"/>
+                            </div>
+                            <field name="vazn1_vaqt" invisible="not vazn1_vaqt"/>
+                            <label for="vazn2"/>
+                            <div class="o_row">
+                                <field name="vazn2" readonly="state in ('done', 'cancel')"/>
+                                <field name="vazn2_manba" widget="badge" decoration-success="vazn2_manba == 'tarozi'"
+                                       decoration-warning="vazn2_manba == 'qolda'" invisible="not vazn2_manba"/>
+                            </div>
+                            <field name="vazn2_vaqt" invisible="not vazn2_vaqt"/>
+                        </group>
+                        <group>
+                            <field name="brutto"/>
+                            <field name="tara"/>
+                            <field name="netto" class="fw-bold fs-4"/>
+                            <field name="netto_t"/>
+                        </group>
+                    </group>
+                    <group string="Hujjat bilan solishtirish">
+                        <group>
+                            <field name="hujjat_netto" readonly="state == 'done'"/>
+                            <field name="farq_kg" decoration-danger="tafovut == 'kritik'"
+                                   decoration-warning="tafovut in ('tasdiq', 'ogohlantirish')"/>
+                            <field name="farq_pct"/>
+                            <field name="tafovut" widget="badge"
+                                   decoration-success="tafovut == 'normal'" decoration-warning="tafovut in ('ogohlantirish', 'tasdiq')"
+                                   decoration-danger="tafovut == 'kritik'"/>
+                        </group>
+                        <group>
+                            <field name="tafovut_sabab" invisible="tafovut in ('yoq', 'normal')"
+                                   required="tafovut in ('tasdiq', 'kritik') and state != 'cancel'"
+                                   placeholder="Masalan: namlik, to'kilish, hujjatdagi xato..."/>
+                            <field name="tasdiqlagan_id" invisible="not tasdiqlagan_id"/>
+                            <field name="tasdiq_vaqt" invisible="not tasdiq_vaqt"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-info mb-0" role="alert" invisible="tafovut in ('yoq', 'normal')">
+                        Og'irlik farqi avtomatik yo'qotish deb yozilmaydi: avval sabab aniqlanadi va mas'ul tasdiqlaydi.
+                    </div>
+                    <field name="izoh" placeholder="Izoh..."/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_agronova_tortish_search" model="ir.ui.view">
+        <field name="name">agronova.tarozi.tortish.search</field>
+        <field name="model">agronova.tarozi.tortish</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="avto_raqam"/>
+                <field name="partner_id"/>
+                <field name="product_id"/>
+                <field name="picking_id"/>
+                <filter name="kirim" string="Kirim" domain="[('yonalish', '=', 'kirim')]"/>
+                <filter name="chiqim" string="Chiqim" domain="[('yonalish', '=', 'chiqim')]"/>
+                <separator/>
+                <filter name="ochiq" string="Ochiq" domain="[('state', 'in', ('draft', 'vazn1'))]"/>
+                <filter name="done" string="Yakunlangan" domain="[('state', '=', 'done')]"/>
+                <separator/>
+                <filter name="tafovutli" string="Tafovut bor" domain="[('tafovut', 'in', ('ogohlantirish', 'tasdiq', 'kritik'))]"/>
+                <filter name="kritik" string="Kritik" domain="[('tafovut', '=', 'kritik')]"/>
+                <separator/>
+                <filter name="bugun" string="Bugun" domain="[('sana', '&gt;=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="sana" string="Sana" date="sana"/>
+                <group>
+                    <filter name="g_yonalish" string="Yo'nalish" context="{'group_by': 'yonalish'}"/>
+                    <filter name="g_product" string="Tovar" context="{'group_by': 'product_id'}"/>
+                    <filter name="g_partner" string="Kontragent" context="{'group_by': 'partner_id'}"/>
+                    <filter name="g_tafovut" string="Tafovut" context="{'group_by': 'tafovut'}"/>
+                    <filter name="g_kun" string="Kun" context="{'group_by': 'sana:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_agronova_tortish_pivot" model="ir.ui.view">
+        <field name="name">agronova.tarozi.tortish.pivot</field>
+        <field name="model">agronova.tarozi.tortish</field>
+        <field name="arch" type="xml">
+            <pivot string="Tarozi tahlili" sample="1">
+                <field name="product_id" type="row"/>
+                <field name="yonalish" type="col"/>
+                <field name="netto" type="measure"/>
+                <field name="farq_kg" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_agronova_tortish_graph" model="ir.ui.view">
+        <field name="name">agronova.tarozi.tortish.graph</field>
+        <field name="model">agronova.tarozi.tortish</field>
+        <field name="arch" type="xml">
+            <graph string="Tarozi" type="bar" sample="1">
+                <field name="sana" interval="day"/>
+                <field name="netto" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_agronova_tarozi_tortish" model="ir.actions.act_window">
+        <field name="name">Tortish varaqalari</field>
+        <field name="res_model">agronova.tarozi.tortish</field>
+        <field name="view_mode">list,form,pivot,graph</field>
+        <field name="search_view_id" ref="view_agronova_tortish_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Birinchi tortishni boshlang</p>
+            <p>Mashina tarozida turganda «1-tortish: tarozidan olish» tugmasini bosing. Netto = Brutto − Tara avtomatik hisoblanadi.</p>
+        </field>
+    </record>
+
+    <record id="action_agronova_tortish_tafovut" model="ir.actions.act_window">
+        <field name="name">Og'irlik tafovutlari</field>
+        <field name="res_model">agronova.tarozi.tortish</field>
+        <field name="view_mode">list,pivot,graph,form</field>
+        <field name="search_view_id" ref="view_agronova_tortish_search"/>
+        <field name="context">{'search_default_tafovutli': 1, 'search_default_done': 1}</field>
+    </record>
+
+</odoo>

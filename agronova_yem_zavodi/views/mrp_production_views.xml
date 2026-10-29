@@ -1,47 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Ishlab chiqarish hujjatida tannarx bo'limi -->
+    <!-- Buyurtma: joy, versiya, sarf va yo'qotish, tannarx. -->
     <record id="view_mrp_production_form_tannarx" model="ir.ui.view">
-        <field name="name">mrp.production.form.agronova.tannarx</field>
+        <field name="name">mrp.production.form.agronova.yem</field>
         <field name="model">mrp.production</field>
         <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
         <field name="arch" type="xml">
-            <notebook position="inside">
-                <page string="Tannarx" name="agronova_tannarx"
-                      invisible="state != 'done'">
+            <xpath expr="//header" position="inside">
+                <button name="action_agronova_sarf_tasdiq" type="object" string="Og'ishni tasdiqlash"
+                        class="btn-warning" groups="agronova_yem_zavodi.group_yem_boshliq"
+                        invisible="not agronova_sarf_ogish or agronova_sarf_tasdiqlagan_id or state in ('done', 'cancel')"/>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_agronova_qadoqlash" type="object" class="oe_stat_button" icon="fa-archive"
+                        invisible="not agronova_yem">
+                    <div class="o_stat_info">
+                        <field name="agronova_qop_soni" class="o_stat_value"/>
+                        <span class="o_stat_text">Qop</span>
+                    </div>
+                </button>
+                <button name="action_agronova_yoqotishlar" type="object" class="oe_stat_button" icon="fa-exclamation-triangle"
+                        invisible="not agronova_yem">
+                    <div class="o_stat_info">
+                        <field name="agronova_haqiqiy_yoqotish_kg" class="o_stat_value" widget="float" digits="[16, 0]"/>
+                        <span class="o_stat_text">kg yo'qotish</span>
+                    </div>
+                </button>
+            </xpath>
+            <xpath expr="//sheet" position="before">
+                <div class="alert alert-warning mb-0" role="alert"
+                     invisible="not agronova_sarf_ogish or agronova_sarf_tasdiqlagan_id or state in ('done', 'cancel')">
+                    <b>Xomashyo sarfi ruxsat etilgan og'ishdan chiqdi.</b>
+                    Buyurtma ishlab chiqarish boshlig'i tasdig'isiz yopilmaydi — «Sarf va yo'qotish» bo'limida sababni yozing.
+                </div>
+            </xpath>
+            <xpath expr="//field[@name='bom_id']" position="after">
+                <field name="agronova_yem" invisible="1"/>
+                <field name="agronova_bom_versiya" invisible="not agronova_bom_versiya"/>
+                <field name="agronova_liniya_id" invisible="not agronova_yem" readonly="state in ('done', 'cancel')"/>
+                <field name="agronova_smena_turi_id" invisible="not agronova_yem" readonly="state in ('done', 'cancel')"/>
+                <field name="agronova_smena_id" invisible="not agronova_smena_id" readonly="1"/>
+                <field name="agronova_reja_qator_id" invisible="not agronova_reja_qator_id" readonly="1"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Sarf va yo'qotish" name="agronova_sarf" invisible="not agronova_yem">
+                    <field name="move_raw_ids" readonly="1" nolabel="1" context="{'list_view_ref': False}">
+                        <list decoration-danger="agronova_limitdan_oshdi" create="false" delete="false">
+                            <field name="product_id"/>
+                            <field name="agronova_reja_kg" string="Reja (kg)" sum="Jami"/>
+                            <field name="agronova_fakt_kg" string="Haqiqiy (kg)" sum="Jami"/>
+                            <field name="agronova_farq_kg" sum="Jami"/>
+                            <field name="agronova_farq_pct"/>
+                            <field name="agronova_ogish_limit" string="Ruxsat ±%"/>
+                            <field name="agronova_limitdan_oshdi" string="Og'ish"/>
+                            <field name="state" column_invisible="1"/>
+                        </list>
+                    </field>
+                    <group>
+                        <group string="Yo'qotish (TZ 5.1)">
+                            <field name="agronova_kirim_kg"/>
+                            <field name="agronova_meyoriy_yoqotish_kg"/>
+                            <field name="agronova_kutilgan_kg"/>
+                            <field name="agronova_miqdor_kg" string="Haqiqiy chiqim (kg)"/>
+                            <field name="agronova_haqiqiy_yoqotish_kg"/>
+                            <field name="agronova_ortiqcha_yoqotish_kg" decoration-danger="agronova_ortiqcha_yoqotish_kg &gt; 0"/>
+                            <field name="agronova_yoqotish_pct"/>
+                            <field name="agronova_yoqotish_qiymat"/>
+                        </group>
+                        <group string="Me'yordan tashqari sarf" invisible="not agronova_sarf_ogish">
+                            <field name="agronova_sarf_ogish" invisible="1"/>
+                            <field name="agronova_sarf_sabab" readonly="agronova_sarf_tasdiqlagan_id"
+                                   placeholder="Masalan: namlik yuqori bo'lgani uchun makkajo'xori ko'proq berildi"/>
+                            <field name="agronova_sarf_tasdiqlagan_id"/>
+                        </group>
+                    </group>
+                </page>
+                <page string="Tannarx" name="agronova_tannarx" invisible="state != 'done'">
                     <group>
                         <group string="Haqiqiy tannarx">
                             <field name="currency_id" invisible="1"/>
                             <field name="agronova_xomashyo_qiymat"/>
                             <field name="agronova_ustama_qiymat"/>
-                            <field name="agronova_jami_tannarx"/>
-                            <field name="agronova_xomashyo_ulush"
-                                   widget="percentage" digits="[12,1]"/>
+                            <field name="agronova_qadoq_qiymat"/>
+                            <field name="agronova_ustama_taqsim"/>
+                            <field name="agronova_toliq_tannarx"/>
+                            <field name="agronova_xomashyo_ulush"/>
                         </group>
                         <group string="Birlik tannarxi">
                             <field name="agronova_miqdor_kg"/>
                             <field name="agronova_tannarx_1_kg"/>
                             <field name="agronova_tannarx_1_tonna"/>
-                        </group>
-                    </group>
-                    <group string="Reja va fakt">
-                        <group>
                             <field name="agronova_reja_tannarx_1_kg"/>
-                            <field name="agronova_tannarx_1_kg"
-                                   string="Fakt: 1 kg tannarxi"/>
                             <field name="agronova_chetlanish"/>
                         </group>
                     </group>
                     <div class="text-muted">
-                        Reja retsept bo'yicha hisoblanadi: komponentlarning
-                        standart narxi + operatsiya vaqti × ish markazi tarifi.
-                        Fakt esa haqiqatda sarflangan xomashyoning FIFO
-                        qiymatidan chiqadi.
+                        Reja tasdiqlash paytidagi retseptura bo'yicha qotadi. Fakt: sarflangan xomashyoning FIFO qiymati,
+                        ish markazi, qoplar va oy oxirida taqsimlangan davr xarajatlari.
                     </div>
                 </page>
-            </notebook>
+            </xpath>
         </field>
+    </record>
+
+    <record id="view_mrp_production_list_agronova_yem" model="ir.ui.view">
+        <field name="name">mrp.production.list.agronova.yem</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.mrp_production_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_id']" position="after">
+                <field name="agronova_liniya_id" optional="show"/>
+                <field name="agronova_smena_turi_id" optional="hide"/>
+                <field name="agronova_bom_versiya" optional="hide"/>
+                <field name="agronova_miqdor_kg" optional="show" sum="Jami"/>
+                <field name="agronova_haqiqiy_yoqotish_kg" optional="hide" sum="Jami"/>
+                <field name="agronova_sarf_ogish" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_mrp_production_search_agronova_yem" model="ir.ui.view">
+        <field name="name">mrp.production.search.agronova.yem</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id" ref="mrp.view_mrp_production_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <field name="agronova_liniya_id"/>
+                <filter name="yem" string="Yem" domain="[('agronova_yem', '=', True)]"/>
+                <filter name="sarf_ogish" string="Sarfda og'ish" domain="[('agronova_sarf_ogish', '=', True)]"/>
+                <filter name="ortiqcha_yoqotish" string="Me'yordan ortiq yo'qotish"
+                        domain="[('agronova_ortiqcha_yoqotish_kg', '&gt;', 0)]"/>
+                <filter name="g_liniya" string="Liniya" context="{'group_by': 'agronova_liniya_id'}"/>
+                <filter name="g_smena" string="Smena" context="{'group_by': 'agronova_smena_turi_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_agronova_yem_buyurtma" model="ir.actions.act_window">
+        <field name="name">Ishlab chiqarish buyurtmalari</field>
+        <field name="res_model">mrp.production</field>
+        <field name="view_mode">list,kanban,form,calendar,pivot,graph</field>
+        <field name="domain">[('agronova_yem', '=', True)]</field>
+        <field name="context">{'search_default_todo': 1}</field>
     </record>
 
     <!-- ============================================ TANNARX HISOBOTI -->
@@ -55,16 +156,20 @@
                 <field name="date_start"/>
                 <field name="name"/>
                 <field name="product_id"/>
+                <field name="agronova_liniya_id" optional="show"/>
                 <field name="agronova_miqdor_kg" sum="Jami kg"/>
                 <field name="agronova_xomashyo_qiymat" sum="Xomashyo"/>
-                <field name="agronova_ustama_qiymat" sum="Ishlab chiqarish"/>
-                <field name="agronova_jami_tannarx" sum="Jami tannarx"/>
-                <field name="agronova_xomashyo_ulush" optional="show"/>
+                <field name="agronova_ustama_qiymat" sum="Ish markazi" optional="show"/>
+                <field name="agronova_qadoq_qiymat" sum="Qadoq" optional="show"/>
+                <field name="agronova_ustama_taqsim" sum="Taqsimlangan" optional="show"/>
+                <field name="agronova_toliq_tannarx" sum="To'liq tannarx"/>
+                <field name="agronova_xomashyo_ulush" optional="hide"/>
                 <field name="agronova_tannarx_1_kg"/>
                 <field name="agronova_tannarx_1_tonna" optional="show"/>
-                <field name="agronova_reja_tannarx_1_kg" optional="hide"/>
+                <field name="agronova_reja_tannarx_1_kg" optional="show"/>
                 <field name="agronova_chetlanish" optional="show"/>
-                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="agronova_yoqotish_qiymat" sum="Yo'qotish" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
                 <field name="currency_id" column_invisible="1"/>
             </list>
         </field>
@@ -78,8 +183,7 @@
                 <field name="product_id" type="row"/>
                 <field name="date_start" interval="month" type="col"/>
                 <field name="agronova_miqdor_kg" type="measure"/>
-                <field name="agronova_jami_tannarx" type="measure"/>
-                <field name="agronova_tannarx_1_kg" type="measure"/>
+                <field name="agronova_toliq_tannarx" type="measure"/>
             </pivot>
         </field>
     </record>
@@ -89,7 +193,7 @@
         <field name="model">mrp.production</field>
         <field name="arch" type="xml">
             <graph string="Tannarx dinamikasi" type="line" sample="1">
-                <field name="date_start" interval="month"/>
+                <field name="date_start" interval="day"/>
                 <field name="agronova_tannarx_1_kg" type="measure"/>
             </graph>
         </field>
@@ -102,43 +206,152 @@
             <search string="Ishlab chiqarish tannarxi">
                 <field name="name"/>
                 <field name="product_id"/>
-                <filter name="rejadan_qimmat" string="Rejadan qimmat"
-                        domain="[('agronova_chetlanish', '&gt;', 0)]"/>
-                <filter name="rejadan_arzon" string="Rejadan arzon"
-                        domain="[('agronova_chetlanish', '&lt;', 0)]"/>
+                <field name="agronova_liniya_id"/>
+                <filter name="rejadan_qimmat" string="Rejadan qimmat" domain="[('agronova_chetlanish', '&gt;', 0)]"/>
+                <filter name="rejadan_arzon" string="Rejadan arzon" domain="[('agronova_chetlanish', '&lt;', 0)]"/>
                 <separator/>
-                <!-- Sana bo'yicha filtr Odooning standart oy tanlagichi
-                     bilan qilinadi — `relativedelta` ko'rinish tekshiruvidan
-                     o'tmaydi. -->
                 <filter name="sana" string="Sana" date="date_start"/>
                 <group>
-                    <filter name="g_product" string="Mahsulot"
-                            context="{'group_by': 'product_id'}"/>
-                    <filter name="g_oy" string="Oy"
-                            context="{'group_by': 'date_start:month'}"/>
-                    <filter name="g_hafta" string="Hafta"
-                            context="{'group_by': 'date_start:week'}"/>
-                    <filter name="g_kompaniya" string="Korxona"
-                            context="{'group_by': 'company_id'}"
-                            groups="base.group_multi_company"/>
+                    <filter name="g_product" string="Mahsulot" context="{'group_by': 'product_id'}"/>
+                    <filter name="g_liniya" string="Liniya" context="{'group_by': 'agronova_liniya_id'}"/>
+                    <filter name="g_oy" string="Oy" context="{'group_by': 'date_start:month'}"/>
+                    <filter name="g_hafta" string="Hafta" context="{'group_by': 'date_start:week'}"/>
                 </group>
             </search>
         </field>
     </record>
 
     <record id="action_agronova_yem_tannarx" model="ir.actions.act_window">
-        <field name="name">Ishlab chiqarish tannarxi</field>
+        <field name="name">Mahsulot tannarxi</field>
         <field name="res_model">mrp.production</field>
         <field name="view_mode">list,pivot,graph,form</field>
-        <field name="domain">[('state', '=', 'done')]</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_agronova_yem_tannarx_list')}),
+            (0, 0, {'view_mode': 'pivot', 'view_id': ref('view_agronova_yem_tannarx_pivot')}),
+            (0, 0, {'view_mode': 'graph', 'view_id': ref('view_agronova_yem_tannarx_graph')})]"/>
+        <field name="domain">[('state', '=', 'done'), ('agronova_yem', '=', True)]</field>
         <field name="search_view_id" ref="view_agronova_yem_tannarx_search"/>
         <field name="context">{'search_default_g_product': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">Hali yakunlangan ishlab chiqarish yo'q</p>
-            <p>Ishlab chiqarish buyurtmasi yakunlangandan keyin bu yerda
-               1 kg va 1 tonna tannarxi, xomashyo ulushi va rejadan
-               chetlanish ko'rinadi.</p>
+            <p>Buyurtma yopilgandan keyin 1 kg va 1 tonna tannarxi, xomashyo ulushi va rejadan chetlanish ko'rinadi.</p>
         </field>
+    </record>
+
+    <!-- ============================== ME'YORIY YO'QOTISH HISOBOTI (TZ 5.3 A) -->
+    <record id="view_agronova_yem_meyoriy_pivot" model="ir.ui.view">
+        <field name="name">mrp.production.agronova.meyoriy.pivot</field>
+        <field name="model">mrp.production</field>
+        <field name="arch" type="xml">
+            <pivot string="Me'yoriy va haqiqiy yo'qotish" sample="1">
+                <field name="product_id" type="row"/>
+                <field name="agronova_kirim_kg" type="measure"/>
+                <field name="agronova_meyoriy_yoqotish_kg" type="measure"/>
+                <field name="agronova_haqiqiy_yoqotish_kg" type="measure"/>
+                <field name="agronova_ortiqcha_yoqotish_kg" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_agronova_yem_meyoriy_list" model="ir.ui.view">
+        <field name="name">mrp.production.agronova.meyoriy.list</field>
+        <field name="model">mrp.production</field>
+        <field name="arch" type="xml">
+            <list create="false" decoration-danger="agronova_ortiqcha_yoqotish_kg &gt; 0">
+                <field name="date_finished"/>
+                <field name="name"/>
+                <field name="product_id"/>
+                <field name="agronova_bom_versiya"/>
+                <field name="agronova_liniya_id"/>
+                <field name="agronova_smena_turi_id" optional="show"/>
+                <field name="agronova_kirim_kg" sum="Jami"/>
+                <field name="agronova_meyoriy_yoqotish_kg" sum="Jami"/>
+                <field name="agronova_kutilgan_kg" sum="Jami" optional="show"/>
+                <field name="agronova_miqdor_kg" string="Haqiqiy chiqim" sum="Jami"/>
+                <field name="agronova_haqiqiy_yoqotish_kg" sum="Jami"/>
+                <field name="agronova_ortiqcha_yoqotish_kg" sum="Jami"/>
+                <field name="agronova_yoqotish_pct"/>
+                <field name="agronova_yoqotish_qiymat" sum="Jami"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_agronova_yem_meyoriy" model="ir.actions.act_window">
+        <field name="name">Me'yoriy yo'qotish hisoboti</field>
+        <field name="res_model">mrp.production</field>
+        <field name="view_mode">pivot,list,graph</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'pivot', 'view_id': ref('view_agronova_yem_meyoriy_pivot')}),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_agronova_yem_meyoriy_list')})]"/>
+        <field name="domain">[('state', '=', 'done'), ('agronova_yem', '=', True)]</field>
+        <field name="search_view_id" ref="view_agronova_yem_tannarx_search"/>
+        <field name="help" type="html">
+            <p>Har buyurtma bo'yicha retseptura me'yori (berilgan xomashyo × standart yo'qotish %) va haqiqatda yo'qotilgan miqdor.</p>
+        </field>
+    </record>
+
+    <!-- ============================== SARF OG'ISHLARI (TZ 3.3) -->
+    <record id="view_agronova_yem_sarf_list" model="ir.ui.view">
+        <field name="name">stock.move.agronova.sarf.list</field>
+        <field name="model">stock.move</field>
+        <field name="arch" type="xml">
+            <list create="false" decoration-danger="agronova_limitdan_oshdi">
+                <field name="date"/>
+                <field name="raw_material_production_id" string="Buyurtma"/>
+                <field name="product_id" string="Xomashyo"/>
+                <field name="agronova_reja_kg" sum="Jami"/>
+                <field name="agronova_fakt_kg" sum="Jami"/>
+                <field name="agronova_farq_kg" sum="Jami"/>
+                <field name="agronova_farq_pct"/>
+                <field name="agronova_ogish_limit"/>
+                <field name="agronova_limitdan_oshdi"/>
+                <field name="state" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_agronova_yem_sarf_search" model="ir.ui.view">
+        <field name="name">stock.move.agronova.sarf.search</field>
+        <field name="model">stock.move</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="product_id"/>
+                <field name="raw_material_production_id"/>
+                <filter name="ogish" string="Me'yordan tashqari" domain="[('agronova_limitdan_oshdi', '=', True)]"/>
+                <filter name="done" string="Bajarilgan" domain="[('state', '=', 'done')]"/>
+                <filter name="sana" string="Sana" date="date"/>
+                <group>
+                    <filter name="g_product" string="Xomashyo" context="{'group_by': 'product_id'}"/>
+                    <filter name="g_kun" string="Kun" context="{'group_by': 'date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_agronova_yem_sarf_pivot" model="ir.ui.view">
+        <field name="name">stock.move.agronova.sarf.pivot</field>
+        <field name="model">stock.move</field>
+        <field name="arch" type="xml">
+            <pivot string="Xomashyo sarfi">
+                <field name="product_id" type="row"/>
+                <field name="agronova_reja_kg" type="measure"/>
+                <field name="agronova_fakt_kg" type="measure"/>
+                <field name="agronova_farq_kg" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_agronova_yem_sarf" model="ir.actions.act_window">
+        <field name="name">Xomashyo sarfi: reja va fakt</field>
+        <field name="res_model">stock.move</field>
+        <field name="view_mode">list,pivot</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_agronova_yem_sarf_list')}),
+            (0, 0, {'view_mode': 'pivot', 'view_id': ref('view_agronova_yem_sarf_pivot')})]"/>
+        <field name="search_view_id" ref="view_agronova_yem_sarf_search"/>
+        <field name="domain">[('raw_material_production_id.agronova_yem', '=', True), ('state', '!=', 'cancel')]</field>
+        <field name="context">{'search_default_done': 1, 'search_default_g_product': 1}</field>
     </record>
 
 </odoo>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_picking_form_agronova_tarozi" model="ir.ui.view">
+        <field name="name">stock.picking.form.agronova.tarozi</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_agronova_tortishlar" type="object" class="oe_stat_button" icon="fa-balance-scale"
+                        invisible="not agronova_tortish_count">
+                    <div class="o_stat_info">
+                        <field name="agronova_tarozi_netto" class="o_stat_value" widget="float" digits="[16, 0]"/>
+                        <span class="o_stat_text">kg tarozida</span>
+                    </div>
+                </button>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <button name="action_agronova_tortish" type="object" string="Tarozida tortish" icon="fa-balance-scale"
+                        groups="agronova_tarozi.group_tarozi_operator"
+                        invisible="state in ('done', 'cancel', 'draft') or picking_type_code == 'internal'"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

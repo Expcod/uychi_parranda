@@ -1,10 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Tannarx hisoboti MRP ning «Hisobot» menyusiga qo'shiladi —
-         alohida ilova yasash shart emas, ishlab chiqarish shu yerda. -->
-    <menuitem id="menu_agronova_yem_tannarx" name="Yem tannarxi"
-              parent="mrp.menu_mrp_reporting"
-              action="action_agronova_yem_tannarx" sequence="15"/>
+    <!-- Yem zavodi ilovasi. Ish oqimi tartibida: reja → ishlab chiqarish →
+         ombor va tarozi → nazorat → hisobotlar. «Boshqaruv paneli» rahbar
+         paneli modulidan shu ilovaga ulanadi. -->
+    <menuitem id="menu_yem_root" name="Yem zavodi"
+              web_icon="agronova_yem_zavodi,static/description/icon.png"
+              sequence="48" groups="group_yem_ishchi"/>
+
+    <!-- ===================================================== REJALASHTIRISH -->
+    <menuitem id="menu_yem_reja_top" name="Rejalashtirish" parent="menu_yem_root" sequence="20"/>
+    <menuitem id="menu_yem_reja" name="Ishlab chiqarish rejasi" parent="menu_yem_reja_top"
+              action="action_agronova_yem_reja" sequence="10"/>
+    <menuitem id="menu_yem_buyurtma" name="Ishlab chiqarish buyurtmalari" parent="menu_yem_reja_top"
+              action="action_agronova_yem_buyurtma" sequence="20"/>
+
+    <!-- ===================================================== ISHLAB CHIQARISH -->
+    <menuitem id="menu_yem_ishlab" name="Ishlab chiqarish" parent="menu_yem_root" sequence="30"/>
+    <menuitem id="menu_yem_smena" name="Smena hisobotlari" parent="menu_yem_ishlab"
+              action="action_agronova_yem_smena" sequence="10"/>
+    <menuitem id="menu_yem_qadoqlash" name="Qadoqlash" parent="menu_yem_ishlab"
+              action="action_agronova_yem_qadoqlash" sequence="20"/>
+    <menuitem id="menu_yem_toxtash" name="Liniya to'xtashlari" parent="menu_yem_ishlab"
+              action="action_agronova_yem_toxtash" sequence="30"/>
+    <menuitem id="menu_yem_energiya" name="Energiya sarfi" parent="menu_yem_ishlab"
+              action="action_agronova_yem_energiya" sequence="40"/>
+
+    <!-- ===================================================== OMBOR VA TAROZI -->
+    <menuitem id="menu_yem_ombor" name="Ombor va tarozi" parent="menu_yem_root" sequence="40"
+              groups="group_yem_omborchi"/>
+    <menuitem id="menu_yem_tortish" name="Tarozi (tortish)" parent="menu_yem_ombor"
+              action="agronova_tarozi.action_agronova_tarozi_tortish" sequence="10"/>
+    <menuitem id="menu_yem_kirim" name="Xomashyo kirimi" parent="menu_yem_ombor"
+              action="stock.action_picking_tree_incoming" sequence="20"/>
+    <menuitem id="menu_yem_zaxira" name="Xomashyo zaxirasi" parent="menu_yem_ombor"
+              action="action_agronova_yem_zaxira" sequence="30"/>
+    <menuitem id="menu_yem_jonatma" name="Jo'natmalar" parent="menu_yem_ombor"
+              action="action_agronova_yem_jonatma" sequence="40"/>
+    <menuitem id="menu_yem_xarid" name="Xarid buyurtmalari" parent="menu_yem_ombor"
+              action="purchase.purchase_rfq" sequence="50"/>
+
+    <!-- ===================================================== NAZORAT -->
+    <menuitem id="menu_yem_nazorat" name="Nazorat" parent="menu_yem_root" sequence="50"/>
+    <menuitem id="menu_yem_yoqotish" name="Yo'qotishlar reyestri" parent="menu_yem_nazorat"
+              action="action_agronova_yem_yoqotish" sequence="10"/>
+    <menuitem id="menu_yem_sarf" name="Xomashyo sarfi: reja va fakt" parent="menu_yem_nazorat"
+              action="action_agronova_yem_sarf" sequence="20"/>
+    <menuitem id="menu_yem_tafovut" name="Og'irlik tafovutlari" parent="menu_yem_nazorat"
+              action="agronova_tarozi.action_agronova_tortish_tafovut" sequence="30"/>
+    <menuitem id="menu_yem_retseptura" name="Retsepturalar" parent="menu_yem_nazorat"
+              action="action_agronova_yem_retseptura" sequence="40"/>
+
+    <!-- ===================================================== HISOBOTLAR -->
+    <menuitem id="menu_yem_hisobot" name="Hisobotlar" parent="menu_yem_root" sequence="60"
+              groups="group_yem_smena_boshligi"/>
+    <menuitem id="menu_yem_h_reja" name="Reja va fakt" parent="menu_yem_hisobot"
+              action="action_agronova_yem_reja_fakt" sequence="10"/>
+    <menuitem id="menu_yem_h_smena" name="Smena samaradorligi" parent="menu_yem_hisobot"
+              action="action_agronova_yem_smena_samaradorlik" sequence="20"/>
+    <menuitem id="menu_yem_h_meyoriy" name="Me'yoriy yo'qotish" parent="menu_yem_hisobot"
+              action="action_agronova_yem_meyoriy" sequence="30"/>
+    <menuitem id="menu_yem_h_haqiqiy" name="Haqiqiy yo'qotish" parent="menu_yem_hisobot"
+              action="action_agronova_yem_haqiqiy_yoqotish" sequence="40"/>
+    <menuitem id="menu_agronova_yem_tannarx" name="Mahsulot tannarxi" parent="menu_yem_hisobot"
+              action="action_agronova_yem_tannarx" sequence="50"/>
+    <menuitem id="menu_yem_h_energiya" name="Energiya" parent="menu_yem_hisobot"
+              action="action_agronova_yem_energiya" sequence="60"/>
+    <menuitem id="menu_yem_h_xarajat" name="Xarajatlar taqsimoti" parent="menu_yem_hisobot"
+              action="action_agronova_yem_xarajat" sequence="70" groups="group_yem_boshliq"/>
+
+    <!-- ===================================================== SOZLAMALAR -->
+    <menuitem id="menu_yem_sozlama" name="Sozlamalar" parent="menu_yem_root" sequence="90"
+              groups="group_yem_texnolog,group_yem_boshliq"/>
+    <menuitem id="menu_yem_s_sozlama" name="Sozlamalar" parent="menu_yem_sozlama"
+              action="action_agronova_yem_sozlamalar" sequence="5" groups="group_yem_direktor"/>
+    <menuitem id="menu_yem_s_liniya" name="Liniyalar" parent="menu_yem_sozlama"
+              action="action_agronova_yem_liniya" sequence="10"/>
+    <menuitem id="menu_yem_s_smena" name="Smenalar" parent="menu_yem_sozlama"
+              action="action_agronova_yem_smena_turi" sequence="20"/>
+    <menuitem id="menu_yem_s_tarozi" name="Tarozilar" parent="menu_yem_sozlama"
+              action="agronova_tarozi.action_agronova_tarozi" sequence="30"/>
+    <menuitem id="menu_yem_s_mahsulot" name="Tayyor yem" parent="menu_yem_sozlama"
+              action="action_agronova_yem_mahsulot" sequence="40"/>
+    <menuitem id="menu_yem_s_xomashyo" name="Xomashyo va qadoq" parent="menu_yem_sozlama"
+              action="action_agronova_yem_xomashyo" sequence="50"/>
+    <menuitem id="menu_yem_s_minmax" name="Minimum / maksimum" parent="menu_yem_sozlama"
+              action="action_agronova_yem_orderpoint" sequence="60"/>
 
 </odoo>

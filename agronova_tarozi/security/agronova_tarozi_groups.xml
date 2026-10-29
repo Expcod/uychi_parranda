@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <record id="module_category_tarozi" model="ir.module.category">
+            <field name="name">AgroNova — Tarozi</field>
+            <field name="sequence">44</field>
+        </record>
+
+        <record id="res_groups_privilege_tarozi" model="res.groups.privilege">
+            <field name="name">AgroNova — Tarozi</field>
+            <field name="category_id" ref="module_category_tarozi"/>
+            <field name="sequence">44</field>
+        </record>
+
+        <record id="group_tarozi_operator" model="res.groups">
+            <field name="name">Tarozi operatori</field>
+            <field name="privilege_id" ref="res_groups_privilege_tarozi"/>
+            <field name="sequence">10</field>
+            <field name="implied_ids" eval="[(4, ref('stock.group_stock_user'))]"/>
+            <field name="comment">Tortish varaqasini ochadi, vaznni tarozidan oladi va varaqani yakunlaydi.</field>
+        </record>
+
+        <!-- Vaznni qo'lda o'zgartirish — favqulodda holat uchun alohida huquq. -->
+        <record id="group_tarozi_tuzatish" model="res.groups">
+            <field name="name">Tarozi — vaznni tuzatish</field>
+            <field name="privilege_id" ref="res_groups_privilege_tarozi"/>
+            <field name="sequence">20</field>
+            <field name="implied_ids" eval="[(4, ref('group_tarozi_operator'))]"/>
+            <field name="comment">Tarozidan olingan vaznni qo'lda o'zgartira oladi. Har o'zgarish chatterga yoziladi.</field>
+        </record>
+
+        <record id="group_tarozi_masul" model="res.groups">
+            <field name="name">Tarozi — tafovut mas'uli</field>
+            <field name="privilege_id" ref="res_groups_privilege_tarozi"/>
+            <field name="sequence">30</field>
+            <field name="implied_ids" eval="[(4, ref('group_tarozi_tuzatish'))]"/>
+            <field name="comment">Tafovutni tasdiqlaydi, yopilgan varaqani qayta ochadi yoki bekor qiladi, tarozilarni sozlaydi.</field>
+        </record>
+
+        <record id="base.group_system" model="res.groups">
+            <field name="implied_ids" eval="[(4, ref('group_tarozi_masul'))]"/>
+        </record>
+
+        <record id="rule_tarozi_company" model="ir.rule">
+            <field name="name">Tarozi: korxona</field>
+            <field name="model_id" ref="model_agronova_tarozi"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_tortish_company" model="ir.rule">
+            <field name="name">Tortish varaqasi: korxona</field>
+            <field name="model_id" ref="model_agronova_tarozi_tortish"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+    </data>
+</odoo>

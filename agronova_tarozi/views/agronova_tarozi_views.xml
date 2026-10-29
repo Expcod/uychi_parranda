@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_agronova_tarozi_list" model="ir.ui.view">
+        <field name="name">agronova.tarozi.list</field>
+        <field name="model">agronova.tarozi</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="kod"/>
+                <field name="turi"/>
+                <field name="protokol"/>
+                <field name="joy" optional="show"/>
+                <field name="oxirgi_vazn"/>
+                <field name="oxirgi_vaqt"/>
+                <field name="holat" widget="badge"
+                       decoration-success="holat == 'onlayn'" decoration-danger="holat == 'oflayn'"
+                       decoration-muted="holat == 'qolda'"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_agronova_tarozi_form" model="ir.ui.view">
+        <field name="name">agronova.tarozi.form</field>
+        <field name="model">agronova.tarozi</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_tortishlar" type="object" class="oe_stat_button" icon="fa-truck">
+                            <field name="tortish_count" widget="statinfo" string="Tortishlar"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Arxiv" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Masalan: Kirish avtotarozisi"/></h1>
+                    </div>
+                    <group>
+                        <group string="Qurilma">
+                            <field name="kod"/>
+                            <field name="turi"/>
+                            <field name="joy"/>
+                            <field name="max_vazn_kg"/>
+                            <field name="aniqlik_kg"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group string="Ulanish">
+                            <field name="protokol"/>
+                            <field name="manzil" invisible="protokol == 'qolda'"/>
+                            <field name="token" password="True" groups="base.group_system"
+                                   invisible="protokol == 'qolda'"/>
+                            <button name="action_kalit_yangilash" type="object" string="Kalitni yangilash"
+                                    class="btn-link" groups="base.group_system" invisible="protokol == 'qolda'"
+                                    confirm="Eski kalit bilan ishlayotgan agent uzilib qoladi. Davom etasizmi?"/>
+                        </group>
+                    </group>
+                    <group string="Joriy ko'rsatkich" invisible="protokol == 'qolda'">
+                        <group>
+                            <field name="oxirgi_vazn"/>
+                            <field name="oxirgi_vaqt"/>
+                            <field name="oxirgi_barqaror"/>
+                            <field name="holat" widget="badge"
+                                   decoration-success="holat == 'onlayn'" decoration-danger="holat == 'oflayn'"/>
+                        </group>
+                        <group groups="base.group_system" string="Sinov (agentsiz)">
+                            <field name="sinov_vazn"/>
+                            <button name="action_sinov_yuborish" type="object" string="Ko'rsatkichni yuborish"
+                                    class="btn-secondary" icon="fa-paper-plane"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Oxirgi o'qishlar" invisible="protokol == 'qolda'">
+                            <field name="oqish_ids" readonly="1">
+                                <list limit="20">
+                                    <field name="vaqt"/>
+                                    <field name="vazn"/>
+                                    <field name="barqaror"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Agentni ulash" invisible="protokol == 'qolda'" groups="base.group_system">
+                            <p>Agent har ko'rsatkichni shu manzilga yuboradi (JSON-RPC, POST):</p>
+                            <pre>/agronova/tarozi/vazn
+{"jsonrpc": "2.0", "params": {"kod": "&lt;kod&gt;", "kalit": "&lt;agent kaliti&gt;", "vazn": 24180, "barqaror": true}}</pre>
+                            <p>Tortish varaqasi faqat <b>barqaror</b> va oxirgi 2 daqiqa ichida kelgan ko'rsatkichni oladi.</p>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_agronova_tarozi" model="ir.actions.act_window">
+        <field name="name">Tarozilar</field>
+        <field name="res_model">agronova.tarozi</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Tarozi qurilmasini qo'shing</p>
+            <p>Avtomobil, qadoqlash yoki bunker tarozisi. Integratsiyalangan tarozida vazn qo'lda kiritilmaydi.</p>
+        </field>
+    </record>
+
+</odoo>

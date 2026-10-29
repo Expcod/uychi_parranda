@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="product_template_form_agronova_yem" model="ir.ui.view">
+        <field name="name">product.template.form.agronova.yem</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Yem zavodi" name="agronova_yem">
+                    <group>
+                        <group>
+                            <field name="agronova_yem_turi"/>
+                        </group>
+                        <group invisible="agronova_yem_turi != 'yem'" string="Qadoq">
+                            <field name="agronova_qop_sigim_kg"/>
+                            <field name="agronova_qop_product_id"/>
+                        </group>
+                        <group invisible="agronova_yem_turi != 'qadoq'" string="Qop">
+                            <field name="agronova_qop_vazn_kg"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_template_search_agronova_yem" model="ir.ui.view">
+        <field name="name">product.template.search.agronova.yem</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_search_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='filter_to_sell']" position="before">
+                <filter name="yem_tayyor" string="Tayyor yem" domain="[('agronova_yem_turi', '=', 'yem')]"/>
+                <filter name="yem_xomashyo" string="Xomashyo va premiks"
+                        domain="[('agronova_yem_turi', 'in', ('xomashyo', 'premiks'))]"/>
+                <filter name="yem_qadoq" string="Qadoq materiallari" domain="[('agronova_yem_turi', '=', 'qadoq')]"/>
+                <separator/>
+            </xpath>
+            <xpath expr="//search" position="inside">
+                <filter name="g_yem_turi" string="Yem zavodi turi" context="{'group_by': 'agronova_yem_turi'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_agronova_yem_mahsulot" model="ir.actions.act_window">
+        <field name="name">Tayyor yem</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('agronova_yem_turi', '=', 'yem')]</field>
+        <field name="context">{'default_agronova_yem_turi': 'yem', 'default_is_storable': True}</field>
+    </record>
+
+    <record id="action_agronova_yem_xomashyo" model="ir.actions.act_window">
+        <field name="name">Xomashyo, premiks, qadoq</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('agronova_yem_turi', 'in', ('xomashyo', 'premiks', 'qadoq', 'ehtiyot'))]</field>
+        <field name="context">{'default_agronova_yem_turi': 'xomashyo', 'default_is_storable': True,
+                               'search_default_g_yem_turi': 1}</field>
+    </record>
+
+</odoo>

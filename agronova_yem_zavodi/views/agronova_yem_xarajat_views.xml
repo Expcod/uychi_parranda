@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_agronova_yem_xarajat_list" model="ir.ui.view">
+        <field name="name">agronova.yem.xarajat.list</field>
+        <field name="model">agronova.yem.xarajat</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="jami" sum="Jami"/>
+                <field name="ishlab_chiqarilgan_kg"/>
+                <field name="ustama_1_kg"/>
+                <field name="ustama_1_t"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge" decoration-success="state == 'taqsimlangan'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_agronova_yem_xarajat_form" model="ir.ui.view">
+        <field name="name">agronova.yem.xarajat.form</field>
+        <field name="model">agronova.yem.xarajat</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_energiyadan" type="object" string="Energiyadan to'ldirish" icon="fa-bolt"
+                            invisible="state != 'draft'"/>
+                    <button name="action_taqsimlash" type="object" string="Tannarxga taqsimlash" class="btn-primary"/>
+                    <button name="action_bekor" type="object" string="Taqsimotni bekor qilish" invisible="state != 'taqsimlangan'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="oy"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="jami"/>
+                            <field name="ishlab_chiqarilgan_kg"/>
+                            <field name="ustama_1_kg"/>
+                            <field name="ustama_1_t"/>
+                        </group>
+                    </group>
+                    <field name="qator_ids">
+                        <list editable="bottom">
+                            <field name="kategoriya"/>
+                            <field name="summa" sum="Jami"/>
+                            <field name="izoh"/>
+                            <field name="currency_id" column_invisible="1"/>
+                        </list>
+                    </field>
+                    <p class="text-muted">
+                        1 kg ga ustama = oy xarajatlari / shu oyda ishlab chiqarilgan kg. Xarajat qo'shilsa taqsimotni qayta bajaring — ikki marta qo'shilmaydi.
+                    </p>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_agronova_yem_xarajat" model="ir.actions.act_window">
+        <field name="name">Xarajatlar taqsimoti</field>
+        <field name="res_model">agronova.yem.xarajat</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

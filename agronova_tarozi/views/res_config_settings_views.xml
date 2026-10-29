@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_agronova_tarozi" model="ir.ui.view">
+        <field name="name">res.config.settings.form.agronova.tarozi</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="stock.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='stock']" position="inside">
+                <block title="Tarozi tafovutlari" name="agronova_tarozi_block">
+                    <setting string="Tafovut chegaralari"
+                             help="Hujjatdagi va tarozidagi netto farqi. Farq kg chegarasi yoki % chegarasi ichida bo'lsa — shu daraja. Hammasidan oshsa — kritik: varaqa mas'ul tasdig'isiz yopilmaydi.">
+                        <div class="content-group">
+                            <div class="row mt8">
+                                <label class="col-lg-5 o_light_label" string="Me'yorda" for="agronova_tarozi_normal_kg"/>
+                                <field name="agronova_tarozi_normal_kg" class="col-lg-2"/> kg yoki
+                                <field name="agronova_tarozi_normal_pct" class="col-lg-2"/> %
+                            </div>
+                            <div class="row mt8">
+                                <label class="col-lg-5 o_light_label" string="Ogohlantirish" for="agronova_tarozi_ogohlantirish_kg"/>
+                                <field name="agronova_tarozi_ogohlantirish_kg" class="col-lg-2"/> kg yoki
+                                <field name="agronova_tarozi_ogohlantirish_pct" class="col-lg-2"/> %
+                            </div>
+                            <div class="row mt8">
+                                <label class="col-lg-5 o_light_label" string="Mas'ul tasdig'i" for="agronova_tarozi_tasdiq_kg"/>
+                                <field name="agronova_tarozi_tasdiq_kg" class="col-lg-2"/> kg yoki
+                                <field name="agronova_tarozi_tasdiq_pct" class="col-lg-2"/> %
+                            </div>
+                        </div>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

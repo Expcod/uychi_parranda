@@ -1,0 +1,35 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_liniya_user,liniya user,model_agronova_yem_liniya,base.group_user,1,0,0,0
+access_liniya_direktor,liniya direktor,model_agronova_yem_liniya,group_yem_direktor,1,1,1,1
+access_smena_turi_user,smena turi user,model_agronova_yem_smena_turi,base.group_user,1,0,0,0
+access_smena_turi_direktor,smena turi direktor,model_agronova_yem_smena_turi,group_yem_direktor,1,1,1,1
+access_reja_ishchi,reja ishchi,model_agronova_yem_reja,group_yem_ishchi,1,0,0,0
+access_reja_boshliq,reja boshliq,model_agronova_yem_reja,group_yem_boshliq,1,1,1,1
+access_reja_qator_ishchi,reja qator ishchi,model_agronova_yem_reja_qator,group_yem_ishchi,1,0,0,0
+access_reja_qator_boshliq,reja qator boshliq,model_agronova_yem_reja_qator,group_yem_boshliq,1,1,1,1
+access_reja_ehtiyoj_ishchi,reja ehtiyoj ishchi,model_agronova_yem_reja_ehtiyoj,group_yem_ishchi,1,0,0,0
+access_reja_ehtiyoj_boshliq,reja ehtiyoj boshliq,model_agronova_yem_reja_ehtiyoj,group_yem_boshliq,1,1,1,1
+access_smena_ishchi,smena ishchi,model_agronova_yem_smena,group_yem_ishchi,1,0,0,0
+access_smena_sb,smena sb,model_agronova_yem_smena,group_yem_smena_boshligi,1,1,1,0
+access_smena_boshliq,smena boshliq,model_agronova_yem_smena,group_yem_boshliq,1,1,1,1
+access_qadoqlash_ishchi,qadoqlash ishchi,model_agronova_yem_qadoqlash,group_yem_ishchi,1,0,0,0
+access_qadoqlash_sb,qadoqlash sb,model_agronova_yem_qadoqlash,group_yem_smena_boshligi,1,1,1,0
+access_qadoqlash_boshliq,qadoqlash boshliq,model_agronova_yem_qadoqlash,group_yem_boshliq,1,1,1,1
+access_jonatma_ishchi,jonatma ishchi,model_agronova_yem_jonatma,group_yem_ishchi,1,0,0,0
+access_jonatma_omborchi,jonatma omborchi,model_agronova_yem_jonatma,group_yem_omborchi,1,1,1,0
+access_jonatma_boshliq,jonatma boshliq,model_agronova_yem_jonatma,group_yem_boshliq,1,1,1,1
+access_jonatma_qator_ishchi,jonatma qator ishchi,model_agronova_yem_jonatma_qator,group_yem_ishchi,1,0,0,0
+access_jonatma_qator_omborchi,jonatma qator omborchi,model_agronova_yem_jonatma_qator,group_yem_omborchi,1,1,1,1
+access_yoqotish_ishchi,yoqotish ishchi,model_agronova_yem_yoqotish,group_yem_ishchi,1,1,1,0
+access_yoqotish_boshliq,yoqotish boshliq,model_agronova_yem_yoqotish,group_yem_boshliq,1,1,1,1
+access_toxtash_ishchi,toxtash ishchi,model_agronova_yem_toxtash,group_yem_ishchi,1,1,1,0
+access_toxtash_boshliq,toxtash boshliq,model_agronova_yem_toxtash,group_yem_boshliq,1,1,1,1
+access_energiya_ishchi,energiya ishchi,model_agronova_yem_energiya,group_yem_ishchi,1,0,0,0
+access_energiya_sb,energiya sb,model_agronova_yem_energiya,group_yem_smena_boshligi,1,1,1,0
+access_energiya_boshliq,energiya boshliq,model_agronova_yem_energiya,group_yem_boshliq,1,1,1,1
+access_zaxira_ishchi,zaxira ishchi,model_agronova_yem_zaxira,group_yem_ishchi,1,0,0,0
+access_zaxira_omborchi,zaxira omborchi,model_agronova_yem_zaxira,group_yem_omborchi,1,1,1,1
+access_xarajat_boshliq,xarajat boshliq,model_agronova_yem_xarajat,group_yem_boshliq,1,0,0,0
+access_xarajat_direktor,xarajat direktor,model_agronova_yem_xarajat,group_yem_direktor,1,1,1,1
+access_xarajat_qator_boshliq,xarajat qator boshliq,model_agronova_yem_xarajat_qator,group_yem_boshliq,1,0,0,0
+access_xarajat_qator_direktor,xarajat qator direktor,model_agronova_yem_xarajat_qator,group_yem_direktor,1,1,1,1

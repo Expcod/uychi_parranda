@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_tarozi_user,tarozi user,model_agronova_tarozi,base.group_user,1,0,0,0
+access_tarozi_masul,tarozi masul,model_agronova_tarozi,group_tarozi_masul,1,1,1,1
+access_tarozi_oqish_user,tarozi oqish user,model_agronova_tarozi_oqish,base.group_user,1,0,0,0
+access_tarozi_oqish_masul,tarozi oqish masul,model_agronova_tarozi_oqish,group_tarozi_masul,1,1,1,1
+access_tortish_user,tortish user,model_agronova_tarozi_tortish,base.group_user,1,0,0,0
+access_tortish_operator,tortish operator,model_agronova_tarozi_tortish,group_tarozi_operator,1,1,1,0
+access_tortish_masul,tortish masul,model_agronova_tarozi_tortish,group_tarozi_masul,1,1,1,1
