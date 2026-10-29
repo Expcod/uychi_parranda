@@ -1,6 +1,8 @@
-# agronova_custom — AgroNova uchun Odoo 19 Enterprise modullari
+# AgroNova — agro-sanoat korxonalari uchun Odoo 19 Enterprise modullari
 
-**AgroNova** — parrandachilik holdingi. Biznes zanjiri:
+**AgroNova** — yem zavodi, parrandachilik va qishloq xo'jaligi korxonalari uchun umumiy ERP
+mahsuloti. Bitta kod bazasi turli korxonalarga o'rnatiladi: kerakli bo'limlar o'rnatiladi,
+qolganlari panelda avtomatik yashiriladi. Biznes zanjiri:
 
 ```
 Yem zavodi → Ona tovuq (tuxum) → Inkubatoriya (jo'ja) → Boquv (filiallar, binolar, partiyalar)
@@ -8,15 +10,14 @@ Yem zavodi → Ona tovuq (tuxum) → Inkubatoriya (jo'ja) → Boquv (filiallar, 
                                + Qishloq xo'jaligi, Transport, Xarid (zakupka), Ish haqi
 ```
 
-- Ijrochi: «NOVA CODE» MCHJ. Demo: `demo.novaodoo.uz` / baza `agronova_demo` (1 bosh + 7 filial).
-- Repo: `github.com/novaodooteam/agronova-custom` (`main`)
-- TZ konspekti: [`docs/TZ_XULOSA.md`](docs/TZ_XULOSA.md), yangi TZ: [`docs/TZ_YANGI_2026-08-11.md`](docs/TZ_YANGI_2026-08-11.md)
+- Ijrochi: «NOVA CODE» MCHJ.
+- Birinchi bosqich (Uychi Paranda TZ): **yem zavodi** — [`agronova_yem_zavodi`](agronova_yem_zavodi/README.md)
+  va [`agronova_tarozi`](agronova_tarozi/README.md). Demo ma'lumot: `scripts/demo_yem_zavodi.py`.
 
 ## Brend va universallik (AgroNova)
 
-Foydalanuvchi ko'radigan nom — **AgroNova** (modul nomlari, guruhlar, rahbar paneli). Texnik
-nomlar (`agronova_*`, `agronova_*`) ataylab o'zgartirilmagan: ishlab turgan bazalardagi XML ID va
-jadvallar buzilmasin. Panel nomi va texnologik normativlar **Sozlamalar → Rahbar paneli**
+Foydalanuvchi ko'radigan nom ham, texnik nomlar ham (`agronova_*` modullar, `agronova.*`
+modellar) — **AgroNova**; mijozga xos nom kodda yo'q. Korxona nomi bazadagi kompaniyadan, panel nomi va texnologik normativlar **Sozlamalar → Rahbar paneli**
 dan beriladi, shuning uchun bitta kod boshqa parrandachilik / agro korxonalariga ham
 o'rnatiladi; o'rnatilmagan bo'limlar panelda avtomatik yashiriladi. Batafsil:
 [`agronova_dashboard/README.md`](agronova_dashboard/README.md).
@@ -44,7 +45,8 @@ o'rnatiladi; o'rnatilmagan bo'limlar panelda avtomatik yashiriladi. Batafsil:
 | [`agronova_ona_tovuq`](agronova_ona_tovuq/README.md) | Ona tovuq partiyalari, sexlar, tuxum tannarxi va sotuvi | agronova_base, agronova_savdo_moliya, agronova_soyish, agronova_ish_haqi, agronova_telegram |
 | [`agronova_inkubatoriya`](agronova_inkubatoriya/README.md) | Tuxum qabuli → inkubatsiya → jo'ja ochilishi → tannarx | agronova_base, agronova_savdo_moliya, agronova_ona_tovuq |
 | [`agronova_soyish`](agronova_soyish/README.md) | Qabul va tortish, so'yish, chiqim foizi, tashqi mijoz xizmati | agronova_base, agronova_savdo_moliya |
-| [`agronova_yem_zavodi`](agronova_yem_zavodi/README.md) | Yem tannarxi (1 kg / 1 t), reja-fakt | — |
+| [`agronova_yem_zavodi`](agronova_yem_zavodi/README.md) | Yem zavodi: reja, retseptura versiyalari, smena, sarf va yo'qotish nazorati, qadoqlash, jo'natma, zaxira, energiya, tannarx | agronova_base, agronova_tarozi, agronova_telegram |
+| [`agronova_tarozi`](agronova_tarozi/README.md) | Tarozi integratsiyasi: ikki marta tortish, brutto/tara/netto, tafovut nazorati | agronova_base |
 | [`agronova_qishloq_xojaligi`](agronova_qishloq_xojaligi/README.md) | Yer maydonlari, ekin partiyalari, hosil tannarxi | agronova_base, agronova_savdo_moliya |
 | [`agronova_zakupka`](agronova_zakupka/README.md) | Xarid: zayavka → ruxsat → kirim → tranzit → ombor → Didox | agronova_base, agronova_savdo_moliya |
 | [`agronova_ish_haqi`](agronova_ish_haqi/README.md) | Tariflar, oylik hisoblash, xodim balansi, provodka | agronova_base, agronova_kassa |
@@ -56,8 +58,7 @@ o'rnatiladi; o'rnatilmagan bo'limlar panelda avtomatik yashiriladi. Batafsil:
 | [`hr_hikvision_attendance`](hr_hikvision_attendance/README.md) | Hikvision Face ID davomat | — |
 | [`user_app_launcher`](user_app_launcher/README.md) | User formasida ilovalarga kirish grid'i | — |
 
-Yordamchi papkalar: `scripts/` (demo bazani sozlash skriptlari `01_…17_`, [`scripts/README.md`](scripts/README.md)),
-`docs/` (TZ konspekti, Excel shablonlar).
+Yordamchi papka: `scripts/` — `demo_yem_zavodi.py` (30 kunlik demo zanjir) va odoo shell test skriptlari.
 
 ## Lokal ishga tushirish
 
@@ -71,7 +72,6 @@ cd "/c/Users/Surface PC/Desktop/odoo"
     --test-enable --test-tags=<modul> --stop-after-init --no-http
 ```
 
-- Prod backup `agronova_back_1208` lokal build'dan yangiroq Odoo'dan olingan — sxema xatolari chiqsa `-u` bilan tuzating.
 - Backup'ni **filestore bilan** (Odoo zip) tiklang; faqat SQL tiklansa ilova ikonlari yo'qoladi
   (`ir.ui.menu.web_icon` ni qayta yozish bilan tiklanadi).
 - `--test-tags=/modul` shakli Git Bash'da yo'lga aylanadi — tag nomini o'zini yozing yoki `MSYS_NO_PATHCONV=1`.

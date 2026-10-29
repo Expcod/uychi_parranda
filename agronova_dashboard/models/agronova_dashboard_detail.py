@@ -666,18 +666,20 @@ class AgroNovaExecutiveDashboardDetail(models.TransientModel):
 
     def _detail_mrp_orders(self, ctx, ref):
         Mrp = self.env["mrp.production"].sudo()
-        domain = [("state", "=", "done"), ("date_start", ">=", ctx["dt_from_s"]),
-                  ("date_start", "<=", ctx["dt_to_s"]), ("company_id", "in", ctx["companies"])]
-        recs = Mrp.search(domain, order="date_start desc", limit=MAX_ROWS)
+        domain = [("state", "=", "done"), ("agronova_yem", "=", True)] + \
+            self._yem_domain(ctx, "date_finished", ref)
+        recs = Mrp.search(domain, order="date_finished desc", limit=MAX_ROWS)
         total = Mrp.search_count(domain)
         kunlik = defaultdict(float)
         for b in recs:
-            if b.date_start:
-                kunlik[b.date_start.date()] += b.agronova_miqdor_kg or 0.0
+            if b.date_finished:
+                kunlik[self._yem_kun(b.date_finished)] += b.agronova_miqdor_kg or 0.0
         kg = sum(recs.mapped("agronova_miqdor_kg"))
-        cols = [("name", _("Buyurtma"), "text"), ("date_start", _("Sana"), "datetime"),
-                ("product_id", _("Mahsulot"), "m2o"), ("agronova_miqdor_kg", _("Miqdor"), "kg"),
-                ("agronova_jami_tannarx", _("Tannarx"), "money"),
+        cols = [("name", _("Buyurtma"), "text"), ("date_finished", _("Sana"), "datetime"),
+                ("product_id", _("Mahsulot"), "m2o"), ("agronova_bom_versiya", _("Versiya"), "text"),
+                ("agronova_liniya_id", _("Liniya"), "m2o"), ("agronova_miqdor_kg", _("Miqdor"), "kg"),
+                ("agronova_haqiqiy_yoqotish_kg", _("Yo'qotish"), "kg"),
+                ("agronova_toliq_tannarx", _("Tannarx"), "money"),
                 ("agronova_tannarx_1_kg", _("1 kg fakt"), "money"),
                 ("agronova_reja_tannarx_1_kg", _("1 kg reja"), "money"),
                 ("agronova_chetlanish", _("Chetlanish"), "pct")]
@@ -688,9 +690,9 @@ class AgroNovaExecutiveDashboardDetail(models.TransientModel):
             _("Yem ishlab chiqarish buyurtmalari"), "fa-industry", "blue",
             stats=[self._stat(_("Buyurtmalar"), total, "int"),
                    self._stat(_("Hajm"), kg / 1000.0, "ton"),
-                   self._stat(_("Jami tannarx"), sum(recs.mapped("agronova_jami_tannarx"))),
+                   self._stat(_("Jami tannarx"), sum(recs.mapped("agronova_toliq_tannarx"))),
                    self._stat(_("1 kg o'rtacha"),
-                              (sum(recs.mapped("agronova_jami_tannarx")) / kg) if kg else 0.0)],
+                              (sum(recs.mapped("agronova_toliq_tannarx")) / kg) if kg else 0.0)],
             chart=self._trend_panel(_("Kunlik hajm"), "fa-bar-chart", ctx, kunlik,
                                     label_a=_("Yem"), value_fmt="kg"),
             columns=columns, rows=rows, total=total,
@@ -1075,3 +1077,239 @@ class AgroNovaExecutiveDashboardDetail(models.TransientModel):
                    self._stat(_("Xodimlar"), len(recs.mapped("employee_id")), "int"),
                    self._stat(_("Jami soat"), sum(recs.mapped("worked_hours")), "hours")],
             columns=columns, rows=rows, action=self._act("hr.attendance", domain, title))
+
+    # ==================================================================
+    # Yem zavodi tafsilotlari
+    # ==================================================================
+    def _yem_domain(self, ctx, field, ref=None):
+        if isinstance(ref, dict) and ref.get("from"):
+            return [(field, ">=", ref["from"] + " 00:00:00"), (field, "<=", ref["to"] + " 23:59:59"),
+                    ("company_id", "in", ctx["companies"])]
+        return [(field, ">=", ctx["dt_from_s"]), (field, "<=", ctx["dt_to_s"]),
+                ("company_id", "in", ctx["companies"])]
+
+    def _detail_yem_reja(self, ctx, ref):
+        Q = self.env["agronova.yem.reja.qator"].sudo()
+        domain = [("reja_id.state", "not in", ("draft", "bekor")), ("muddat", ">=", ctx["d_from_s"]),
+                  ("muddat", "<=", ctx["d_to_s"]), ("company_id", "in", ctx["companies"])]
+        recs = Q.search(domain, order="muddat desc, id desc")
+        reja = sum(recs.mapped("miqdor_kg"))
+        fakt = sum(recs.mapped("fakt_kg"))
+        cols = [("muddat", _("Muddat"), "date"), ("reja_id.name", _("Reja"), "text"),
+                ("product_id", _("Mahsulot"), "m2o"), ("liniya_id", _("Liniya"), "m2o"),
+                ("smena_turi_id", _("Smena"), "m2o"), ("miqdor_kg", _("Reja"), "kg"),
+                ("fakt_kg", _("Fakt"), "kg"), ("bajarilish", _("Bajarilish"), "pct"),
+                ("holat", _("Holati"), "sel")]
+
+        def rang(q, f):
+            if f not in ("holat", "bajarilish"):
+                return ""
+            return "danger" if q.holat == "kechikmoqda" else ("ok" if q.holat == "bajarildi" else "")
+
+        columns, rows = self._rows_table(recs, cols, open_record=False, tone=rang)
+        return self._detail(
+            _("Ishlab chiqarish rejasi va fakt"), "fa-bullseye", "blue",
+            stats=[self._stat(_("Reja"), reja / 1000.0, "ton"), self._stat(_("Fakt"), fakt / 1000.0, "ton"),
+                   self._stat(_("Bajarilish"), (fakt / reja * 100.0) if reja else 0.0, "pct",
+                              tone="ok" if reja and fakt >= reja * 0.98 else "bad"),
+                   self._stat(_("Kechikmoqda"), len(recs.filtered(lambda q: q.holat == "kechikmoqda")), "int")],
+            columns=columns, rows=rows,
+            action=self._act("agronova.yem.reja", [("id", "in", recs.mapped("reja_id").ids)], _("Rejalar")))
+
+    def _detail_yem_sarf(self, ctx, ref):
+        Move = self.env["stock.move"].sudo()
+        domain = [("raw_material_production_id.agronova_yem", "=", True), ("state", "=", "done"),
+                  ("date", ">=", ctx["dt_from_s"]), ("date", "<=", ctx["dt_to_s"]),
+                  ("company_id", "in", ctx["companies"])]
+        moves = Move.search(domain)
+        jami = defaultdict(lambda: [0.0, 0.0])
+        for m in moves:
+            jami[m.product_id][0] += m.agronova_reja_kg
+            jami[m.product_id][1] += m.agronova_fakt_kg
+        rows = []
+        for p, (reja, fakt) in sorted(jami.items(), key=lambda kv: -kv[1][1]):
+            farq = fakt - reja
+            pct = (farq / reja * 100.0) if reja else 0.0
+            rang = "danger" if abs(pct) > 1 else ""
+            rows.append({"cells": [
+                {"text": p.display_name},
+                {"text": self._fmt(reja, "kg"), "align": "right"},
+                {"text": self._fmt(fakt, "kg"), "align": "right"},
+                {"text": self._fmt(farq, "kg"), "align": "right", "tone": rang},
+                {"text": self._fmt(pct, "pct"), "align": "right", "tone": rang or "ok"},
+            ]})
+        ogish = moves.filtered("agronova_limitdan_oshdi")
+        return self._detail(
+            _("Xomashyo sarfi: reja va fakt"), "fa-sliders", "orange",
+            stats=[self._stat(_("Reja"), sum(v[0] for v in jami.values()) / 1000.0, "ton"),
+                   self._stat(_("Fakt"), sum(v[1] for v in jami.values()) / 1000.0, "ton"),
+                   self._stat(_("Me'yordan tashqari"), len(ogish), "int", tone="bad" if ogish else "ok")],
+            columns=[{"label": _("Xomashyo")}, {"label": _("Reja"), "align": "right"},
+                     {"label": _("Fakt"), "align": "right"}, {"label": _("Farq"), "align": "right"},
+                     {"label": _("Farq %"), "align": "right"}], rows=rows,
+            action=self._act("stock.move", domain, _("Xomashyo sarfi")))
+
+    def _detail_yem_yoqotish(self, ctx, ref):
+        Y = self.env["agronova.yem.yoqotish"].sudo()
+        domain = [("state", "!=", "rad")] + self._yem_domain(ctx, "sana", ref)
+        recs = Y.search(domain, order="sana desc")
+        kunlik = defaultdict(float)
+        for y in recs:
+            kunlik[self._yem_kun(y.sana)] += y.miqdor_kg
+        cols = [("sana", _("Sana"), "datetime"), ("turi", _("Sabab"), "sel"), ("product_id", _("Mahsulot"), "m2o"),
+                ("liniya_id", _("Liniya"), "m2o"), ("miqdor_kg", _("Yo'qotish"), "kg"),
+                ("meyoriy_kg", _("Me'yor"), "kg"), ("ortiqcha_kg", _("Ortig'i"), "kg"),
+                ("qiymat", _("Qiymati"), "money"), ("state", _("Holat"), "sel")]
+        columns, rows = self._rows_table(
+            recs, cols, tone=lambda y, f: "danger" if f == "ortiqcha_kg" and y.ortiqcha_kg > 0 else "")
+        return self._detail(
+            _("Yo'qotishlar: me'yoriy va haqiqiy"), "fa-exclamation-triangle", "red",
+            stats=[self._stat(_("Haqiqiy"), sum(recs.mapped("miqdor_kg")), "kg"),
+                   self._stat(_("Me'yor doirasida"), sum(recs.mapped("meyorda_kg")), "kg"),
+                   self._stat(_("Me'yordan ortiq"), sum(recs.mapped("ortiqcha_kg")), "kg", tone="bad"),
+                   self._stat(_("Moliyaviy ta'siri"), sum(recs.mapped("qiymat")))],
+            chart=self._trend_panel(_("Kunlik yo'qotish"), "fa-bar-chart", ctx, kunlik,
+                                    label_a=_("Yo'qotish"), value_fmt="kg"),
+            columns=columns, rows=rows, total=len(recs),
+            action=self._act("agronova.yem.yoqotish", domain, _("Yo'qotishlar")))
+
+    def _detail_yem_qadoqlash(self, ctx, ref):
+        Q = self.env["agronova.yem.qadoqlash"].sudo()
+        domain = [("state", "=", "tasdiqlangan")] + self._yem_domain(ctx, "sana", ref)
+        recs = Q.search(domain, order="sana desc")
+        cols = [("sana", _("Sana"), "datetime"), ("product_id", _("Mahsulot"), "m2o"),
+                ("qop_soni", _("Qop"), "int"), ("brutto_kg", _("Brutto"), "kg"), ("qoplar_kg", _("Qoplar"), "kg"),
+                ("netto_kg", _("Netto"), "kg"), ("toldirish_farq_kg", _("To'ldirish farqi"), "kg"),
+                ("toldirish_holat", _("Holati"), "sel")]
+        columns, rows = self._rows_table(
+            recs, cols, tone=lambda r, f: "danger" if f == "toldirish_holat" and r.toldirish_holat != "normal" else "")
+        return self._detail(
+            _("Qadoqlash: brutto, qop va netto"), "fa-archive", "teal",
+            stats=[self._stat(_("Qoplar"), sum(recs.mapped("qop_soni")), "int"),
+                   self._stat(_("Netto"), sum(recs.mapped("netto_kg")) / 1000.0, "ton"),
+                   self._stat(_("Bo'sh qoplar"), sum(recs.mapped("qoplar_kg")), "kg"),
+                   self._stat(_("Tafovutli"), len(recs.filtered(lambda r: r.toldirish_holat != "normal")), "int")],
+            columns=columns, rows=rows, total=len(recs),
+            action=self._act("agronova.yem.qadoqlash", domain, _("Qadoqlash")))
+
+    def _detail_yem_jonatma(self, ctx, ref):
+        J = self.env["agronova.yem.jonatma"].sudo()
+        domain = [("state", "=", "jonatildi")] + self._yem_domain(ctx, "sana", ref)
+        if isinstance(ref, str) and ref in dict(J._fields["turi"].selection):
+            domain.append(("turi", "=", ref))
+        recs = J.search(domain, order="sana desc")
+        cols = [("sana", _("Sana"), "datetime"), ("name", _("Raqam"), "text"), ("turi", _("Turi"), "sel"),
+                ("partner_id", _("Mijoz"), "m2o"), ("avto_raqam", _("Mashina"), "text"),
+                ("hujjat_kg", _("Hujjat"), "kg"), ("haqiqiy_kg", _("Tarozi"), "kg"),
+                ("farq_kg", _("Farq"), "kg"), ("summa", _("Summa"), "money")]
+        columns, rows = self._rows_table(
+            recs, cols, tone=lambda j, f: "danger" if f == "farq_kg" and j.tafovut in ("tasdiq", "kritik") else "")
+        return self._detail(
+            _("Jo'natmalar"), "fa-truck", "orange",
+            stats=[self._stat(_("Jo'natmalar"), len(recs), "int"),
+                   self._stat(_("Hajm"), sum(recs.mapped("hujjat_kg")) / 1000.0, "ton"),
+                   self._stat(_("Sotuv summasi"), sum(recs.mapped("summa"))),
+                   self._stat(_("Tafovutli"), len(recs.filtered(
+                       lambda j: j.tafovut in ("ogohlantirish", "tasdiq", "kritik"))), "int")],
+            columns=columns, rows=rows, total=len(recs),
+            action=self._act("agronova.yem.jonatma", domain, _("Jo'natmalar")))
+
+    def _detail_yem_zaxira(self, ctx, ref):
+        Z = self.env["agronova.yem.zaxira"].sudo()
+        recs = Z.search([("company_id", "in", ctx["companies"])])
+        cols = [("product_id", _("Xomashyo"), "m2o"), ("qoldiq_kg", _("Qoldiq"), "kg"),
+                ("min_kg", _("Minimum"), "kg"), ("max_kg", _("Maksimum"), "kg"),
+                ("kunlik_kg", _("Kunlik sarf"), "kg"), ("yetadi_kun", _("Yetadi"), "days"),
+                ("kutilayotgan_kg", _("Kutilayotgan"), "kg"), ("holat", _("Holati"), "sel")]
+
+        def rang(z, f):
+            if f not in ("qoldiq_kg", "holat", "yetadi_kun"):
+                return ""
+            return "danger" if z.holat == "kritik" else ("strong" if z.holat == "kam" else "")
+
+        columns, rows = self._rows_table(recs, cols, open_record=False, tone=rang)
+        return self._detail(
+            _("Xomashyo zaxirasi"), "fa-cubes", "red",
+            stats=[self._stat(_("Minimumdan past"), len(recs.filtered(lambda z: z.holat == "kritik")), "int",
+                              tone="bad"),
+                   self._stat(_("Tugash arafasida"), len(recs.filtered(lambda z: z.holat == "kam")), "int"),
+                   self._stat(_("Me'yorda"), len(recs.filtered(lambda z: z.holat == "normal")), "int", tone="ok")],
+            columns=columns, rows=rows,
+            action=self._act("agronova.yem.zaxira", [], _("Xomashyo zaxirasi")))
+
+    def _detail_yem_toxtash(self, ctx, ref):
+        T = self.env["agronova.yem.toxtash"].sudo()
+        domain = [("boshlanish", ">=", ctx["dt_from_s"]), ("boshlanish", "<=", ctx["dt_to_s"]),
+                  ("company_id", "in", ctx["companies"])]
+        recs = T.search(domain, order="boshlanish desc")
+        sabab = defaultdict(float)
+        nomi = dict(T._fields["sabab"].selection)
+        for t in recs:
+            sabab[t.sabab] += t.davomiylik_min / 60.0
+        ranglar = ("red", "orange", "blue", "purple", "teal", "gray", "indigo", "green")
+        qismlar = [{"label": nomi.get(k, k), "value": v, "color": c}
+                   for (k, v), c in zip(sorted(sabab.items(), key=lambda kv: -kv[1]), ranglar)]
+        cols = [("boshlanish", _("Boshlandi"), "datetime"), ("liniya_id", _("Liniya"), "m2o"),
+                ("sabab", _("Sabab"), "sel"), ("uskuna", _("Uskuna"), "text"),
+                ("davomiylik_min", _("Daqiqa"), "int"), ("masul_id", _("Mas'ul"), "m2o")]
+        columns, rows = self._rows_table(recs, cols)
+        return self._detail(
+            _("Liniya to'xtashlari"), "fa-pause-circle", "gray",
+            stats=[self._stat(_("Holatlar"), len(recs), "int"),
+                   self._stat(_("Jami"), sum(recs.mapped("davomiylik_min")) / 60.0, "hours"),
+                   self._stat(_("Hozir to'xtagan"), len(recs.filtered("davom_etmoqda")), "int")],
+            split=self._split_panel(_("Sabablar (soat)"), "fa-pie-chart", qismlar, value_fmt="hours")
+            if qismlar else None,
+            columns=columns, rows=rows, total=len(recs),
+            action=self._act("agronova.yem.toxtash", domain, _("To'xtashlar")))
+
+    def _detail_yem_tortish(self, ctx, ref):
+        T = self.env["agronova.tarozi.tortish"].sudo()
+        domain = [("state", "=", "done")] + self._yem_domain(ctx, "sana", ref)
+        recs = T.search(domain, order="sana desc")
+        cols = [("sana", _("Sana"), "datetime"), ("name", _("Varaqa"), "text"), ("yonalish", _("Yo'nalish"), "sel"),
+                ("avto_raqam", _("Mashina"), "text"), ("product_id", _("Tovar"), "m2o"),
+                ("brutto", _("Brutto"), "kg"), ("tara", _("Tara"), "kg"), ("netto", _("Netto"), "kg"),
+                ("hujjat_netto", _("Hujjat"), "kg"), ("farq_kg", _("Farq"), "kg"), ("tafovut", _("Tafovut"), "sel")]
+
+        def rang(t, f):
+            if f not in ("farq_kg", "tafovut"):
+                return ""
+            return "danger" if t.tafovut == "kritik" else (
+                "strong" if t.tafovut in ("tasdiq", "ogohlantirish") else "")
+
+        columns, rows = self._rows_table(recs, cols, tone=rang)
+        kirim = sum(recs.filtered(lambda t: t.yonalish == "kirim").mapped("netto"))
+        chiqim = sum(recs.filtered(lambda t: t.yonalish == "chiqim").mapped("netto"))
+        return self._detail(
+            _("Tarozi: brutto, tara, netto"), "fa-balance-scale", "indigo",
+            stats=[self._stat(_("Tortishlar"), len(recs), "int"),
+                   self._stat(_("Kirim netto"), kirim / 1000.0, "ton"),
+                   self._stat(_("Chiqim netto"), chiqim / 1000.0, "ton"),
+                   self._stat(_("Kritik"), len(recs.filtered(lambda t: t.tafovut == "kritik")), "int", tone="bad")],
+            columns=columns, rows=rows, total=len(recs),
+            action=self._act("agronova.tarozi.tortish", domain, _("Tortishlar")))
+
+    def _detail_yem_smena(self, ctx, ref):
+        S = self.env["agronova.yem.smena"].sudo()
+        domain = [("sana", ">=", ctx["d_from_s"]), ("sana", "<=", ctx["d_to_s"]),
+                  ("company_id", "in", ctx["companies"])]
+        if isinstance(ref, int):
+            domain.append(("liniya_id", "=", ref))
+        recs = S.search(domain, order="sana desc, smena_turi_id")
+        cols = [("sana", _("Sana"), "date"), ("smena_turi_id", _("Smena"), "m2o"), ("liniya_id", _("Liniya"), "m2o"),
+                ("boshliq_id", _("Boshliq"), "m2o"), ("rejadagi_kg", _("Reja"), "kg"), ("fakt_kg", _("Fakt"), "kg"),
+                ("bajarilish", _("Bajarilish"), "pct"), ("qadoqlangan_kg", _("Qadoq"), "kg"),
+                ("yoqotish_kg", _("Yo'qotish"), "kg"), ("toxtash_min", _("To'xtash, daq."), "int"),
+                ("state", _("Holat"), "sel")]
+        columns, rows = self._rows_table(
+            recs, cols, tone=lambda s, f: "danger" if f == "bajarilish" and 0 < s.bajarilish < 95 else "")
+        fakt = sum(recs.mapped("fakt_kg"))
+        reja = sum(recs.mapped("rejadagi_kg"))
+        return self._detail(
+            _("Smena hisobotlari"), "fa-users", "blue",
+            stats=[self._stat(_("Smenalar"), len(recs), "int"), self._stat(_("Fakt"), fakt / 1000.0, "ton"),
+                   self._stat(_("Bajarilish"), (fakt / reja * 100.0) if reja else 0.0, "pct"),
+                   self._stat(_("To'xtash"), sum(recs.mapped("toxtash_min")) / 60.0, "hours")],
+            columns=columns, rows=rows, total=len(recs),
+            action=self._act("agronova.yem.smena", domain, _("Smena hisobotlari")))

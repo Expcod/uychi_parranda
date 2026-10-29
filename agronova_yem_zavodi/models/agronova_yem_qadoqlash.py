@@ -21,6 +21,7 @@ class AgroNovaYemQadoqlash(models.Model):
     _description = "Yem zavodi — qadoqlash"
     _inherit = ['mail.thread', 'agronova.yem.smena.qulf.mixin']
     _order = 'sana desc, id desc'
+    _smena_qulf_erkin = {'state', 'izoh'}
 
     name = fields.Char("Raqam", required=True, copy=False, readonly=True, default=lambda s: _("Yangi"))
     company_id = fields.Many2one('res.company', "Korxona", required=True, default=lambda s: s.env.company)

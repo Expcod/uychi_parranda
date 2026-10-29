@@ -98,6 +98,7 @@
                             <group class="oe_subtotal_footer">
                                 <field name="hujjat_kg"/>
                                 <field name="qop_soni"/>
+                                <field name="nominal_kg"/>
                                 <field name="currency_id" invisible="1"/>
                                 <field name="summa" invisible="ichki"/>
                             </group>
@@ -106,7 +107,9 @@
                             <group>
                                 <group>
                                     <field name="tortish_id"/>
-                                    <field name="hujjat_kg" string="Hujjat bo'yicha netto"/>
+                                    <field name="hujjat_kg"/>
+                                    <field name="qoplar_kg"/>
+                                    <field name="nominal_kg"/>
                                     <field name="haqiqiy_kg"/>
                                 </group>
                                 <group>

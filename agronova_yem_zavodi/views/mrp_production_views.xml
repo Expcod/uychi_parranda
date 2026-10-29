@@ -35,7 +35,7 @@
                     Buyurtma ishlab chiqarish boshlig'i tasdig'isiz yopilmaydi — «Sarf va yo'qotish» bo'limida sababni yozing.
                 </div>
             </xpath>
-            <xpath expr="//field[@name='bom_id']" position="after">
+            <xpath expr="//field[@name='user_id'][@widget='many2one_avatar']" position="after">
                 <field name="agronova_yem" invisible="1"/>
                 <field name="agronova_bom_versiya" invisible="not agronova_bom_versiya"/>
                 <field name="agronova_liniya_id" invisible="not agronova_yem" readonly="state in ('done', 'cancel')"/>

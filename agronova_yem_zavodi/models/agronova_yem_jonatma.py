@@ -55,8 +55,12 @@ class AgroNovaYemJonatma(models.Model):
     picking_id = fields.Many2one('stock.picking', "Ombor hujjati", copy=False, readonly=True)
     tortish_id = fields.Many2one('agronova.tarozi.tortish', "Tarozi varaqasi", copy=False, readonly=True)
 
-    hujjat_kg = fields.Float("Hujjat bo'yicha (kg)", compute='_compute_jami', store=True, digits=(16, 1))
+    hujjat_kg = fields.Float("Hujjat bo'yicha yem (kg)", compute='_compute_jami', store=True, digits=(16, 1))
     qop_soni = fields.Integer("Qoplar", compute='_compute_jami', store=True)
+    qoplar_kg = fields.Float("Qoplar og'irligi (kg)", compute='_compute_jami', store=True, digits=(16, 1))
+    nominal_kg = fields.Float("Nominal yuk (kg)", compute='_compute_jami', store=True, digits=(16, 1),
+                              help="Tarozi bilan solishtiriladigan og'irlik: sof yem + bo'sh qoplar. "
+                                   "Tarozi yukni qoplari bilan tortadi.")
     haqiqiy_kg = fields.Float("Tarozi netto (kg)", related='tortish_id.netto', store=True)
     farq_kg = fields.Float("Farq (kg)", related='tortish_id.farq_kg', store=True)
     farq_pct = fields.Float("Farq (%)", related='tortish_id.farq_pct', store=True)
@@ -82,6 +86,9 @@ class AgroNovaYemJonatma(models.Model):
         for j in self:
             j.hujjat_kg = sum(j.qator_ids.mapped('miqdor_kg'))
             j.qop_soni = sum(j.qator_ids.mapped('qop_soni'))
+            j.qoplar_kg = sum(q.qop_soni * q.product_id.agronova_qop_product_id.agronova_qop_vazn_kg
+                              for q in j.qator_ids)
+            j.nominal_kg = j.hujjat_kg + j.qoplar_kg
             j.summa = sum(j.qator_ids.mapped('summa'))
 
     @api.onchange('turi')
@@ -175,7 +182,7 @@ class AgroNovaYemJonatma(models.Model):
                 'picking_id': self.picking_id.id,
                 'partner_id': self.partner_id.id,
                 'product_id': self.qator_ids[:1].product_id.id if len(self.qator_ids) == 1 else False,
-                'hujjat_netto': self.hujjat_kg,
+                'hujjat_netto': self.nominal_kg,
                 'avto_raqam': self.avto_raqam,
                 'haydovchi': self.haydovchi,
                 'company_id': self.company_id.id,

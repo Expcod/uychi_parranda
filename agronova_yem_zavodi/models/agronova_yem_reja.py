@@ -275,7 +275,9 @@ class AgroNovaYemRejaQator(models.Model):
             fakt = sum(mos.filtered(lambda m: m.state == 'done').mapped('agronova_miqdor_kg'))
             q.fakt_kg = fakt
             q.bajarilish = (fakt / q.miqdor_kg * 100.0) if q.miqdor_kg else 0.0
-            if q.miqdor_kg and fakt >= q.miqdor_kg * 0.98:
+            # Chiqim rejadan tabiiy yo'qotish miqdorida kam bo'ladi — shuning uchun
+            # barcha buyurtmasi yopilgan qator bajarilgan hisoblanadi.
+            if (mos and all(m.state == 'done' for m in mos)) or                     (q.miqdor_kg and fakt >= q.miqdor_kg * 0.98):
                 q.holat = 'bajarildi'
             elif q.muddat and q.muddat < bugun:
                 q.holat = 'kechikmoqda'

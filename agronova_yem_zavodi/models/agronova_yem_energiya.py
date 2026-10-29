@@ -8,6 +8,7 @@ class AgroNovaYemEnergiya(models.Model):
     _description = "Yem zavodi — energiya sarfi"
     _inherit = ['mail.thread', 'agronova.yem.smena.qulf.mixin']
     _order = 'sana desc, id desc'
+    _smena_qulf_erkin = {'izoh'}
 
     name = fields.Char("Nomi", compute='_compute_name', store=True)
     company_id = fields.Many2one('res.company', "Korxona", required=True, default=lambda s: s.env.company)

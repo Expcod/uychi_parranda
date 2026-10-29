@@ -1449,79 +1449,330 @@ class AgroNovaExecutiveDashboard(models.TransientModel):
     # ==================================================================
     # 8. YEM ZAVODI
     # ==================================================================
-    def _section_yem_zavodi(self, ctx):
-        Mrp = self.env["mrp.production"].sudo()
-        buyurtmalar = Mrp.search([
-            ("state", "=", "done"),
-            ("date_start", ">=", ctx["dt_from_s"]), ("date_start", "<=", ctx["dt_to_s"]),
-            ("company_id", "in", ctx["companies"]),
-        ])
+    def _yem_kun(self, dt):
+        return fields.Datetime.context_timestamp(self, dt).date() if dt else None
 
-        kg = sum(buyurtmalar.mapped("agronova_miqdor_kg"))
-        tannarx = sum(buyurtmalar.mapped("agronova_jami_tannarx"))
-        ort_kg = (tannarx / kg) if kg else 0.0
-        reja = self._ortacha(buyurtmalar.mapped("agronova_reja_tannarx_1_kg"))
-        chetlanish = self._ortacha(buyurtmalar.mapped("agronova_chetlanish"))
+    def _yem_davr(self, ctx, field):
+        return [(field, ">=", ctx["dt_from_s"]), (field, "<=", ctx["dt_to_s"]),
+                ("company_id", "in", ctx["companies"])]
+
+    def _yem_asos(self, ctx):
+        """Yem zavodi bo'limi va 3D sahna uchun umumiy hisob — bir marta yig'iladi."""
+        env = self.env
+        Mrp = env["mrp.production"].sudo()
+        mos = Mrp.search([("state", "=", "done"), ("agronova_yem", "=", True)]
+                         + self._yem_davr(ctx, "date_finished"))
+        ochiq = Mrp.search([("state", "in", ("confirmed", "progress", "to_close")),
+                            ("agronova_yem", "=", True), ("company_id", "in", ctx["companies"])])
+        a = {"mos": mos, "ochiq": ochiq}
+        a["kg"] = sum(mos.mapped("agronova_miqdor_kg"))
+        a["kirim_kg"] = sum(mos.mapped("agronova_kirim_kg"))
+        a["meyoriy_kg"] = sum(mos.mapped("agronova_meyoriy_yoqotish_kg"))
+        a["haqiqiy_kg"] = sum(mos.mapped("agronova_haqiqiy_yoqotish_kg"))
+        a["ortiq_kg"] = sum(mos.mapped("agronova_ortiqcha_yoqotish_kg"))
+        a["tannarx"] = sum(mos.mapped("agronova_toliq_tannarx"))
+        a["reja_1kg"] = self._ortacha([m for m in mos.mapped("agronova_reja_tannarx_1_kg") if m])
+        a["ogish"] = mos.filtered("agronova_sarf_ogish")
+
+        Q = env["agronova.yem.reja.qator"].sudo() if self._has("agronova.yem.reja.qator") else None
+        qatorlar = Q.search([("reja_id.state", "not in", ("draft", "bekor")),
+                             ("muddat", ">=", ctx["d_from_s"]), ("muddat", "<=", ctx["d_to_s"]),
+                             ("company_id", "in", ctx["companies"])]) if Q is not None else []
+        a["reja_kg"] = sum(qatorlar.mapped("miqdor_kg")) if Q is not None else 0.0
+        a["reja_fakt_kg"] = sum(qatorlar.mapped("fakt_kg")) if Q is not None else 0.0
+        a["kechikkan"] = qatorlar.filtered(lambda q: q.holat == "kechikmoqda") if Q is not None else []
+        a["reja_kunlik"] = defaultdict(float)
+        for q in (qatorlar or []):
+            if q.muddat:
+                a["reja_kunlik"][q.muddat] += q.miqdor_kg
+
+        a["kunlik"] = defaultdict(float)
+        a["mahsulot"] = defaultdict(float)
+        for m in mos:
+            a["kunlik"][self._yem_kun(m.date_finished)] += m.agronova_miqdor_kg or 0.0
+            a["mahsulot"][m.product_id.display_name] += m.agronova_miqdor_kg or 0.0
+
+        Qd = env["agronova.yem.qadoqlash"].sudo()
+        qd = Qd.search([("state", "=", "tasdiqlangan")] + self._yem_davr(ctx, "sana"))
+        a["qd"] = qd
+        a["qadoq_kg"] = sum(qd.mapped("netto_kg"))
+        a["qop"] = sum(qd.mapped("qop_soni"))
+        a["qd_tafovut"] = qd.filtered(lambda r: r.toldirish_holat != "normal")
+
+        J = env["agronova.yem.jonatma"].sudo()
+        jon = J.search([("state", "=", "jonatildi")] + self._yem_davr(ctx, "sana"))
+        a["jon"] = jon
+        a["jon_kg"] = sum(jon.mapped("hujjat_kg"))
+        a["jon_turi"] = defaultdict(float)
+        for j in jon:
+            a["jon_turi"][j.turi] += j.hujjat_kg
+        a["sotuv_summa"] = sum(jon.filtered(lambda j: j.turi == "sotuv").mapped("summa"))
+
+        Y = env["agronova.yem.yoqotish"].sudo()
+        yoq = Y.search([("state", "!=", "rad")] + self._yem_davr(ctx, "sana"))
+        a["yoq"] = yoq
+        a["yoq_tekshiruv"] = Y.search([("state", "=", "tekshiruvda"), ("company_id", "in", ctx["companies"])])
+        a["yoq_sabab"] = defaultdict(float)
+        sab = dict(Y._fields["turi"].selection)
+        for y in yoq:
+            a["yoq_sabab"][sab.get(y.turi, y.turi)] += y.miqdor_kg
+
+        Tx = env["agronova.yem.toxtash"].sudo()
+        tox = Tx.search([("boshlanish", ">=", ctx["dt_from_s"]), ("boshlanish", "<=", ctx["dt_to_s"]),
+                         ("company_id", "in", ctx["companies"])])
+        a["tox"] = tox
+        a["tox_min"] = sum(tox.mapped("davomiylik_min"))
+        a["tox_hozir"] = Tx.search([("davom_etmoqda", "=", True), ("company_id", "in", ctx["companies"])])
+
+        T = env["agronova.tarozi.tortish"].sudo()
+        tt = T.search([("state", "=", "done")] + self._yem_davr(ctx, "sana"))
+        a["tt"] = tt
+        a["kirim_t_kg"] = sum(tt.filtered(lambda t: t.yonalish == "kirim").mapped("netto"))
+        a["tt_tafovut"] = tt.filtered(lambda t: t.tafovut in ("ogohlantirish", "tasdiq", "kritik"))
+        a["tt_kritik"] = tt.filtered(lambda t: t.tafovut == "kritik")
+        a["tt_ochiq"] = T.search([("state", "=", "vazn1"), ("company_id", "in", ctx["companies"])])
+
+        Z = env["agronova.yem.zaxira"].sudo()
+        z = Z.search([("company_id", "in", ctx["companies"])])
+        a["zaxira"] = z
+        a["zaxira_xavf"] = z.filtered(lambda r: r.holat in ("kritik", "kam"))
+        a["zaxira_kritik"] = z.filtered(lambda r: r.holat == "kritik")
+        a["xomashyo_kg"] = sum(z.filtered(lambda r: r.yem_turi in ("xomashyo", "premiks")).mapped("qoldiq_kg"))
+
+        E = env["agronova.yem.energiya"].sudo()
+        en = E.search([("sana", ">=", ctx["d_from_s"]), ("sana", "<=", ctx["d_to_s"]),
+                       ("company_id", "in", ctx["companies"])])
+        a["kwh"] = sum(en.mapped("elektr_kwh"))
+        a["kwh_t"] = (a["kwh"] / (sum(en.mapped("ishlab_chiqarilgan_t")) or 1.0)) if en else 0.0
+        a["kwh_norma"] = float(env["ir.config_parameter"].sudo().get_param("agronova_yem.kwh_norma_t", 36) or 36)
+
+        # Tayyor mahsulot — faqat zavod omborida: ona tovuq va boquvga jo'natilgani
+        # ularning ombori, zavodniki emas.
+        icp = env["ir.config_parameter"].sudo()
+        ichki = [int(icp.get_param("agronova_yem.%s_location_id" % k, 0) or 0)
+                 for k in ("ona_tovuq", "boquv", "ichki")]
+        quants = env["stock.quant"].sudo().search([
+            ("product_id.agronova_yem_turi", "=", "yem"), ("location_id.usage", "=", "internal"),
+            ("company_id", "in", ctx["companies"])])
+        chiqarilgan = env["stock.location"].sudo().browse([x for x in ichki if x]).exists()
+        if chiqarilgan:
+            quants = quants.filtered(lambda q: not any(
+                q.location_id.parent_path.startswith(l.parent_path) for l in chiqarilgan))
+        a["tayyor_kg"] = sum(env["product.product"]._agronova_kg(q.quantity, q.product_uom_id) for q in quants)
+        S = env["agronova.yem.smena"].sudo()
+        a["smenalar"] = S.search([("sana", ">=", ctx["d_from_s"]), ("sana", "<=", ctx["d_to_s"]),
+                                  ("company_id", "in", ctx["companies"])])
+        return a
+
+    def _yem_scene(self, a):
+        """Zavod ichidagi zanjir 3D da: kirim tarozisidan jo'natmagacha.
+
+        Har bino — bitta bosqich, bosilsa o'sha bosqichning tafsiloti ochiladi.
+        Rang — muammo bor-yo'qligi: kritik zaxira, me'yordan ortiq yo'qotish,
+        to'xtab turgan liniya, kritik tarozi tafovuti.
+        """
+        lin = self.env["agronova.yem.liniya"].sudo().search([], limit=2)
+        nodes = [
+            {"id": "tarozi", "label": _("Tarozi (kirim)"), "shape": "truck", "pos": [-10, 0],
+             "value": a["kirim_t_kg"], "display": self._fmt(a["kirim_t_kg"] / 1000.0, "ton"),
+             "metric": _("Qabul qilingan xomashyo, tafovutli tortish: %s", len(a["tt_tafovut"])),
+             "status": "bad" if (a["tt_ochiq"] and len(a["tt_kritik"]) > len(a["tt"]) * 0.05)
+             or len(a["tt_kritik"]) > len(a["tt"]) * 0.05 else ("ok" if a["kirim_t_kg"] else "idle"),
+             "detail": self._det("yem_tortish")},
+            {"id": "xomashyo", "label": _("Xomashyo ombori"), "shape": "crates", "pos": [-6, -2.6],
+             "value": a["xomashyo_kg"], "display": self._fmt(a["xomashyo_kg"] / 1000.0, "ton"),
+             "metric": _("Qoldiq; minimumdan past: %s", len(a["zaxira_kritik"])),
+             "status": "bad" if a["zaxira_kritik"] else "ok", "detail": self._det("yem_zaxira")},
+            {"id": "silos", "label": _("Dozalash"), "shape": "silo", "pos": [-6, 2.6],
+             "value": a["kirim_kg"], "display": self._fmt(a["kirim_kg"] / 1000.0, "ton"),
+             "metric": _("Berilgan xomashyo; me'yordan tashqari sarf: %s", len(a["ogish"])),
+             "status": "bad" if len(a["ogish"]) > len(a["mos"]) * 0.1 else ("ok" if a["kirim_kg"] else "idle"),
+             "detail": self._det("yem_sarf")},
+        ]
+        for i, l in enumerate(lin):
+            l_mos = a["mos"].filtered(lambda m: m.agronova_liniya_id == l)
+            kg = sum(l_mos.mapped("agronova_miqdor_kg"))
+            ortiq = sum(l_mos.mapped("agronova_ortiqcha_yoqotish_kg"))
+            toxtagan = a["tox_hozir"].filtered(lambda t: t.liniya_id == l)
+            nodes.append({
+                "id": "liniya%s" % l.id, "label": l.name, "shape": "factory",
+                "pos": [-1.5, -2.8 if i == 0 else 2.8], "value": kg,
+                "display": self._fmt(kg / 1000.0, "ton"),
+                "metric": _("To'xtab turibdi") if toxtagan else _("Me'yordan ortiq yo'qotish: %s",
+                                                                  self._fmt(ortiq, "kg")),
+                "status": "bad" if (toxtagan or ortiq > 0.005 * (kg or 1)) else ("ok" if kg else "idle"),
+                "detail": self._det("yem_smena", l.id),
+            })
+        nodes += [
+            {"id": "qadoq", "label": _("Qadoqlash"), "shape": "dome", "pos": [2.8, 0],
+             "value": a["qadoq_kg"], "display": _("%s qop", formatLang(self.env, a["qop"], digits=0)),
+             "metric": _("To'ldirishda tafovut: %s", len(a["qd_tafovut"])),
+             "status": "bad" if len(a["qd_tafovut"]) > max(3, len(a["qd"]) * 0.1) else
+             ("ok" if a["qadoq_kg"] else "idle"), "detail": self._det("yem_qadoqlash")},
+            {"id": "tayyor", "label": _("Tayyor mahsulot"), "shape": "crates", "pos": [6.5, -2.6],
+             "value": a["tayyor_kg"], "display": self._fmt(a["tayyor_kg"] / 1000.0, "ton"),
+             "metric": _("Ombordagi qoldiq"), "status": "ok" if a["tayyor_kg"] else "idle",
+             "detail": self._det("yem_jonatma")},
+            {"id": "jonatma", "label": _("Jo'natma"), "shape": "truck", "pos": [10, 0],
+             "value": a["jon_kg"], "display": self._fmt(a["jon_kg"] / 1000.0, "ton"),
+             "metric": _("Sotuv va ichki xo'jaliklar"), "status": "ok" if a["jon_kg"] else "idle",
+             "detail": self._det("yem_jonatma")},
+            {"id": "sotuv", "label": _("Sotuv tushumi"), "shape": "bank", "pos": [6.5, 2.6],
+             "value": a["sotuv_summa"], "display": self._fmt_compact(a["sotuv_summa"]),
+             "metric": _("Tashqi mijozlarga sotuv"), "status": "ok" if a["sotuv_summa"] else "idle",
+             "detail": self._det("yem_jonatma", "sotuv")},
+        ]
+        logs = {n["id"]: math.log10(abs(n["value"]) + 1) for n in nodes}
+        top = max(logs.values(), default=0.0) or 1.0
+        for n in nodes:
+            n["h"] = round(0.35 + 0.65 * (logs[n["id"]] / top), 3)
+        lid = ["liniya%s" % l.id for l in lin]
+        links = [["tarozi", "xomashyo"], ["xomashyo", "silos"]] + [["silos", x] for x in lid] \
+            + [[x, "qadoq"] for x in lid] + [["qadoq", "tayyor"], ["tayyor", "jonatma"], ["jonatma", "sotuv"]]
+        return {
+            "type": "scene3d", "mode": "chain", "title": _("Yem zavodi — 3D jarayon xaritasi"),
+            "icon": "fa-cube", "nodes": nodes, "links": links,
+            "hint": _("Kirim tarozisidan jo'natmagacha. Binoni bosing — o'sha bosqichning hujjatlari ochiladi."),
+            "legend": [{"label": _("Normada"), "color": "green"},
+                       {"label": _("Muammo bor"), "color": "red"},
+                       {"label": _("Davrda faoliyat yo'q"), "color": "gray"}],
+        }
+
+    def _section_yem_zavodi(self, ctx):
+        a = self._yem_asos(ctx)
+        prev = self._prev_ctx(ctx)
+        Mrp = self.env["mrp.production"].sudo()
+        prev_kg = sum(Mrp.search([("state", "=", "done"), ("agronova_yem", "=", True)]
+                                 + self._yem_davr(prev, "date_finished")).mapped("agronova_miqdor_kg"))
+        kg = a["kg"]
+        bajarilish = (a["reja_fakt_kg"] / a["reja_kg"] * 100.0) if a["reja_kg"] else 0.0
+        meyor_pct = (a["meyoriy_kg"] / a["kirim_kg"] * 100.0) if a["kirim_kg"] else 0.0
+        haqiqiy_pct = (a["haqiqiy_kg"] / a["kirim_kg"] * 100.0) if a["kirim_kg"] else 0.0
+        bir_kg = (a["tannarx"] / kg) if kg else 0.0
+        tt_farq = sum(abs(t.farq_kg) for t in a["tt_tafovut"])
 
         kpis = [
-            self._kpi(_("Buyurtmalar"), len(buyurtmalar), "int", "fa-industry", "blue",
-                      detail=self._det("mrp_orders"),
-                      action=self._act("mrp.production", [("state", "=", "done")],
-                                       _("Yakunlangan buyurtmalar"))),
-            self._kpi(_("Ishlab chiqarilgan"), kg / 1000.0, "ton", "fa-cubes", "green",
-                      hint=self._fmt(kg, "kg"), detail=self._det("mrp_orders")),
-            self._kpi(_("Jami tannarx"), tannarx, "money", "fa-money", "orange",
+            self._kpi(_("Ishlab chiqarildi"), kg / 1000.0, "ton", "fa-industry", "green",
+                      hint=_("%s ta buyurtma", len(a["mos"])), prev=prev_kg / 1000.0,
+                      spark=self._spark(ctx, a["kunlik"]), detail=self._det("mrp_orders")),
+            self._kpi(_("Reja bajarilishi"), bajarilish, "pct", "fa-bullseye", "blue",
+                      hint=_("Reja %s", self._fmt(a["reja_kg"] / 1000.0, "ton")),
+                      tone="ok" if bajarilish >= 98 else ("bad" if a["reja_kg"] else ""),
+                      detail=self._det("yem_reja")),
+            self._kpi(_("Haqiqiy yo'qotish"), haqiqiy_pct, "pct", "fa-exclamation-triangle", "red",
+                      hint=_("Me'yor %(m)s%% · ortig'i %(o)s", m=round(meyor_pct, 2),
+                             o=self._fmt(a["ortiq_kg"], "kg")),
+                      tone="bad" if haqiqiy_pct > meyor_pct else "ok", detail=self._det("yem_yoqotish")),
+            self._kpi(_("1 kg tannarxi"), bir_kg, "money", "fa-balance-scale", "purple",
+                      hint=_("Reja: %s", self._fmt(a["reja_1kg"])),
+                      tone="bad" if a["reja_1kg"] and bir_kg > a["reja_1kg"] * 1.02 else "",
                       detail=self._det("mrp_orders")),
-            self._kpi(_("O'rtacha 1 kg tannarxi"), ort_kg, "money", "fa-balance-scale", "purple",
-                      hint=_("Reja: %s", self._fmt(reja)), detail=self._det("mrp_orders")),
-            self._kpi(_("Rejadan chetlanish"), chetlanish, "pct", "fa-tachometer", "red",
-                      hint=_("Musbat — qimmatga tushgan"),
-                      tone="bad" if chetlanish > 0 else "ok", detail=self._det("mrp_orders")),
+            self._kpi(_("Qadoqlandi"), a["qadoq_kg"] / 1000.0, "ton", "fa-archive", "teal",
+                      hint=_("%s qop", formatLang(self.env, a["qop"], digits=0)),
+                      detail=self._det("yem_qadoqlash")),
+            self._kpi(_("Jo'natildi"), a["jon_kg"] / 1000.0, "ton", "fa-truck", "orange",
+                      hint=_("Sotuv %(s)s · ichki %(i)s",
+                             s=self._fmt(a["jon_turi"].get("sotuv", 0.0) / 1000.0, "ton"),
+                             i=self._fmt((a["jon_kg"] - a["jon_turi"].get("sotuv", 0.0)) / 1000.0, "ton")),
+                      detail=self._det("yem_jonatma")),
+            self._kpi(_("Xomashyo xavfi"), len(a["zaxira_xavf"]), "int", "fa-cubes", "red",
+                      hint=_("Minimumdan past: %s", len(a["zaxira_kritik"])),
+                      tone="bad" if a["zaxira_kritik"] else "ok", detail=self._det("yem_zaxira")),
+            self._kpi(_("Liniya to'xtashi"), a["tox_min"] / 60.0, "hours", "fa-pause-circle", "gray",
+                      hint=_("%s holat", len(a["tox"])), tone="bad" if a["tox_hozir"] else "",
+                      detail=self._det("yem_toxtash")),
+            self._kpi(_("Tarozi tafovuti"), tt_farq, "kg", "fa-balance-scale", "indigo",
+                      hint=_("%(n)s ta tortishda, kritik: %(k)s", n=len(a["tt_tafovut"]), k=len(a["tt_kritik"])),
+                      tone="bad" if a["tt_kritik"] else "", detail=self._det("yem_tortish")),
         ]
 
-        kunlik = defaultdict(float)
-        mahsulot = defaultdict(float)
-        for b in buyurtmalar:
-            if b.date_start:
-                kunlik[b.date_start.date()] += b.agronova_miqdor_kg or 0.0
-            mahsulot[b.product_id.display_name or str(_("Noma'lum"))] += b.agronova_miqdor_kg or 0.0
-
-        rows = []
-        for b in buyurtmalar[:MAX_ROWS]:
-            rows.append({"open": {"res_model": "mrp.production", "res_id": b.id}, "cells": [
-                {"text": b.name or ""},
-                {"text": b.product_id.display_name or "—"},
-                {"text": self._fmt(b.agronova_miqdor_kg, "kg"), "align": "right"},
-                {"text": self._fmt(b.agronova_jami_tannarx), "align": "right"},
-                {"text": self._fmt(b.agronova_tannarx_1_kg), "align": "right", "tone": "strong"},
-                {"text": self._fmt(b.agronova_reja_tannarx_1_kg), "align": "right"},
-                {"text": self._fmt(b.agronova_chetlanish, "pct"), "align": "right",
-                 "tone": "danger" if (b.agronova_chetlanish or 0) > 0 else "ok"},
+        mahsulot_rows = sorted(({"name": k, "value": v / 1000.0} for k, v in a["mahsulot"].items()),
+                               key=lambda r: r["value"], reverse=True)
+        tur_nomi = dict(self.env["agronova.yem.jonatma"]._fields["turi"].selection)
+        rang = {"sotuv": "green", "ona_tovuq": "orange", "boquv": "blue", "ichki": "purple",
+                "kochirish": "gray", "qaytarish": "red"}
+        smena_rows = []
+        guruh = defaultdict(lambda: {"fakt": 0.0, "reja": 0.0, "tox": 0})
+        for s in a["smenalar"]:
+            k = "%s · %s" % (s.liniya_id.name, s.smena_turi_id.name)
+            guruh[k]["fakt"] += s.fakt_kg
+            guruh[k]["reja"] += s.reja_kg or s.rejadagi_kg
+            guruh[k]["tox"] += s.toxtash_min
+            guruh[k]["liniya"] = s.liniya_id.id
+        for k, g in guruh.items():
+            smena_rows.append({"name": k, "value": g["fakt"] / 1000.0,
+                               "sub": _("Reja %(r)s%% · to'xtash %(t)s daq.",
+                                        r=round(g["fakt"] / g["reja"] * 100.0, 1) if g["reja"] else 0,
+                                        t=int(g["tox"])),
+                               "detail": self._det("yem_smena", g["liniya"])})
+        zaxira_rows = []
+        for z in a["zaxira"].sorted(lambda r: (r.holat_tartib, r.yetadi_kun))[:12]:
+            ton = "danger" if z.holat == "kritik" else ("strong" if z.holat == "kam" else "")
+            zaxira_rows.append({"detail": self._det("yem_zaxira"), "cells": [
+                {"text": z.product_id.display_name},
+                {"text": self._fmt(z.qoldiq_kg / 1000.0, "ton"), "align": "right", "tone": ton},
+                {"text": self._fmt(z.min_kg / 1000.0, "ton"), "align": "right"},
+                {"text": self._fmt(z.yetadi_kun, "days") if z.yetadi_kun < 999 else "—", "align": "right",
+                 "tone": ton},
+                {"text": dict(z._fields["holat"].selection).get(z.holat, ""), "tone": ton},
             ]})
 
         panels = [
-            self._trend_panel(_("Ishlab chiqarish dinamikasi"), "fa-bar-chart", ctx,
-                              kunlik, label_a=_("Yem (kg)"), value_fmt="kg",
+            self._yem_scene(a),
+            self._trend_panel(_("Ishlab chiqarish: fakt va reja"), "fa-bar-chart", ctx, a["kunlik"],
+                              a["reja_kunlik"], label_a=_("Fakt"), label_b=_("Reja"), value_fmt="kg",
                               detail_key="mrp_orders"),
-            self._rank_panel(_("Mahsulotlar bo'yicha hajm"), "fa-cubes",
-                             sorted(({"name": k, "value": v} for k, v in mahsulot.items()),
-                                    key=lambda r: r["value"], reverse=True),
-                             color="green", value_fmt="kg"),
-            self._grid_panel(_("Ishlab chiqarish buyurtmalari"), "fa-table", [
-                {"label": _("Buyurtma")}, {"label": _("Mahsulot")},
-                {"label": _("Miqdor"), "align": "right"},
-                {"label": _("Jami tannarx"), "align": "right"},
-                {"label": _("1 kg fakt"), "align": "right"},
-                {"label": _("1 kg reja"), "align": "right"},
-                {"label": _("Chetlanish"), "align": "right"},
-            ], rows),
+            self._gauge_panel(_("Asosiy me'yorlar"), "fa-tachometer", [
+                self._gauge(_("Yo'qotish, %"), haqiqiy_pct, meyor_pct or 1.5, unit="pct"),
+                self._gauge(_("Elektr, kVt·soat / t"), a["kwh_t"], a["kwh_norma"], unit="qty"),
+                self._gauge(_("Reja bajarilishi, %"), bajarilish, 100.0, unit="pct",
+                            lower_is_better=False, scale=120.0),
+            ]),
+            self._rank_panel(_("Mahsulotlar bo'yicha hajm"), "fa-cubes", mahsulot_rows, color="green",
+                             value_fmt="ton"),
+            self._split_panel(_("Jo'natma yo'nalishlari"), "fa-truck", [
+                {"label": tur_nomi.get(k, k), "value": v / 1000.0, "color": rang.get(k, "gray"),
+                 "detail": self._det("yem_jonatma", k)} for k, v in a["jon_turi"].items()], value_fmt="ton"),
+            self._rank_panel(_("Smenalar samaradorligi"), "fa-users", smena_rows, color="blue", value_fmt="ton"),
+            self._rank_panel(_("Yo'qotish sabablari"), "fa-exclamation-triangle",
+                             sorted(({"name": k, "value": v, "detail": self._det("yem_yoqotish")}
+                                     for k, v in a["yoq_sabab"].items()),
+                                    key=lambda r: r["value"], reverse=True), color="red", value_fmt="kg"),
+            self._grid_panel(_("Xomashyo zaxirasi"), "fa-database", [
+                {"label": _("Xomashyo")}, {"label": _("Qoldiq"), "align": "right"},
+                {"label": _("Minimum"), "align": "right"}, {"label": _("Yetadi"), "align": "right"},
+                {"label": _("Holati")}], zaxira_rows,
+                message=_("Zaxira jadvali bo'sh — «Xomashyo zaxirasi» da «Yangilash» ni bosing.")),
         ]
+
         alerts = []
-        qimmat = buyurtmalar.filtered(lambda b: (b.agronova_chetlanish or 0) > 0)
-        if qimmat:
+        if a["tox_hozir"]:
             alerts.append(self._alert(
-                _("%s ta buyurtma rejadagi tannarxdan qimmatga tushgan", len(qimmat)),
-                "warn", "fa-balance-scale", self._det("mrp_orders")))
+                _("Hozir to'xtab turibdi: %s", ", ".join(a["tox_hozir"].mapped("liniya_id.name"))),
+                "bad", "fa-pause-circle", self._det("yem_toxtash")))
+        if a["zaxira_kritik"]:
+            alerts.append(self._alert(
+                _("Minimumdan past xomashyo: %s", ", ".join(a["zaxira_kritik"].mapped("product_id.name")[:4])),
+                "bad", "fa-cubes", self._det("yem_zaxira")))
+        if a["yoq_tekshiruv"]:
+            alerts.append(self._alert(
+                _("%s ta yo'qotish boshliq tekshiruvini kutmoqda", len(a["yoq_tekshiruv"])),
+                "warn", "fa-exclamation-triangle", self._det("yem_yoqotish")))
+        if a["tt_kritik"]:
+            alerts.append(self._alert(_("%s ta tortishda kritik og'irlik tafovuti", len(a["tt_kritik"])),
+                                      "bad", "fa-balance-scale", self._det("yem_tortish")))
+        if a["tt_ochiq"]:
+            alerts.append(self._alert(_("Tarozida %s ta mashina 2-tortishni kutmoqda", len(a["tt_ochiq"])),
+                                      "info", "fa-truck", self._det("yem_tortish")))
+        if a["kechikkan"]:
+            alerts.append(self._alert(_("Rejada %s ta qator kechikmoqda", len(a["kechikkan"])),
+                                      "warn", "fa-clock-o", self._det("yem_reja")))
+        if a["ogish"]:
+            alerts.append(self._alert(_("%s ta buyurtmada sarf me'yordan chiqqan (tasdiqlangan)", len(a["ogish"])),
+                                      "info", "fa-sliders", self._det("yem_sarf")))
+        if a["reja_kg"] and bajarilish >= 98:
+            alerts.append(self._alert(_("Reja %s%% bajarildi", round(bajarilish, 1)), "ok", "fa-check",
+                                      self._det("yem_reja")))
         return {"kpis": kpis, "panels": panels, "alerts": alerts}
 
     # ==================================================================
