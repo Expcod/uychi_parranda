@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_employee_form_ih" model="ir.ui.view">
+        <field name="name">hr.employee.form.agronova.ish.haqi</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_agronova_harakat" type="object"
+                        class="oe_stat_button" icon="fa-money"
+                        groups="agronova_ish_haqi.group_ih_korish">
+                    <field name="agronova_balans" widget="statinfo"
+                           string="Qoldiq"/>
+                </button>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Ish haqi" name="agronova_ish_haqi"
+                      groups="agronova_ish_haqi.group_ih_korish">
+                    <group>
+                        <group string="Amaldagi tarif">
+                            <field name="agronova_tarif_turi"/>
+                            <field name="agronova_stavka"/>
+                            <field name="agronova_currency_id" invisible="1"/>
+                        </group>
+                        <group string="Hisob-kitob">
+                            <field name="agronova_hisoblandi"/>
+                            <field name="agronova_berildi"/>
+                            <field name="agronova_balans"/>
+                        </group>
+                    </group>
+                    <field name="agronova_tarif_ids" readonly="1">
+                        <list>
+                            <field name="tur"/>
+                            <field name="stavka"/>
+                            <field name="norma_kun"/>
+                            <field name="amal_sana"/>
+                            <field name="tugash_sana"/>
+                            <field name="holat" widget="badge"/>
+                            <field name="currency_id" column_invisible="1"/>
+                        </list>
+                    </field>
+                </page>
+                <!-- DonXolmdagi uslub: bitta qoldiq raqami emas, har oy
+                     alohida qator — qachon nima hisoblangani va qancha
+                     berilgani ko'rinib turadi. -->
+                <page string="Oyma-oy balans" name="agronova_oylik_balans"
+                      groups="agronova_ish_haqi.group_ih_korish">
+                    <group>
+                        <field name="agronova_oylik_yili"/>
+                    </group>
+                    <field name="agronova_oylik_html" nolabel="1" readonly="1"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+    <!-- Oylik bo'limining bosh ekrani: hujjatlar emas, XODIMLAR ro'yxati.
+         Rahbar «kimga qancha qarzmiz» degan savolga bir qarashda javob
+         oladi, xodim ustiga bosib tafsilotga kiradi. -->
+    <record id="view_ih_employee_list" model="ir.ui.view">
+        <field name="name">agronova.ih.employee.list</field>
+        <field name="model">hr.employee</field>
+        <field name="arch" type="xml">
+            <list string="Ish haqi — xodimlar" create="0"
+                  decoration-danger="agronova_balans &lt; 0"
+                  decoration-bf="agronova_balans &gt; 0">
+                <field name="name"/>
+                <field name="department_id" optional="show"/>
+                <field name="job_title" optional="hide"/>
+                <field name="company_id" optional="show"/>
+                <field name="agronova_tarif_turi" optional="show"/>
+                <field name="agronova_stavka" optional="show"/>
+                <field name="agronova_oy_hisoblandi" string="Shu oy hisoblandi"
+                       optional="show" sum="Jami"/>
+                <field name="agronova_oy_berildi" string="Shu oy berildi"
+                       optional="show" sum="Jami"/>
+                <field name="agronova_hisoblandi" optional="hide" sum="Jami"/>
+                <field name="agronova_berildi" optional="hide" sum="Jami"/>
+                <field name="agronova_balans" string="QOLDIQ" sum="Jami qoldiq"/>
+                <field name="agronova_currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Oylik uchun alohida, soddalashtirilgan xodim formasi.
+         To'liq kadrlar kartochkasi (rezyume, jihoz, ta'til...) bu yerda
+         keraksiz — buxgalter faqat pul tomonini ko'radi. -->
+    <record id="view_ih_employee_form" model="ir.ui.view">
+        <field name="name">agronova.ih.employee.form</field>
+        <field name="model">hr.employee</field>
+        <field name="arch" type="xml">
+            <form string="Ish haqi" create="0">
+                <header>
+                    <button name="action_agronova_oylik_ber" type="object"
+                            string="Oylik berish" class="btn-primary"/>
+                    <button name="action_agronova_harakat" type="object"
+                            string="Hisob-kitob harakatlari"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                        <field name="job_title" readonly="1" placeholder="Lavozim"/>
+                    </div>
+                    <group>
+                        <group string="Tarif">
+                            <field name="agronova_tarif_turi"/>
+                            <field name="agronova_stavka"/>
+                            <field name="department_id" readonly="1"/>
+                            <field name="company_id" readonly="1"/>
+                        </group>
+                        <group string="Joriy oy">
+                            <field name="agronova_oy_hisoblandi"/>
+                            <field name="agronova_oy_berildi"/>
+                            <field name="agronova_oy_balans"/>
+                        </group>
+                        <group string="Jami">
+                            <field name="agronova_hisoblandi"/>
+                            <field name="agronova_berildi"/>
+                            <field name="agronova_balans"
+                                   style="font-size:20px; font-weight:bold;"/>
+                            <field name="agronova_currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Hisob-kitob harakatlari" name="harakatlar">
+                            <field name="agronova_harakat_ids" readonly="1">
+                                <list decoration-success="tur in ('hisoblandi','bonus')"
+                                      decoration-warning="tur == 'jarima'"
+                                      decoration-muted="tur == 'berildi'">
+                                    <field name="sana"/>
+                                    <field name="tur" widget="badge"/>
+                                    <field name="izoh"/>
+                                    <field name="summa" sum="Jami"/>
+                                    <field name="balans_summa" string="Balansga"
+                                           sum="Balans"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Oyma-oy balans" name="oy_balans">
+                            <group>
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    <button name="action_agronova_yil_oldingi"
+                                            type="object" string="◀"
+                                            class="btn-secondary"
+                                            title="Oldingi yil"/>
+                                    <field name="agronova_oylik_yili" nolabel="1"
+                                           class="oe_inline"
+                                           style="width:70px; font-weight:bold; text-align:center;"/>
+                                    <button name="action_agronova_yil_keyingi"
+                                            type="object" string="▶"
+                                            class="btn-secondary"
+                                            title="Keyingi yil"/>
+                                </div>
+                            </group>
+                            <field name="agronova_oylik_html" nolabel="1"
+                                   readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ih_employee" model="ir.actions.act_window">
+        <field name="name">Xodimlar</field>
+        <field name="res_model">hr.employee</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_ih_employee_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_ih_employee_form')})]"/>
+    </record>
+</odoo>

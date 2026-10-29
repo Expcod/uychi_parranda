@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_agronova_trip_attach_picking_form" model="ir.ui.view">
+        <field name="name">agronova.trip.attach.picking.form</field>
+        <field name="model">agronova.trip.attach.picking</field>
+        <field name="arch" type="xml">
+            <form string="Ombor hujjatini biriktirish">
+                <field name="trip_id" invisible="1"/>
+                <group>
+                    <field name="picking_ids" nolabel="1" widget="many2many"
+                           options="{'no_create': True}">
+                        <list>
+                            <field name="name"/>
+                            <field name="scheduled_date"/>
+                            <field name="location_id" string="Qayerdan"/>
+                            <field name="location_dest_id" string="Qayerga"/>
+                            <field name="partner_id" optional="hide"/>
+                            <field name="state" widget="badge"/>
+                        </list>
+                    </field>
+                </group>
+                <div class="text-muted">
+                    Faqat boshqa reysga biriktirilmagan hujjatlar ko'rinadi.
+                    Hujjat bu yerda yaratilmaydi — ombor jarayonida yaratilganini tanlaysiz.
+                </div>
+                <footer>
+                    <button name="action_attach" type="object" string="Biriktirish"
+                            class="btn-primary" data-hotkey="q"/>
+                    <button string="Bekor qilish" class="btn-secondary"
+                            special="cancel" data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_agronova_trip_attach_picking" model="ir.actions.act_window">
+        <field name="name">Ombor hujjatini biriktirish</field>
+        <field name="res_model">agronova.trip.attach.picking</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" eval="False"/>
+    </record>
+
+</odoo>

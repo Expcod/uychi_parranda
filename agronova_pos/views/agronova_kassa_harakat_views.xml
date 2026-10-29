@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Kassa kitobidagi POS qatoridan smenaga o'tish. -->
+    <record id="view_agronova_kassa_harakat_form_pos" model="ir.ui.view">
+        <field name="name">agronova.kassa.harakat.form.pos</field>
+        <field name="model">agronova.kassa.harakat</field>
+        <field name="inherit_id" ref="agronova_kassa.view_agronova_kassa_harakat_form"/>
+        <field name="arch" type="xml">
+            <field name="origin" position="after">
+                <field name="pos_session_id" readonly="1"
+                       invisible="not pos_session_id"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_agronova_kassa_harakat_list_pos" model="ir.ui.view">
+        <field name="name">agronova.kassa.harakat.list.pos</field>
+        <field name="model">agronova.kassa.harakat</field>
+        <field name="inherit_id" ref="agronova_kassa.view_agronova_kassa_harakat_list"/>
+        <field name="arch" type="xml">
+            <field name="manba" position="after">
+                <field name="pos_session_id" optional="hide"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_stock_lot_box_list" model="ir.ui.view">
+        <field name="name">agronova.lot.box.list</field>
+        <field name="model">agronova.lot.box</field>
+        <field name="arch" type="xml">
+            <list string="Qutilar">
+                <field name="name"/>
+                <field name="product_id"/>
+                <field name="lot_count"/>
+                <field name="capacity" optional="hide"/>
+                <field name="printed" widget="boolean_toggle"/>
+                <field name="date" string="Sana"/>
+                <field name="create_date" string="Yaratilgan" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_stock_lot_box_form" model="ir.ui.view">
+        <field name="name">agronova.lot.box.form</field>
+        <field name="model">agronova.lot.box</field>
+        <field name="arch" type="xml">
+            <form string="Quti">
+                <header>
+                    <button name="action_print_box_label" type="object"
+                            string="Stikerni chop etish" class="btn-primary"
+                            icon="fa-print"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="product_id" readonly="1"/>
+                            <field name="lot_count"/>
+                            <field name="capacity"/>
+                        </group>
+                        <group>
+                            <field name="date"/>
+                            <field name="printed"/>
+                            <field name="note"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Ichidagi serial raqamlar">
+                            <field name="lot_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="product_id"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_stock_lot_box_search" model="ir.ui.view">
+        <field name="name">agronova.lot.box.search</field>
+        <field name="model">agronova.lot.box</field>
+        <field name="arch" type="xml">
+            <search string="Qutilar">
+                <field name="name" string="Quti kodi"
+                       filter_domain="['|', ('name', 'ilike', self), ('lot_ids.name', 'ilike', self)]"/>
+                <field name="product_id"/>
+                <filter name="not_printed" string="Chop etilmagan"
+                        domain="[('printed', '=', False)]"/>
+                <filter name="box_date" string="Quti sanasi" date="date"/>
+                <filter name="creation_date" string="Yaratilgan sana" date="create_date"/>
+                <group>
+                    <filter name="group_product" string="Mahsulot" domain="[]"
+                            context="{'group_by': 'product_id'}"/>
+                    <filter name="group_date" string="Quti sanasi" domain="[]"
+                            context="{'group_by': 'date'}"/>
+                    <filter name="group_create_date" string="Yaratilgan sana" domain="[]"
+                            context="{'group_by': 'create_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Inventarizatsiyadagi «QR stikerlarni chop etish» tugmasidan ochiladi -->
+    <record id="view_stock_lot_box_wizard_form" model="ir.ui.view">
+        <field name="name">agronova.lot.box.wizard.form</field>
+        <field name="model">agronova.lot.box.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Qutiga solish va chop etish">
+                <group>
+                    <group>
+                        <field name="printer_id" options="{'no_create': True}"/>
+                        <field name="date"/>
+                        <field name="mode" widget="radio"/>
+                    </group>
+                    <group>
+                        <field name="capacity" invisible="mode == 'labels_only'"/>
+                        <field name="lot_count"/>
+                    </group>
+                </group>
+                <div class="alert alert-warning" role="alert"
+                     invisible="in_box_count == 0">
+                    <b><field name="in_box_count" class="oe_inline" readonly="1"/> ta
+                    seriya</b> allaqachon boshqa qutida — ular qayta qutilanmaydi.
+                </div>
+                <div class="alert alert-info" role="alert" invisible="box_count == 0">
+                    <b><field name="box_count" class="oe_inline" readonly="1"/> ta
+                    quti</b> yaratiladi va stikerlari chop etiladi.
+                </div>
+                <div class="alert alert-info" role="alert"
+                     invisible="mode != 'labels_only'">
+                    <b><field name="lot_count" class="oe_inline" readonly="1"/> ta
+                    stiker</b> chop etiladi (quti yaratilmaydi).
+                </div>
+                <field name="lot_ids" invisible="1"/>
+                <footer>
+                    <button name="action_confirm" type="object"
+                            string="Qutilash va chop etish" class="btn-primary"/>
+                    <button string="Bekor qilish" class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_stock_lot_box" model="ir.actions.act_window">
+        <field name="name">Qutilar</field>
+        <field name="res_model">agronova.lot.box</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Hali quti yaratilmagan</p>
+            <p>
+                Qutilar sexda ishlab chiqarishni tugatishda yaratiladi —
+                "Qutiga solish" yoqilgan bo'lsa har quti to'lganda avtomatik.
+                Quti QR kodini skanerlash ichidagi barcha serial raqamlarni
+                bir vaqtda transferga qo'shadi.
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_res_config_settings_zakupka" model="ir.ui.view">
+        <field name="name">res.config.settings.zakupka</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@id='user_default_rights']" position="before">
+                <block title="Xarid (Zakupka)" name="agronova_zakupka">
+                    <setting string="Ish vaqti kalendari"
+                             help="Barcha muddat hisoblari (javob berish, tasdiqlash, eskalatsiya) shu bitta kalendardan olinadi. Tunda va dam olish kunida muddat o'smaydi.">
+                        <field name="agronova_zk_kalendar_id"/>
+                    </setting>
+                    <setting string="Javob va tasdiqlash muddatlari (soat)"
+                             help="Muhimlik darajasiga qarab. TZ 6-bo'lim jadvali.">
+                        <field name="agronova_zk_muddat_juda_muhim"/>
+                        <field name="agronova_zk_muddat_orta"/>
+                        <field name="agronova_zk_muddat_zaxira"/>
+                        <field name="agronova_zk_eskalatsiya_oraliq"/>
+                    </setting>
+                    <setting string="Bitta tasdiq chegarasi"
+                             help="TODO: aniq raqam buyurtmachidan (TZ 20.1). Bu summadan past so'rovda sifat va narx nazorati bosqichi o'tkazib yuboriladi.">
+                        <field name="agronova_zk_bitta_tasdiq_chegara"/>
+                    </setting>
+                    <setting string="Narx nazorati"
+                             help="Norma narx uch qatlamda aniqlanadi. Og'ish chegarasi tovar → kategoriya → umumiy tartibida qidiriladi.">
+                        <field name="agronova_zk_narx_tarixi_soni"/>
+                        <field name="agronova_zk_ogish_umumiy"/>
+                        <field name="agronova_zk_narx_eskirish_oy"/>
+                        <field name="agronova_zk_birinchi_xarid_taklif"/>
+                    </setting>
+                    <setting string="Tranzit va faktura nazorati"
+                             help="Ogohlantirish chegaralari — kun bilan.">
+                        <field name="agronova_zk_tranzit_kun"/>
+                        <field name="agronova_zk_didox_kutish_kun"/>
+                    </setting>
+                    <setting string="Orqaga sana bilan kiritish oynasi"
+                             help="Oyna ichida yozuv «kechikib kiritilgan» belgisi bilan kiritiladi; tashqarisida faqat bosh buxgalter; yopilgan davrga mutlaqo taqiq.">
+                        <field name="agronova_zk_orqaga_sana_oyna"/>
+                    </setting>
+                    <setting string="Didox ulanishi"
+                             help="Rekvizitlar ko'rsatilmasa avtomat tortib olish o'tkazib yuboriladi, solishtirish esa qo'lda kiritilgan yozuvlarda ishlayveradi.">
+                        <field name="agronova_zk_didox_url"/>
+                        <field name="agronova_zk_didox_login"/>
+                        <field name="agronova_zk_didox_token" password="True"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

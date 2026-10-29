@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- TZ 17-band: oltita hisobot (17.6 foyda-zarar alohida sahifada).
+         Inkubatoriyadagi kabi alohida model yasalmaydi — hisobot
+         hujjatlarning o'zidan, oldindan guruhlangan ko'rinishda
+         ochiladi. Shunda raqam bitta manbadan keladi va hisobot bilan
+         hujjat bir-biriga zid chiqmaydi. -->
+
+    <!-- Kirim qatorining o'z ro'yxati yo'q edi: u faqat kirim hujjati
+         ichida ko'rinardi. Tuxum ombori hisoboti uchun kerak. -->
+    <record id="view_ot_tuxum_kirim_qator_list" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.tuxum.kirim.qator.list</field>
+        <field name="model">agronova.ona_tovuq.tuxum.kirim.qator</field>
+        <field name="arch" type="xml">
+            <list expand="context.get('expand', False)" string="Tuxum kirimi" create="false" edit="false">
+                <field name="kirim_id"/>
+                <field name="sifat" string="Sifat"/>
+                <field name="dona" sum="Jami dona"/>
+                <field name="lot_id" optional="hide"/>
+                <field name="qiymat" sum="Jami" widget="monetary"/>
+                <field name="currency_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Kunlik hisobot uchun alohida ro'yxat: ustunlar tartibi
+         «xo'roz -> tovuq (boshi) -> yo'qotish -> tovuq (oxiri)» bo'lishi
+         kerak, kunlik kiritish ro'yxatida esa boshqa tartib qulay.
+
+         Bosh soni va foizlar QO'SHILMAYDI — modelda `aggregator` qo'yilgan
+         (max / min / avg). Ilgari oylik guruhda kunlik qoldiqlar
+         yig'ilib, 8 000 boshlik sex 74 841 bo'lib chiqardi. -->
+    <record id="view_ot_hisobot_kunlik_list" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.jurnal.tuxum.hisobot.list</field>
+        <field name="model">agronova.ona_tovuq.jurnal.tuxum</field>
+        <field name="arch" type="xml">
+            <list expand="context.get('expand', False)" string="Kunlik hisobot" create="false"
+                  decoration-warning="ogohlantirish"
+                  decoration-muted="holat == 'draft'">
+                <!-- Ustun sarlavhalari qisqartirilgan: maydonning to'liq
+                     nomi («Jami yig'ilgan tuxum (dona)») sarlavhaga
+                     sig'may «Jami yig'i...» bo'lib kesilardi. -->
+                <field name="date"/>
+                <field name="sex_id"/>
+                <field name="partiya_id" string="Partiya" optional="show"/>
+                <field name="xoroz_son" string="Xo'roz"/>
+                <field name="tovuq_son" string="Tovuq (boshi)" width="130px"/>
+                <field name="nobud_son" string="Nobud" sum="Nobud"/>
+                <field name="brak_son" string="Brak" sum="Brak"/>
+                <field name="nobud_xoroz" string="shundan xo'roz"
+                       sum="shundan xo'roz" optional="hide" width="138px"/>
+                <field name="tovuq_oxiri" string="Tovuq (oxiri)" width="130px"/>
+                <field name="jami_tuxum" string="Jami tuxum" sum="Jami tuxum" width="106px"/>
+                <field name="sifatli_tuxum" string="Sifatli" sum="Sifatli"
+                       optional="show" width="90px"/>
+                <field name="brak_tuxum" string="Brak tuxum" sum="Brak tuxum"
+                       optional="hide" width="106px"/>
+                <field name="inkubatsiyaga_yarokli" string="Inkubatsion"
+                       sum="Inkubatsion" optional="show" width="114px"/>
+                <field name="tuxum_berish_foiz" string="Berish %"
+                       optional="show" width="90px"/>
+                <field name="norma_tuxum_berish" string="Norma %"
+                       optional="hide" width="90px"/>
+                <field name="sarf_qiymat" string="Sarf" sum="Sarf"
+                       optional="hide"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="ogohlantirish" optional="hide"/>
+                <field name="holat" widget="badge" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- 17.1 -->
+    <record id="action_ot_hisobot_kunlik" model="ir.actions.act_window">
+        <field name="name">Kunlik hisobot</field>
+        <field name="res_model">agronova.ona_tovuq.jurnal.tuxum</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_ot_hisobot_kunlik_list"/>
+        <field name="context">{'expand': True, 'group_by': ['sex_id', 'date:month']}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Ma'lumot yo'q</p>
+            <p>Kunlik: tovuqlar soni, nobudgarchilik, tuxum soni, tuxum
+               berish foizi, yem va boshqa sarflar.</p>
+        </field>
+    </record>
+
+    <!-- 17.2 -->
+    <record id="action_ot_hisobot_sex" model="ir.actions.act_window">
+        <field name="name">Sexlar hisoboti</field>
+        <field name="res_model">agronova.ona_tovuq.sex</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Ma'lumot yo'q</p>
+            <p>Har sex bo'yicha: bosh soni, xarajat, daromad, foyda va
+               rentabellik.</p>
+        </field>
+    </record>
+
+    <!-- 17.3 -->
+    <record id="action_ot_hisobot_partiya" model="ir.actions.act_window">
+        <field name="name">Partiyalar hisoboti</field>
+        <field name="res_model">agronova.ona_tovuq.partiya.tuxum</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'expand': True, 'group_by': ['sex_id']}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Ma'lumot yo'q</p>
+            <p>Partiya bo'yicha: bosh soni, nobudgarchilik, ishlab
+               chiqarilgan tuxum, yem sarfi, xarajat, tannarx va foyda.</p>
+        </field>
+    </record>
+
+    <!-- 17.4 -->
+    <record id="action_ot_hisobot_ombor" model="ir.actions.act_window">
+        <field name="name">Tuxum ombori hisoboti</field>
+        <field name="res_model">agronova.ona_tovuq.tuxum.kirim.qator</field>
+        <field name="view_mode">list</field>
+        <field name="context">{'expand': True, 'group_by': ['sifat']}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Ma'lumot yo'q</p>
+            <p>Omborga kirgan tuxum sifat kategoriyalari bo'yicha. Chiqim
+               ichki sotuv hisobotida, qoldiq esa Ombor → Qoldiqlar
+               sahifasida.</p>
+        </field>
+    </record>
+
+    <record id="action_ot_hisobot_sotuv" model="ir.actions.act_window">
+        <field name="name">Ichki sotuv (arxiv)</field>
+        <field name="res_model">agronova.ona_tovuq.ichki_sotuv</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('holat', '=', 'done')]</field>
+        <field name="context">{'expand': True, 'group_by': ['qabul_company_id', 'tur']}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Ma'lumot yo'q</p>
+            <p>Inkubatoriyaga tuxum, So'yishga poda: miqdor, summa,
+               tannarx va marja. Tashqi sotuv standart Sotuv
+               hisobotlarida.</p>
+        </field>
+    </record>
+
+    <!-- 17.5 -->
+    <record id="action_ot_hisobot_tannarx" model="ir.actions.act_window">
+        <field name="name">Tannarx hisoboti</field>
+        <field name="res_model">account.analytic.line</field>
+        <field name="view_mode">list,pivot</field>
+        <!-- Bo'sh analitik reja ustunlari chiqmasin: umumiy ro'yxat
+             `agronova_base` da, bitta «Obyekt» ustuni bilan. -->
+        <field name="view_id" ref="agronova_base.view_agronova_analitik_tannarx_list"/>
+        <field name="search_view_id"
+               ref="agronova_base.view_agronova_analitik_tannarx_search"/>
+        <field name="domain">[('agronova_tannarx_bazasi', '=', True),
+                              ('amount', '&lt;', 0)]</field>
+        <field name="context">{'expand': True, 'group_by': ['agronova_kategoriya_id']}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Ma'lumot yo'q</p>
+            <p>Xarajatlar tarkibi — partiya va sex kesimida. 1 dona tuxum
+               tannarxi foyda-zarar hisobotida.</p>
+        </field>
+    </record>
+
+</odoo>

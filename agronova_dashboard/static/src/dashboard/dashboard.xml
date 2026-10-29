@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <!--
+        Panel sarlavhasidagi sahifalagich. `panel` chaqiruvchi kontekstdan olinadi.
+        Ro'yxat bir sahifadan uzun bo'lsagina ko'rinadi; o'q tugmalari aylanma.
+    -->
+    <t t-name="agronova_dashboard.Pager">
+        <div class="o_smd_pager" t-if="isPaged(panel)">
+            <span class="o_smd_pager_label" t-esc="pageLabel(panel)"/>
+            <button class="o_smd_pager_btn" title="Oldingi sahifa"
+                t-on-click.stop="() => this.turnPage(panel, -1)">
+                <i class="fa fa-chevron-left"/>
+            </button>
+            <button class="o_smd_pager_btn" title="Keyingi sahifa"
+                t-on-click.stop="() => this.turnPage(panel, 1)">
+                <i class="fa fa-chevron-right"/>
+            </button>
+        </div>
+    </t>
+
+    <!-- Trend grafigi tanasi: asosiy panel va tafsilot oynasi ikkalasi ishlatadi. -->
+    <t t-name="agronova_dashboard.TrendBody">
+        <div t-if="panel.empty" class="o_smd_empty_row">
+            <i class="fa fa-bar-chart o_smd_empty_icon"/>
+            <div>Bu davrda ma'lumot topilmadi.</div>
+        </div>
+        <div t-else="" class="o_smd_trend">
+            <div class="o_smd_trend_summary" t-if="panel.summary">
+                <span t-foreach="panel.summary" t-as="s" t-key="s_index" class="o_smd_trend_sum">
+                    <span class="o_smd_legend_dot" t-attf-style="background: {{ hex(s.color) }};"/>
+                    <t t-esc="s.label"/>: <b t-esc="s.display"/>
+                </span>
+            </div>
+            <div class="o_smd_trend_chart">
+                <div t-foreach="panel.bars" t-as="bar" t-key="bar_index"
+                    class="o_smd_trend_group"
+                    t-att-class="{ 'o_smd_clickable': bar.detail }"
+                    t-on-click="() => this.activate(bar)">
+                    <div class="o_smd_trend_tip">
+                        <div t-esc="bar.label" class="o_smd_trend_tip_head"/>
+                        <div t-esc="bar.in_display"/>
+                        <div t-if="panel.two_series" t-esc="bar.out_display"/>
+                    </div>
+                    <div class="o_smd_trend_bars">
+                        <div class="o_smd_trend_bar o_smd_trend_in"
+                            t-attf-style="height: {{ bar.in_pct }}%;"/>
+                        <div class="o_smd_trend_bar o_smd_trend_out"
+                            t-if="panel.two_series"
+                            t-attf-style="height: {{ bar.out_pct }}%;"/>
+                    </div>
+                    <div class="o_smd_trend_label" t-esc="bar.label"/>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="agronova_dashboard.SplitBody">
+        <div class="o_smd_split">
+            <div class="o_smd_donut" t-attf-style="background: {{ panel.gradient }};">
+                <div class="o_smd_donut_hole">
+                    <span class="o_smd_donut_total" t-esc="panel.total_center"/>
+                    <span class="o_smd_donut_cap">Jami</span>
+                </div>
+            </div>
+            <div class="o_smd_legend">
+                <div t-if="panel.empty" class="o_smd_empty_row">
+                    Bu davrda ma'lumot topilmadi.
+                </div>
+                <div t-foreach="panel.parts" t-as="part" t-key="part_index"
+                    class="o_smd_legend_row"
+                    t-att-class="{ 'o_smd_clickable': part.detail }"
+                    t-on-click="() => this.activate(part)">
+                    <span class="o_smd_legend_dot" t-attf-style="background: {{ part.hex }};"/>
+                    <span class="o_smd_legend_label" t-esc="part.label" t-att-title="part.label"/>
+                    <span class="o_smd_legend_val" t-esc="part.display"/>
+                    <span class="o_smd_legend_pct" t-esc="part.pct + '%'"/>
+                    <i t-if="part.detail" class="fa fa-angle-right o_smd_chev"/>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="agronova_dashboard.Scene3D">
+        <div class="o_s3d">
+            <div class="o_s3d_host" t-ref="host"/>
+            <div class="o_s3d_labels" t-ref="labels"/>
+            <div t-if="!state.ready and !state.failed" class="o_s3d_loading">
+                <i class="fa fa-cube fa-spin"/> 3D sahna yuklanmoqda...
+            </div>
+            <!-- WebGL yo'q bo'lsa — oddiy kartochkalar. -->
+            <div t-if="state.failed" class="o_s3d_fallback">
+                <div class="o_s3d_fallback_note">
+                    <i class="fa fa-info-circle"/> Brauzeringiz 3D grafikani qo'llamaydi — oddiy ko'rinish.
+                </div>
+                <div class="o_s3d_fallback_grid">
+                    <div t-foreach="props.scene.nodes" t-as="n" t-key="n_index"
+                        class="o_s3d_fallback_item" t-attf-class="o_s3d_{{ n.status }}"
+                        t-on-click="() => props.onPick and props.onPick(n)">
+                        <b t-esc="n.label"/>
+                        <span t-esc="n.display"/>
+                        <small t-esc="n.metric"/>
+                    </div>
+                </div>
+            </div>
+            <div t-if="state.hover" class="o_s3d_tip" t-attf-class="o_s3d_{{ state.hover.status }}"
+                t-attf-style="left: {{ state.hover.x }}px; top: {{ state.hover.y }}px;">
+                <div class="o_s3d_tip_title" t-esc="state.hover.label"/>
+                <div class="o_s3d_tip_value" t-esc="state.hover.display"/>
+                <div class="o_s3d_tip_metric" t-esc="state.hover.metric"/>
+                <div class="o_s3d_tip_cta">Bosing — batafsil <i class="fa fa-angle-right"/></div>
+            </div>
+            <div t-if="state.ready" class="o_s3d_tools">
+                <button title="Yaqinlashtirish" t-on-click="() => this.zoom(0.85)"><i class="fa fa-plus"/></button>
+                <button title="Uzoqlashtirish" t-on-click="() => this.zoom(1.15)"><i class="fa fa-minus"/></button>
+                <button title="Avtomatik aylanish" t-att-class="{ 'active': state.autoRotate }"
+                    t-on-click="toggleRotate"><i class="fa fa-repeat"/></button>
+                <button title="Boshlang'ich ko'rinish" t-on-click="resetView"><i class="fa fa-crosshairs"/></button>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="agronova_dashboard.Dashboard">
+        <div class="o_smd" t-att-class="{ 'o_smd_nav_open': state.navOpen }">
+            <!-- ============ Chap navigatsiya ============ -->
+            <aside class="o_smd_sidebar">
+                <div class="o_smd_brand">
+                    <div class="o_smd_brand_logo" t-esc="brandInitials"/>
+                    <div class="o_smd_brand_text">
+                        <div class="o_smd_brand_name" t-esc="brandName"/>
+                        <div class="o_smd_brand_tag" t-esc="companyName"/>
+                    </div>
+                </div>
+                <nav class="o_smd_nav">
+                    <t t-foreach="navGroups" t-as="g" t-key="g.label">
+                        <div class="o_smd_nav_group" t-esc="g.label"/>
+                        <button t-foreach="g.items" t-as="s" t-key="s.code"
+                            class="o_smd_nav_item"
+                            t-att-class="{ 'active': state.section === s.code }"
+                            t-att-title="s.label"
+                            t-on-click="() => this.selectSection(s.code)">
+                            <i class="fa" t-att-class="s.icon"/>
+                            <span t-esc="s.label"/>
+                        </button>
+                    </t>
+                </nav>
+                <div class="o_smd_sidebar_foot" t-if="state.meta">
+                    <i class="fa fa-user-circle-o"/>
+                    <span t-esc="state.meta.user"/>
+                </div>
+            </aside>
+
+            <!-- ============ Asosiy qism ============ -->
+            <main class="o_smd_main">
+                <div class="o_smd_progress" t-if="state.loading and state.data"/>
+                <!-- Yuqori panel -->
+                <div class="o_smd_topbar">
+                    <div class="o_smd_topbar_title">
+                        <button class="o_smd_burger" title="Bo'limlar"
+                            t-on-click="toggleNav">
+                            <i class="fa fa-bars"/>
+                        </button>
+                        <i class="fa o_smd_title_icon" t-att-class="currentSection.icon"/>
+                        <div>
+                            <div class="o_smd_title" t-esc="currentSection.label"/>
+                            <div class="o_smd_subtitle" t-if="state.data">
+                                <t t-esc="state.data.date_from"/> — <t t-esc="state.data.date_to"/>
+                                <span t-if="state.updatedAt" class="o_smd_updated">
+                                    · yangilandi <t t-esc="state.updatedAt"/>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="o_smd_controls">
+                        <div class="o_smd_periods">
+                            <button t-foreach="periods" t-as="p" t-key="p.code"
+                                class="o_smd_period_btn"
+                                t-att-class="{ 'active': state.period === p.code }"
+                                t-on-click="() => this.selectPeriod(p.code)">
+                                <t t-esc="p.label"/>
+                            </button>
+                        </div>
+                        <div class="o_smd_range">
+                            <div class="o_smd_date_field" t-att-class="{ 'active': state.period === 'custom' }">
+                                <i class="fa fa-calendar"/>
+                                <DateTimeInput
+                                    type="'date'"
+                                    value="dateFromValue"
+                                    placeholder="'Boshlanishi'"
+                                    onApply="(v) => this.onDateFromPicked(v)"
+                                    class="'o_smd_input'"/>
+                            </div>
+                            <span class="o_smd_range_sep">—</span>
+                            <div class="o_smd_date_field" t-att-class="{ 'active': state.period === 'custom' }">
+                                <i class="fa fa-calendar"/>
+                                <DateTimeInput
+                                    type="'date'"
+                                    value="dateToValue"
+                                    placeholder="'Tugashi'"
+                                    onApply="(v) => this.onDateToPicked(v)"
+                                    class="'o_smd_input'"/>
+                            </div>
+                            <button class="o_smd_apply" t-on-click="applyCustomRange">Qo'llash</button>
+                        </div>
+                        <button class="o_smd_refresh" t-on-click="refresh" title="Yangilash">
+                            <i class="fa fa-refresh" t-att-class="{ 'fa-spin': state.loading }"/>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Birinchi yuklanish: skelet kartochkalar -->
+                <div t-if="state.loading and !state.data" class="o_smd_body">
+                    <div class="o_smd_kpis">
+                        <div t-foreach="[1,2,3,4,5,6,7,8]" t-as="i" t-key="i" class="o_smd_kpi o_smd_skeleton">
+                            <div class="o_smd_kpi_icon"/>
+                            <div class="o_smd_kpi_meta"><div class="o_smd_sk_line"/><div class="o_smd_sk_line o_smd_sk_big"/></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Xatolik -->
+                <div t-elif="state.error and !state.data" class="o_smd_status">
+                    <i class="fa fa-exclamation-triangle fa-2x text-danger"/>
+                    <span>Ma'lumotni yuklab bo'lmadi.</span>
+                    <button class="o_smd_apply" t-on-click="refresh">Qayta urinish</button>
+                </div>
+
+                <!-- Bo'lim mavjud emas -->
+                <div t-elif="state.data and !state.data.available" class="o_smd_status">
+                    <i class="fa fa-plug fa-2x"/>
+                    <span t-esc="state.data.message or 'Bu bo\'lim hozircha mavjud emas.'"/>
+                </div>
+
+                <!-- Kontent -->
+                <div t-elif="state.data" class="o_smd_body" t-att-class="{ 'o_smd_dim': state.loading }">
+                    <!-- Avtomatik topilgan muammolar va yutuqlar -->
+                    <div class="o_smd_alerts" t-if="state.data.alerts.length">
+                        <div t-foreach="state.data.alerts" t-as="al" t-key="al_index"
+                            class="o_smd_alert" t-attf-class="o_smd_alert_{{ al.tone }} {{ al.detail ? 'o_smd_clickable' : '' }}"
+                            t-on-click="() => this.activate(al)">
+                            <i class="fa" t-att-class="al.icon"/>
+                            <span t-esc="al.text"/>
+                            <i t-if="al.detail" class="fa fa-angle-right o_smd_chev"/>
+                        </div>
+                    </div>
+
+                    <!-- KPI kartochkalari -->
+                    <div class="o_smd_kpis" t-if="state.data.kpis.length">
+                        <div t-foreach="state.data.kpis" t-as="kpi" t-key="kpi_index"
+                            class="o_smd_kpi"
+                            t-attf-class="o_smd_{{ kpi.color }} {{ kpi.tone ? 'o_smd_' + kpi.tone : '' }} {{ isClickable(kpi) ? 'o_smd_clickable' : '' }}"
+                            t-att-title="isClickable(kpi) ? 'Batafsil ko\'rish uchun bosing' : ''"
+                            t-on-click="() => this.activate(kpi)">
+                            <div class="o_smd_kpi_row">
+                                <div class="o_smd_kpi_icon"><i class="fa" t-att-class="kpi.icon"/></div>
+                                <div class="o_smd_kpi_meta">
+                                    <div class="o_smd_kpi_label" t-esc="kpi.label"/>
+                                    <div class="o_smd_kpi_value" t-esc="kpi.display"/>
+                                </div>
+                                <i t-if="isClickable(kpi)" class="fa fa-expand o_smd_kpi_open"/>
+                            </div>
+                            <div class="o_smd_kpi_foot">
+                                <span t-if="kpi.delta" class="o_smd_delta"
+                                    t-att-class="kpi.delta.good ? 'o_smd_delta_good' : 'o_smd_delta_bad'"
+                                    title="Oldingi xuddi shunday davrga nisbatan">
+                                    <i class="fa" t-att-class="kpi.delta.up ? 'fa-caret-up' : 'fa-caret-down'"/>
+                                    <t t-esc="kpi.delta.display"/>
+                                </span>
+                                <span class="o_smd_kpi_hint" t-if="kpi.hint" t-esc="kpi.hint"/>
+                            </div>
+                            <svg t-if="kpi.spark.length > 1" class="o_smd_spark" viewBox="0 0 100 28" preserveAspectRatio="none">
+                                <polygon t-att-points="sparkArea(kpi)" class="o_smd_spark_area"/>
+                                <polyline t-att-points="sparkPoints(kpi)" class="o_smd_spark_line"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Panellar -->
+                    <div class="o_smd_panels" t-if="state.data.panels.length">
+                        <t t-foreach="state.data.panels" t-as="panel" t-key="state.loadSeq + '_' + panel_index">
+                            <!-- 3D sahna -->
+                            <div t-if="panel.type === 'scene3d'" class="o_smd_panel o_smd_panel_full o_smd_panel_3d">
+                                <div class="o_smd_panel_head">
+                                    <i class="fa" t-att-class="panel.icon"/>
+                                    <span t-esc="panel.title"/>
+                                    <span class="o_smd_badge">3D</span>
+                                    <div class="o_smd_3d_legend">
+                                        <span t-foreach="panel.legend" t-as="lg" t-key="lg_index">
+                                            <span class="o_smd_legend_dot" t-attf-style="background: {{ hex(lg.color) }};"/>
+                                            <t t-esc="lg.label"/>
+                                        </span>
+                                    </div>
+                                </div>
+                                <Scene3D scene="panel" onPick="(n) => this.onScenePick(n)"/>
+                                <div class="o_smd_3d_hint" t-if="panel.hint">
+                                    <i class="fa fa-hand-pointer-o"/> <t t-esc="panel.hint"/>
+                                </div>
+                            </div>
+
+                            <!-- Reyting -->
+                            <div t-elif="panel.type === 'rank'" class="o_smd_panel" t-att-class="{ 'o_smd_panel_full': panel.full }">
+                                <div class="o_smd_panel_head">
+                                    <i class="fa" t-att-class="panel.icon"/>
+                                    <span t-esc="panel.title"/>
+                                    <t t-call="agronova_dashboard.Pager"/>
+                                </div>
+                                <div class="o_smd_panel_body">
+                                    <div t-if="!panel.rows.length" class="o_smd_empty_row">
+                                        Bu davrda ma'lumot topilmadi.
+                                    </div>
+                                    <div t-foreach="pageRows(panel)" t-as="row" t-key="row_index"
+                                        class="o_smd_rank_row"
+                                        t-att-class="{ 'o_smd_clickable': row.detail }"
+                                        t-on-click="() => this.activate(row)">
+                                        <div class="o_smd_rank_no" t-esc="rowNumber(panel, row_index)"/>
+                                        <div class="o_smd_rank_main">
+                                            <div class="o_smd_rank_top">
+                                                <span class="o_smd_rank_name" t-esc="row.name" t-att-title="row.name"/>
+                                                <span class="o_smd_rank_val" t-att-class="{ 'text-danger': row.negative }" t-esc="row.display"/>
+                                            </div>
+                                            <div class="o_smd_rank_sub" t-if="row.sub" t-esc="row.sub"/>
+                                            <div class="o_smd_bar">
+                                                <div class="o_smd_bar_fill"
+                                                    t-attf-style="width: {{ row.pct }}%; background: {{ row.negative ? '#dc2626' : panel.hex }};"/>
+                                            </div>
+                                        </div>
+                                        <i t-if="row.detail" class="fa fa-angle-right o_smd_chev"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Donut -->
+                            <div t-elif="panel.type === 'split'" class="o_smd_panel">
+                                <div class="o_smd_panel_head">
+                                    <i class="fa" t-att-class="panel.icon"/>
+                                    <span t-esc="panel.title"/>
+                                </div>
+                                <t t-call="agronova_dashboard.SplitBody"/>
+                            </div>
+
+                            <!-- Normativ o'lchagichlari: fakt vs norma -->
+                            <div t-elif="panel.type === 'gauges'" class="o_smd_panel o_smd_panel_full">
+                                <div class="o_smd_panel_head">
+                                    <i class="fa" t-att-class="panel.icon"/>
+                                    <span t-esc="panel.title"/>
+                                </div>
+                                <div class="o_smd_gauges">
+                                    <div t-foreach="panel.gauges" t-as="g" t-key="g_index"
+                                        class="o_smd_gauge" t-attf-style="--gc: {{ g.hex }};">
+                                        <div class="o_smd_gauge_top">
+                                            <span class="o_smd_gauge_name" t-esc="g.label"/>
+                                            <span class="o_smd_gauge_fact" t-esc="g.fact_display"/>
+                                        </div>
+                                        <div class="o_smd_gauge_track">
+                                            <div class="o_smd_gauge_fill" t-attf-style="width: {{ g.fact_pct }}%;"/>
+                                            <div class="o_smd_gauge_norm" t-attf-style="left: {{ g.norm_pct }}%;"
+                                                t-att-title="'Normativ: ' + g.norm_display"/>
+                                        </div>
+                                        <div class="o_smd_gauge_foot">
+                                            <span>Normativ: <b t-esc="g.norm_display"/></span>
+                                            <span class="o_smd_gauge_verdict" t-esc="g.verdict"/>
+                                            <span t-esc="g.delta_display"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Ferma binolari (jonli holat) -->
+                            <div t-elif="panel.type === 'farm'" class="o_smd_panel o_smd_panel_full">
+                                <div class="o_smd_panel_head">
+                                    <i class="fa" t-att-class="panel.icon"/>
+                                    <span t-esc="panel.title"/>
+                                </div>
+                                <div t-if="!panel.cards.length" class="o_smd_empty_row">
+                                    Hozircha faol partiya yo'q.
+                                </div>
+                                <div t-else="" class="o_smd_farm">
+                                    <div t-foreach="panel.cards" t-as="c" t-key="c_index"
+                                        class="o_smd_coop o_smd_clickable"
+                                        t-att-class="{ 'working': c.working, 'alert': c.alert }"
+                                        t-on-click="() => this.activate(c)">
+                                        <div class="o_smd_coop_scene">
+                                            <span class="o_smd_coop_bird">🐔</span>
+                                            <span class="o_smd_coop_bird">🐔</span>
+                                            <span class="o_smd_coop_bird">🐔</span>
+                                            <div class="o_smd_coop_feed"/>
+                                        </div>
+                                        <div class="o_smd_coop_name" t-esc="c.name" t-att-title="c.name"/>
+                                        <div class="o_smd_coop_sub" t-esc="c.sub"/>
+                                        <div class="o_smd_coop_status">
+                                            <span class="o_smd_dot"/>
+                                            <t t-esc="c.status"/> · <t t-esc="c.age"/>
+                                        </div>
+                                        <div class="o_smd_coop_progress" title="Boquv davri bajarilishi">
+                                            <div t-attf-style="width: {{ c.progress }}%;"/>
+                                        </div>
+                                        <div class="o_smd_coop_stats">
+                                            <span>Bosh<b t-esc="c.head_display"/></span>
+                                            <span>FCR<b t-esc="c.fcr_display"/></span>
+                                            <span>Nobud<b t-esc="c.nobud_display"/></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Trend (ustunli grafik) -->
+                            <div t-elif="panel.type === 'trend'" class="o_smd_panel">
+                                <div class="o_smd_panel_head">
+                                    <i class="fa" t-att-class="panel.icon"/>
+                                    <span t-esc="panel.title"/>
+                                    <div class="o_smd_trend_legend">
+                                        <span t-foreach="panel.legend" t-as="lg" t-key="lg_index" class="o_smd_trend_leg">
+                                            <span class="o_smd_legend_dot" t-attf-style="background: {{ hex(lg.color) }};"/>
+                                            <t t-esc="lg.label"/>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="o_smd_panel_body">
+                                    <t t-call="agronova_dashboard.TrendBody"/>
+                                </div>
+                            </div>
+
+                            <!-- Ko'p ustunli jadval -->
+                            <div t-elif="panel.type === 'gridtable'" class="o_smd_panel o_smd_panel_full">
+                                <div class="o_smd_panel_head">
+                                    <i class="fa" t-att-class="panel.icon"/>
+                                    <span t-esc="panel.title"/>
+                                    <t t-call="agronova_dashboard.Pager"/>
+                                </div>
+                                <div class="o_smd_panel_body o_smd_table_scroll">
+                                    <t t-call="agronova_dashboard.Table"/>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </main>
+
+            <!-- ============ Tafsilot oynasi (drill-down) ============ -->
+            <div t-if="state.detail.open" class="o_smd_drawer_backdrop" t-on-click="closeDetail"/>
+            <aside t-if="state.detail.open" class="o_smd_drawer">
+                <t t-set="det" t-value="currentDetail"/>
+                <div class="o_smd_drawer_head" t-attf-class="o_smd_{{ det ? det.color : 'blue' }}">
+                    <button t-if="state.detail.stack.length > 1" class="o_smd_drawer_btn" title="Orqaga"
+                        t-on-click="detailBack"><i class="fa fa-arrow-left"/></button>
+                    <div class="o_smd_kpi_icon"><i class="fa" t-att-class="det ? det.icon : 'fa-spinner fa-spin'"/></div>
+                    <div class="o_smd_drawer_titles">
+                        <div class="o_smd_drawer_title" t-esc="det ? det.title : 'Yuklanmoqda...'"/>
+                        <div class="o_smd_drawer_sub" t-if="det">
+                            <t t-esc="det.subtitle or det.period_label"/>
+                        </div>
+                    </div>
+                    <button class="o_smd_drawer_btn" title="Yopish (Esc)" t-on-click="closeDetail">
+                        <i class="fa fa-times"/>
+                    </button>
+                </div>
+                <div class="o_smd_drawer_crumbs" t-if="state.detail.stack.length > 1">
+                    <t t-foreach="state.detail.stack" t-as="crumb" t-key="crumb_index">
+                        <span t-esc="crumb.title"/>
+                        <i t-if="!crumb_last" class="fa fa-angle-right"/>
+                    </t>
+                </div>
+                <div class="o_smd_drawer_body" t-att-class="{ 'o_smd_dim': state.detail.loading }">
+                    <div class="o_smd_progress" t-if="state.detail.loading"/>
+                    <t t-if="det">
+                        <div class="o_smd_stats" t-if="det.stats.length">
+                            <div t-foreach="det.stats" t-as="st" t-key="st_index" class="o_smd_stat"
+                                t-attf-class="o_smd_stat_{{ st.tone or 'none' }}">
+                                <div class="o_smd_stat_label" t-esc="st.label"/>
+                                <div class="o_smd_stat_value" t-esc="st.display"/>
+                                <div class="o_smd_stat_hint" t-if="st.hint" t-esc="st.hint"/>
+                            </div>
+                        </div>
+                        <div class="o_smd_drawer_charts" t-if="det.chart or det.split">
+                            <div class="o_smd_panel" t-if="det.chart">
+                                <div class="o_smd_panel_head"><i class="fa fa-bar-chart"/><span t-esc="det.chart.title"/></div>
+                                <div class="o_smd_panel_body"><t t-call="agronova_dashboard.TrendBody"><t t-set="panel" t-value="det.chart"/></t></div>
+                            </div>
+                            <div class="o_smd_panel" t-if="det.split and det.split.parts.length">
+                                <div class="o_smd_panel_head"><i class="fa fa-pie-chart"/><span t-esc="det.split.title"/></div>
+                                <t t-call="agronova_dashboard.SplitBody"><t t-set="panel" t-value="det.split"/></t>
+                            </div>
+                        </div>
+                        <div class="o_smd_panel" t-if="det.columns.length">
+                            <div class="o_smd_panel_head">
+                                <i class="fa fa-table"/>
+                                <span>Yozuvlar</span>
+                                <t t-call="agronova_dashboard.Pager"><t t-set="panel" t-value="det"/></t>
+                            </div>
+                            <div class="o_smd_panel_body o_smd_table_scroll">
+                                <t t-call="agronova_dashboard.Table"><t t-set="panel" t-value="det"/></t>
+                            </div>
+                            <div class="o_smd_truncated" t-if="det.truncated">
+                                <i class="fa fa-info-circle"/> <t t-esc="det.truncated"/>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+                <div class="o_smd_drawer_foot" t-if="det and det.action">
+                    <span class="o_smd_drawer_tip"><i class="fa fa-lightbulb-o"/> Qatorni bosing — batafsil yoki hujjatning o'zi ochiladi</span>
+                    <button class="o_smd_apply" t-on-click="() => this.openDetailAction(det.action)">
+                        <i class="fa fa-external-link"/> Odoo'da ochish
+                    </button>
+                </div>
+            </aside>
+        </div>
+    </t>
+
+    <!-- Jadval: asosiy panel va tafsilot oynasi uchun umumiy. -->
+    <t t-name="agronova_dashboard.Table">
+        <table class="o_smd_table">
+            <thead>
+                <tr>
+                    <th class="o_smd_t_no">#</th>
+                    <th t-foreach="panel.columns" t-as="col" t-key="col_index"
+                        t-att-class="col.align === 'right' ? 'o_smd_t_num' : ''"
+                        t-esc="col.label"/>
+                </tr>
+            </thead>
+            <tbody>
+                <tr t-if="!panel.rows.length">
+                    <td t-att-colspan="panel.columns.length + 1"
+                        class="o_smd_empty_cell" t-esc="panel.message"/>
+                </tr>
+                <tr t-foreach="pageRows(panel)" t-as="r" t-key="r_index"
+                    t-att-class="{ 'o_smd_clickable': r.detail or r.open }"
+                    t-att-title="r.detail ? 'Batafsil' : (r.open ? 'Hujjatni ochish' : '')"
+                    t-on-click="() => this.onDetailRow(r)">
+                    <td class="o_smd_t_no" t-esc="rowNumber(panel, r_index)"/>
+                    <td t-foreach="r.cells" t-as="cell" t-key="cell_index"
+                        t-att-class="cellClass(cell)" t-esc="cell.text"/>
+                </tr>
+            </tbody>
+            <tfoot t-if="panel.footer and panel.footer.length" class="o_smd_t_total">
+                <tr>
+                    <td class="o_smd_t_no"/>
+                    <td t-foreach="panel.footer" t-as="cell" t-key="cell_index"
+                        t-att-class="cellClass(cell)" t-esc="cell.text"/>
+                </tr>
+            </tfoot>
+        </table>
+    </t>
+</templates>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Ko'p korxonali muhitda har bo'lim faqat o'z yozuvini ko'radi.
+             Inkubatoriya bitta korxona bo'lsa ham qoida qoladi: keyin
+             ikkinchi inkubatoriya ochilsa tayyor turadi. -->
+
+        <record id="rule_ink_inkubator_company" model="ir.rule">
+            <field name="name">Inkubator — o'z korxonasi</field>
+            <field name="model_id" ref="model_agronova_ink_inkubator"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="rule_ink_qabul_company" model="ir.rule">
+            <field name="name">Tuxum qabuli — o'z korxonasi</field>
+            <field name="model_id" ref="model_agronova_ink_qabul"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="rule_ink_partiya_company" model="ir.rule">
+            <field name="name">Inkubatsiya partiyasi — o'z korxonasi</field>
+            <field name="model_id" ref="model_agronova_ink_partiya"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="rule_ink_ochilish_company" model="ir.rule">
+            <field name="name">Ochilish — o'z korxonasi</field>
+            <field name="model_id" ref="model_agronova_ink_ochilish"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="rule_ink_ichki_sotuv_company" model="ir.rule">
+            <field name="name">Ichki berish — o'z korxonasi</field>
+            <field name="model_id" ref="model_agronova_ink_ichki_sotuv"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="rule_ink_xarajat_company" model="ir.rule">
+            <field name="name">Xarajat — o'z korxonasi</field>
+            <field name="model_id" ref="model_agronova_ink_xarajat"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="rule_ink_elminatsiya_company" model="ir.rule">
+            <field name="name">Elminatsiya — o'z korxonasi</field>
+            <field name="model_id" ref="model_agronova_ink_elminatsiya"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+    </data>
+</odoo>

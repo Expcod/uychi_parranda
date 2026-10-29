@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ TARIF -->
+    <record id="view_ih_tarif_list" model="ir.ui.view">
+        <field name="name">agronova.ish_haqi.tarif.list</field>
+        <field name="model">agronova.ish_haqi.tarif</field>
+        <field name="arch" type="xml">
+            <list string="Ish haqi tariflari"
+                  decoration-muted="holat == 'expired'"
+                  decoration-info="holat == 'draft'">
+                <field name="employee_id"/>
+                <field name="tur"/>
+                <field name="stavka"/>
+                <field name="norma_kun" optional="show"/>
+                <field name="amal_sana"/>
+                <field name="tugash_sana" optional="show"/>
+                <field name="holat" widget="badge"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ih_tarif_form" model="ir.ui.view">
+        <field name="name">agronova.ish_haqi.tarif.form</field>
+        <field name="model">agronova.ish_haqi.tarif</field>
+        <field name="arch" type="xml">
+            <form string="Ish haqi tarifi">
+                <header>
+                    <button name="action_tasdiqlash" type="object"
+                            string="Tasdiqlash" class="btn-primary"
+                            invisible="holat != 'draft'"
+                            confirm="Tasdiqlangandan keyin stavka o'zgartirilmaydi — o'zgarsa yangi tarif ochiladi. Davom etamizmi?"/>
+                    <field name="holat" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Xodim">
+                            <field name="employee_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Tarif">
+                            <field name="tur" widget="radio"/>
+                            <field name="stavka"/>
+                            <field name="norma_kun"
+                                   invisible="tur == 'soatlik'"
+                                   required="tur != 'soatlik'"/>
+                            <field name="amal_sana"/>
+                            <field name="tugash_sana" invisible="not tugash_sana"/>
+                        </group>
+                    </group>
+                    <div class="text-muted">
+                        <b>Oklad</b> va <b>Kunbay</b> bir xil formulada
+                        hisoblanadi: oylik summa «Oydagi ish kuni» ga
+                        bo'linib, ishlagan kuniga ko'paytiriladi. Farqi
+                        normada — okladda 26, kunbayda 15 yoki 30.
+                        <b>Soatli</b> tarifda stavka 1 soat narxi
+                        (19 000 – 38 000 so'm).
+                        <br/>
+                        Tasdiqlangan tarif o'zgartirilmaydi: o'tgan oylarning
+                        hisob-kitobi o'sha paytdagi tarif bilan qolishi kerak.
+                    </div>
+                    <group string="Asos">
+                        <field name="izoh" nolabel="1"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ih_tarif" model="ir.actions.act_window">
+        <field name="name">Ish haqi tariflari</field>
+        <field name="res_model">agronova.ish_haqi.tarif</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Xodimga tarif oching</p>
+            <p>Tarifsiz xodim oylik hisoblashga tushmaydi.</p>
+        </field>
+    </record>
+
+    <!-- ========================================================== HARAKAT -->
+    <record id="view_ih_harakat_list" model="ir.ui.view">
+        <field name="name">agronova.ish_haqi.harakat.list</field>
+        <field name="model">agronova.ish_haqi.harakat</field>
+        <field name="arch" type="xml">
+            <list string="Hisob-kitob harakati"
+                  decoration-success="balans_summa &gt; 0"
+                  decoration-danger="balans_summa &lt; 0">
+                <field name="sana"/>
+                <field name="employee_id"/>
+                <field name="tur" widget="badge"/>
+                <field name="summa"/>
+                <field name="balans_summa" sum="Balans"/>
+                <field name="davr_id" optional="show"/>
+                <field name="izoh" optional="hide"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ih_harakat_form" model="ir.ui.view">
+        <field name="name">agronova.ish_haqi.harakat.form</field>
+        <field name="model">agronova.ish_haqi.harakat</field>
+        <field name="arch" type="xml">
+            <form string="Hisob-kitob harakati">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="employee_id"/>
+                            <field name="sana"/>
+                            <field name="tur"/>
+                        </group>
+                        <group>
+                            <field name="summa"/>
+                            <field name="balans_summa"/>
+                            <field name="davr_id" readonly="1"
+                                   invisible="not davr_id"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <div class="text-muted">
+                        Summa har doim musbat kiritiladi — balansga qanday
+                        ta'sir qilishi turdan aniqlanadi. «Berildi» qatorini
+                        xodimga pul berilganda qo'lda qo'shasiz.
+                    </div>
+                    <group string="Izoh">
+                        <field name="izoh" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ih_harakat" model="ir.actions.act_window">
+        <field name="name">Xodimlar bilan hisob-kitob</field>
+        <field name="res_model">agronova.ish_haqi.harakat</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ============================================================= DAVR -->
+    <record id="view_ih_davr_list" model="ir.ui.view">
+        <field name="name">agronova.ish_haqi.davr.list</field>
+        <field name="model">agronova.ish_haqi.davr</field>
+        <field name="arch" type="xml">
+            <list string="Oylik hisoblash" decoration-muted="holat == 'storno'">
+                <field name="name"/>
+                <field name="davr_boshi"/>
+                <field name="davr_oxiri"/>
+                <field name="xodim_soni"/>
+                <field name="jami_hisoblangan" sum="Hisoblangan"/>
+                <field name="jami_avans" optional="show" sum="Avans"/>
+                <field name="jami_jarima" optional="hide" sum="Jarima"/>
+                <field name="jami_bonus" optional="hide" sum="Bonus"/>
+                <field name="jami_qolga" sum="Qo'lga"/>
+                <field name="holat" widget="badge"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ih_davr_form" model="ir.ui.view">
+        <field name="name">agronova.ish_haqi.davr.form</field>
+        <field name="model">agronova.ish_haqi.davr</field>
+        <field name="arch" type="xml">
+            <form string="Oylik ish haqi">
+                <header>
+                    <button name="action_yigish" type="object" string="Yig'ish"
+                            class="btn-secondary" invisible="holat != 'draft'"
+                            help="Xodimlarni yig'adi va tarif bo'yicha hisoblaydi."/>
+                    <button name="action_tasdiqlash" type="object"
+                            string="Tasdiqlash" class="btn-primary"
+                            invisible="holat != 'draft'"
+                            confirm="Xodimlar balansiga yoziladi va buxgalteriya provodkasi ochiladi. Davom etamizmi?"/>
+                    <button name="action_storno" type="object" string="Storno"
+                            invisible="holat != 'posted'"
+                            confirm="Provodka teskarilanadi va balans qatorlari o'chiriladi. Davom etamizmi?"/>
+                    <button name="action_qoralamaga" type="object"
+                            string="Qoralamaga" invisible="holat != 'storno'"/>
+                    <field name="holat" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_move" type="object"
+                                class="oe_stat_button" icon="fa-book"
+                                invisible="not move_id">
+                            <span class="o_stat_text">Provodka</span>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Davr">
+                            <field name="davr_boshi"/>
+                            <field name="davr_oxiri"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="department_ids" widget="many2many_tags"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Yakun">
+                            <field name="xodim_soni"/>
+                            <field name="jami_hisoblangan"/>
+                            <field name="jami_bonus"/>
+                            <field name="jami_avans"/>
+                            <field name="jami_jarima"/>
+                            <field name="jami_qolga"
+                                   class="oe_subtotal_footer_separator"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Xodimlar" name="qatorlar">
+                            <field name="qator_ids" readonly="holat != 'draft'">
+                                <list editable="bottom" create="0">
+                                    <field name="employee_id" readonly="1"/>
+                                    <field name="department_id" readonly="1"
+                                           optional="show"/>
+                                    <field name="tur" readonly="1"/>
+                                    <field name="stavka" readonly="1"/>
+                                    <field name="manba" readonly="1"
+                                           optional="show"/>
+                                    <field name="norma_kun" readonly="1"
+                                           optional="hide"/>
+                                    <field name="ishlagan_kun"/>
+                                    <field name="ishlagan_soat"
+                                           column_invisible="0"/>
+                                    <field name="hisoblangan" readonly="1"
+                                           sum="Hisoblangan"/>
+                                    <field name="bonus"/>
+                                    <field name="avans"/>
+                                    <field name="jarima"/>
+                                    <field name="qolga" readonly="1"
+                                           sum="Qo'lga"/>
+                                    <field name="izoh" optional="hide"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                            <div class="text-muted">
+                                «Kun manbai» <b>davomatdan</b> bo'lsa raqamlar
+                                Hikvision yoki botdan kelgan. <b>Qo'lda</b>
+                                bo'lsa davomat yozuvi topilmagan va norma
+                                bo'yicha to'ldirilgan — tekshirib chiqing.
+                                <br/>
+                                Avans va jarima hozircha faqat balansda qayd
+                                etiladi, provodkaga kirmaydi — ular pul
+                                harakati bilan bog'lanmagan.
+                            </div>
+                        </page>
+                        <page string="Balans harakatlari" name="harakat"
+                              invisible="holat == 'draft'">
+                            <field name="harakat_ids" readonly="1"/>
+                        </page>
+                        <page string="Izoh" name="izoh">
+                            <field name="izoh" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ih_davr" model="ir.actions.act_window">
+        <field name="name">Oylik ish haqi</field>
+        <field name="res_model">agronova.ish_haqi.davr</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Oylik hisoblashni boshlang</p>
+            <p>Davrni tanlab «Yig'ish» bosing — tarifi bor xodimlar chiqadi.
+               Avans, jarima va bonusni qatorda kiritasiz.</p>
+        </field>
+    </record>
+
+</odoo>

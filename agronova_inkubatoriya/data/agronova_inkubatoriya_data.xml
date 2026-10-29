@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="seq_ink_qabul" model="ir.sequence">
+        <field name="name">Inkubatoriya — tuxum qabuli</field>
+        <field name="code">agronova.ink.qabul</field>
+        <field name="prefix">INK-TQ-%(year)s-</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_ink_partiya" model="ir.sequence">
+        <field name="name">Inkubatoriya — partiya</field>
+        <field name="code">agronova.ink.partiya</field>
+        <field name="prefix">INK-%(year)s-</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_ink_ochilish" model="ir.sequence">
+        <field name="name">Inkubatoriya — ochilish</field>
+        <field name="code">agronova.ink.ochilish</field>
+        <field name="prefix">INK-OCH-%(year)s-</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_ink_xarajat" model="ir.sequence">
+        <field name="name">Inkubatoriya — xarajat</field>
+        <field name="code">agronova.ink.xarajat</field>
+        <field name="prefix">INK-XR-%(year)s-</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_ink_ichki_sotuv" model="ir.sequence">
+        <field name="name">Inkubatoriya — ichki berish</field>
+        <field name="code">agronova.ink.ichki_sotuv</field>
+        <field name="prefix">INK-IS-%(year)s-</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_ink_elminatsiya" model="ir.sequence">
+        <field name="name">Inkubatoriya — elminatsiya</field>
+        <field name="code">agronova.ink.elminatsiya</field>
+        <field name="prefix">INK-ELM-%(year)s-</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+</odoo>

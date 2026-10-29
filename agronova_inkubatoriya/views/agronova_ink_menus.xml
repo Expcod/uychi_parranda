@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_ink_root" name="Inkubatoriya" sequence="46"
+              web_icon="agronova_inkubatoriya,static/description/icon.png"
+              groups="agronova_inkubatoriya.group_ink_omborchi"/>
+
+    <menuitem id="menu_ink_jarayon" name="Inkubatsiya" parent="menu_ink_root"
+              sequence="10"/>
+    <menuitem id="menu_ink_qabul" name="Tuxum qabuli"
+              parent="menu_ink_jarayon" action="action_ink_qabul" sequence="10"/>
+    <menuitem id="menu_ink_partiya" name="Inkubatsiya partiyalari"
+              parent="menu_ink_jarayon" action="action_ink_partiya"
+              sequence="20"/>
+    <menuitem id="menu_ink_ochilish" name="Jo'ja ochilishi"
+              parent="menu_ink_jarayon" action="action_ink_ochilish"
+              sequence="30"/>
+
+    <menuitem id="menu_ink_moliya" name="Moliya" parent="menu_ink_root"
+              sequence="30" groups="agronova_inkubatoriya.group_ink_boshliq"/>
+    <menuitem id="menu_ink_xarajat" name="Xarajatlar"
+              parent="menu_ink_moliya" action="action_ink_xarajat"
+              sequence="10"/>
+    <!-- «Jo'jani ichki berish» menyusi olib tashlandi: Boquvga
+         o'tkazma endi standart Sotuv (sale.order) orqali qilinadi —
+         mijoz qilib Boquv korxonasi tanlanadi, qatorda inkubatsiya
+         partiyasi ko'rsatiladi. Eski yozuv arxiv sifatida qoladi. -->
+    <menuitem id="menu_ink_elminatsiya" name="Ichki marja elminatsiyasi"
+              parent="menu_ink_moliya" action="action_ink_elminatsiya"
+              sequence="30" groups="agronova_inkubatoriya.group_ink_hisobchi"/>
+
+    <menuitem id="menu_ink_hisobot" name="Hisobotlar" parent="menu_ink_root"
+              sequence="40" groups="agronova_inkubatoriya.group_ink_boshliq"/>
+    <menuitem id="menu_ink_pl" name="Foyda-zarar"
+              parent="menu_ink_hisobot" action="action_ink_pl_sahifa"
+              sequence="10"/>
+    <menuitem id="menu_ink_hisobot_tuxum" name="Tuxum hisoboti"
+              parent="menu_ink_hisobot" action="action_ink_hisobot_tuxum"
+              sequence="20"/>
+    <menuitem id="menu_ink_hisobot_inkubatsiya" name="Inkubatsiya hisoboti"
+              parent="menu_ink_hisobot" action="action_ink_hisobot_inkubatsiya"
+              sequence="30"/>
+    <menuitem id="menu_ink_hisobot_joja" name="Jo'ja hisoboti"
+              parent="menu_ink_hisobot" action="action_ink_hisobot_joja"
+              sequence="40"/>
+    <menuitem id="menu_ink_hisobot_tannarx" name="Tannarx hisoboti"
+              parent="menu_ink_hisobot" action="action_ink_hisobot_tannarx"
+              sequence="50" groups="agronova_inkubatoriya.group_ink_hisobchi"/>
+    <menuitem id="menu_ink_hisobot_sotuv" name="Sotuv hisoboti"
+              parent="menu_ink_hisobot" action="action_ink_hisobot_sotuv"
+              sequence="60"/>
+
+    <menuitem id="menu_ink_config" name="Sozlamalar" parent="menu_ink_root"
+              sequence="90" groups="agronova_inkubatoriya.group_ink_boshliq"/>
+    <menuitem id="menu_ink_inkubator" name="Inkubatorlar"
+              parent="menu_ink_config" action="action_ink_inkubator"
+              sequence="10"/>
+
+    <!-- Xarajat kategoriyasi umumiy ma'lumotnoma (`agronova_base`) — har
+         bo'lim o'z sozlamasidan ham ochadi, alohida ro'yxat yasalmaydi.
+         TZ bo'yicha yangi kategoriyani faqat administrator qo'shadi. -->
+    <menuitem id="menu_ink_xarajat_kategoriya" name="Xarajat kategoriyalari"
+              parent="menu_ink_config"
+              action="agronova_base.action_agronova_xarajat_kategoriya"
+              sequence="80"/>
+
+    <!-- Naqd xarajat depozitdan chiqadi, shuning uchun depozit
+         ro'yxati har bo'lim sozlamasidan ham ochiladi. Yangi depozitni
+         bosh buxgalter yoki administrator qo'shadi. -->
+    <menuitem id="menu_ink_depozit" name="Depozitlar"
+              parent="menu_ink_config"
+              action="agronova_savdo_moliya.action_agronova_depozit"
+              sequence="85"/>
+
+</odoo>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_agronova_telegram_request_list" model="ir.ui.view">
+        <field name="name">agronova.telegram.request.list</field>
+        <field name="model">agronova.telegram.request</field>
+        <field name="arch" type="xml">
+            <list string="Botga ulanish arizalari" create="0"
+                  decoration-info="holat == 'yangi'"
+                  decoration-muted="holat == 'rad'">
+                <field name="create_date" string="Kelgan vaqti"/>
+                <field name="ism"/>
+                <field name="telegram_username"/>
+                <field name="telegram_ism"/>
+                <field name="employee_id" widget="many2one_avatar_employee"/>
+                <field name="holat" widget="badge"
+                       decoration-info="holat == 'yangi'"
+                       decoration-success="holat == 'biriktirilgan'"
+                       decoration-danger="holat == 'rad'"/>
+                <field name="chat_id" optional="hide"/>
+                <button name="action_biriktir" type="object" icon="fa-link"
+                        title="Biriktirish" invisible="holat == 'biriktirilgan'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_agronova_telegram_request_form" model="ir.ui.view">
+        <field name="name">agronova.telegram.request.form</field>
+        <field name="model">agronova.telegram.request</field>
+        <field name="arch" type="xml">
+            <form string="Botga ulanish arizasi">
+                <header>
+                    <button name="action_biriktir" type="object"
+                            string="Xodimga biriktirish" class="btn-primary"
+                            invisible="holat == 'biriktirilgan'"/>
+                    <button name="action_rad" type="object" string="Rad etish"
+                            invisible="holat != 'yangi'"/>
+                    <button name="action_qayta_ochish" type="object"
+                            string="Qayta ochish" invisible="holat != 'rad'"/>
+                    <field name="holat" widget="statusbar"
+                           statusbar_visible="yangi,biriktirilgan"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="ism"/>
+                        <h1><field name="ism" placeholder="Ism-familiya"/></h1>
+                    </div>
+                    <group>
+                        <group string="Telegram">
+                            <field name="telegram_username"/>
+                            <field name="telegram_ism"/>
+                            <field name="chat_id"/>
+                        </group>
+                        <group string="Biriktirish">
+                            <field name="employee_id"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-info" role="alert"
+                         invisible="holat == 'biriktirilgan'">
+                        Xodimni tanlab «Xodimga biriktirish» ni bosing —
+                        shundan keyin bot shu xodim uchun ishlay boshlaydi.
+                        Telegram profildagi ismni xodim yozgani bilan
+                        solishtirib ko'ring.
+                    </div>
+                    <group string="Izoh">
+                        <field name="izoh" nolabel="1"
+                               placeholder="Masalan: telefon orqali tasdiqlandi"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_agronova_telegram_request_search" model="ir.ui.view">
+        <field name="name">agronova.telegram.request.search</field>
+        <field name="model">agronova.telegram.request</field>
+        <field name="arch" type="xml">
+            <search string="Botga ulanish arizalari">
+                <field name="ism"/>
+                <field name="telegram_username"/>
+                <field name="employee_id"/>
+                <filter name="yangi" string="Yangi"
+                        domain="[('holat', '=', 'yangi')]"/>
+                <filter name="biriktirilgan" string="Biriktirilgan"
+                        domain="[('holat', '=', 'biriktirilgan')]"/>
+                <filter name="rad" string="Rad etilgan"
+                        domain="[('holat', '=', 'rad')]"/>
+                <separator/>
+                <filter name="g_holat" string="Holat"
+                        context="{'group_by': 'holat'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_agronova_telegram_request" model="ir.actions.act_window">
+        <field name="name">Botga ulanish arizalari</field>
+        <field name="res_model">agronova.telegram.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_agronova_telegram_request_search"/>
+        <field name="context">{'search_default_yangi': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Hozircha ariza yo'q</p>
+            <p>Xodim botga <b>/start</b> yozib ism-familiyasini jo'natsa,
+               arizasi shu yerga tushadi.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_agronova_telegram_request"
+              name="Botga ulanish arizalari"
+              parent="fleet.menu_root"
+              action="action_agronova_telegram_request"
+              sequence="89"
+              groups="hr.group_hr_user"/>
+
+</odoo>

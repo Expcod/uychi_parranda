@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_ot_partiya_ostirish" model="ir.sequence">
+        <field name="name">Ona tovuq — o'stirish partiyasi</field>
+        <field name="code">agronova.ona_tovuq.partiya.ostirish</field>
+        <field name="prefix">OT-O-%(year)s-</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_ot_partiya_tuxum" model="ir.sequence">
+        <field name="name">Ona tovuq — tuxum partiyasi</field>
+        <field name="code">agronova.ona_tovuq.partiya.tuxum</field>
+        <field name="prefix">OT-T-%(year)s-</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_ot_xarajat" model="ir.sequence">
+        <field name="name">Ona tovuq — xarajat hujjati</field>
+        <field name="code">agronova.ona_tovuq.xarajat</field>
+        <field name="prefix">OT-X-%(year)s-</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_ot_ichki_sotuv" model="ir.sequence">
+        <field name="name">Ona tovuq — ichki sotuv</field>
+        <field name="code">agronova.ona_tovuq.ichki_sotuv</field>
+        <field name="prefix">OT-IS-%(year)s-</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_ot_ish_haqi" model="ir.sequence">
+        <field name="name">Ona tovuq — ish haqi taqsimoti</field>
+        <field name="code">agronova.ona_tovuq.ish_haqi</field>
+        <field name="prefix">OT-IH-%(year)s-</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_ot_elminatsiya" model="ir.sequence">
+        <field name="name">Ona tovuq — ichki marja elminatsiyasi</field>
+        <field name="code">agronova.ona_tovuq.elminatsiya</field>
+        <field name="prefix">OT-ELM-%(year)s-</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <!-- Elminatsiya qatorlari bo'lim rejasiga emas, shu alohida rejaga
+         tushadi: bo'lim hisobotida ichki marja saqlanib qoladi, konsolidatsiya
+         esa uni o'zaro yo'q qiladi. -->
+    <record id="analytic_plan_konsolidatsiya" model="account.analytic.plan">
+        <field name="name">Konsolidatsiya</field>
+        <field name="default_applicability">optional</field>
+    </record>
+
+    <!-- Jurnal to'ldirilmasa eslatma (TZ B04) -->
+    <record id="cron_ot_jurnal_eslatma" model="ir.cron">
+        <field name="name">Ona tovuq: to'ldirilmagan kunlik jurnal eslatmasi</field>
+        <field name="model_id" ref="model_agronova_ona_tovuq_partiya_tuxum"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_jurnal_eslatma()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="False"/>
+    </record>
+</odoo>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_boquv_pl_form" model="ir.ui.view">
+        <field name="name">agronova.boquv.pl.form</field>
+        <field name="model">agronova.boquv.pl</field>
+        <field name="arch" type="xml">
+            <form string="Boquv — bo'lim foyda-zarari">
+                <header>
+                    <button name="action_yangilash" type="object"
+                            string="Yangilash" class="btn-primary"
+                            help="Davrni o'zgartirgandan keyin xarajat tarkibi va natijani qayta hisoblaydi."/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Boquv — foyda va zarar</h1>
+                        <h3 class="text-muted">
+                            <field name="company_id" readonly="1"
+                                   options="{'no_open': True}"/>
+                        </h3>
+                    </div>
+                    <group>
+                        <group string="Davr">
+                            <field name="davr_boshi"/>
+                            <field name="davr_oxiri"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Asosiy zooveterinariya ko'rsatkichlari">
+                            <field name="faol_partiya_soni"/>
+                            <field name="jami_bosh"/>
+                            <field name="tirik_bosh"/>
+                            <field name="nobud_bosh"/>
+                            <field name="nobud_foiz"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Samaradorlik va ishlab chiqarish">
+                            <field name="yem_sarf_kg"/>
+                            <field name="ortacha_fcr"/>
+                            <field name="ortacha_epef"/>
+                            <field name="soyilgan_bosh"/>
+                            <field name="soyilgan_kg"/>
+                        </group>
+                        <group string="Tannarx (ma'lumot uchun)">
+                            <field name="tannarx_1_bosh"/>
+                            <field name="tannarx_1_kg"/>
+                            <field name="ishlab_chiqarish"/>
+                            <field name="ombor_ozgarishi"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Daromad">
+                            <field name="ichki_sotuv"/>
+                            <field name="tashqi_sotuv"/>
+                            <field name="boshqa_daromad"/>
+                            <field name="jami_daromad"
+                                   class="oe_subtotal_footer_separator"/>
+                        </group>
+                        <group string="Xarajat">
+                            <field name="sotilgan_tannarx"/>
+                            <field name="jami_xarajat"
+                                   class="oe_subtotal_footer_separator"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Bo'lim natijasi (boshqaruv hisobi)">
+                            <field name="bolim_foyda"/>
+                            <field name="bolim_rentabellik"/>
+                        </group>
+                        <group string="Korxona natijasi (konsolidatsiya)">
+                            <field name="elminatsiya"/>
+                            <field name="konsolidatsiya_foyda"/>
+                            <field name="konsolidatsiya_rentabellik"/>
+                        </group>
+                    </group>
+
+                    <div class="alert alert-info" role="alert">
+                        <b>Boquv bo'limining foyda va zarari qanday hisoblanadi:</b>
+                        <br/>
+                        1. <b>Daromad:</b> So'yish filialiga jo'natilgan tirik tovuqlarning ichki sotuv summasi va tashqi sotuvlar;
+                        <br/>
+                        2. <b>Xarajat:</b> So'yishga jo'natilgan va sotilgan tovuqlarning haqiqiy tannarxi;
+                        <br/>
+                        3. <b>Bo'lim foydasi:</b> Jami daromad − Sotilgan tovuqlar tannarxi.
+                        <br/>
+                        4. <b>Ishlab chiqarish xarajati:</b> Podani boqish uchun qilingan jami xarajat (yem, jo'ja, dori, ish haqi va h.k.). Hali so'yishga jo'natilmagan tirik jo'jalar qiymati podada (aktiv sifatida) saqlanib turadi.
+                    </div>
+
+                    <notebook>
+                        <page string="Ishlab chiqarish xarajati tarkibi" name="tarkib">
+                            <field name="qator_ids" readonly="1">
+                                <list create="0" delete="0">
+                                    <field name="nom"/>
+                                    <field name="summa" sum="Jami"/>
+                                    <field name="ulush"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                            <div class="text-muted">
+                                Bu yerda davrda boquv bo'yicha qilingan barcha ishlab chiqarish xarajatlari turlarga bo'lingan (yem, jo'ja kirimi, veterinariya, ish haqi, dezinfeksiya, kommunal va h.k.).
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_boquv_pl_sahifa" model="ir.actions.server">
+        <field name="name">Foyda-zarar hisoboti</field>
+        <field name="model_id" ref="model_agronova_boquv_pl"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_ochish()</field>
+    </record>
+
+</odoo>
+

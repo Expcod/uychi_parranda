@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Serial miqdorini o'zgartirish oynasi -->
+    <record id="view_quant_serial_wizard_form" model="ir.ui.view">
+        <field name="name">agronova.quant.serial.wizard.form</field>
+        <field name="model">agronova.quant.serial.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Serial miqdorini o'zgartirish">
+                <sheet>
+                    <field name="product_locked" invisible="1"/>
+                    <field name="diff_mode" invisible="1"/>
+                    <field name="available_lot_ids" invisible="1"/>
+
+                    <group>
+                        <group>
+                            <field name="product_id"
+                                   readonly="product_locked"
+                                   options="{'no_create': True}"/>
+                            <field name="location_id"
+                                   options="{'no_create': True}"/>
+                            <field name="company_id"
+                                   groups="base.group_multi_company"
+                                   options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="current_qty"/>
+                            <field name="count"/>
+                        </group>
+                    </group>
+
+                    <!-- Nima bo'lishini oldindan aytadi: foydalanuvchi
+                         "Bajarish" bosishdan oldin natijani biladi. -->
+                    <div class="alert alert-success" role="alert"
+                         invisible="diff_mode != 'add'">
+                        <b><field name="diff" class="oe_inline" readonly="1"/> ta</b>
+                        yangi seriya yaratiladi. Stikerlari chop etilmagan
+                        holatda (<b>qizil</b>) ro'yxatga qo'shiladi.
+                    </div>
+                    <div class="alert alert-warning" role="alert"
+                         invisible="diff_mode != 'remove'">
+                        <b><field name="diff" class="oe_inline" readonly="1"/> ta</b>
+                        seriya ombordan chiqariladi. Seriya yozuvi o'chmaydi —
+                        faqat qoldig'i nolga tushadi, tarixi saqlanib qoladi.
+                    </div>
+                    <div class="alert alert-info" role="alert"
+                         invisible="diff_mode != 'none'">
+                        Miqdor o'zgarmadi. Kerakli sonni «Yangi soni» maydoniga yozing.
+                    </div>
+
+                    <group invisible="diff_mode != 'remove'">
+                        <field name="removal_mode" widget="radio"/>
+                    </group>
+                    <!-- Yorliq (`many2many_tags`) emas, ro'yxat: yuzlab seriya
+                         bo'lganda yorliqlar oynani buzib yuboradi. Ro'yxatda
+                         qidiruv va sahifalash ishlaydi. -->
+                    <div invisible="diff_mode != 'remove' or removal_mode != 'manual'">
+                        <separator string="Chiqariladigan seriyalarni belgilang"/>
+                        <field name="removal_lot_ids" nolabel="1"
+                               widget="many2many"
+                               required="removal_mode == 'manual'"
+                               domain="[('id', 'in', available_lot_ids)]"
+                               options="{'no_create': True, 'no_create_edit': True}">
+                            <list create="0" delete="1">
+                                <field name="name" string="Seriya"/>
+                                <field name="label_printed" string="Stiker chop etilgan"
+                                       readonly="1"/>
+                            </list>
+                        </field>
+                    </div>
+                </sheet>
+                <footer>
+                    <button name="action_apply" type="object"
+                            string="Bajarish" class="btn-primary"
+                            invisible="diff_mode == 'none'"/>
+                    <button string="Bekor qilish" class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_quant_serial_wizard" model="ir.actions.act_window">
+        <field name="name">Serial miqdorini o'zgartirish</field>
+        <field name="res_model">agronova.quant.serial.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- MAHSULOT ICHIDAGI ro'yxat (Quantity On Hand → Update Quantity).
+         Odoo bu yo'lda `view_stock_quant_tree_editable` ni ochadi — Physical
+         Inventory sahifasidagi view'dan BOSHQA yozuv. Wizard tugmasi aynan
+         shu yerda kerak: mahsulot allaqachon ma'lum, omborchi faqat lokatsiya
+         va sonni kiritadi. -->
+    <record id="view_stock_quant_tree_editable_qr" model="ir.ui.view">
+        <field name="name">stock.quant.list.editable.qr.label</field>
+        <field name="model">stock.quant</field>
+        <field name="inherit_id" ref="stock.view_stock_quant_tree_editable"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//header" position="inside">
+                <button name="%(action_quant_serial_wizard)d" type="action"
+                        string="Miqdorni o'zgartirish"
+                        class="btn btn-primary"
+                        groups="stock.group_production_lot"
+                        context="{'default_product_id': context.get('default_product_id')}"
+                        display="always"/>
+                <!-- `display` berilmaydi — tugma faqat qator belgilanganda chiqadi. -->
+                <button name="action_print_lot_labels" type="object"
+                        string="QR stikerlarni chop etish"
+                        groups="stock.group_production_lot"/>
+            </xpath>
+
+            <xpath expr="//field[@name='lot_id']" position="after">
+                <field name="qr_scan_required" widget="boolean_toggle"
+                       string="QR skanerlash"
+                       groups="stock.group_production_lot"
+                       optional="show"/>
+                <field name="label_state" widget="badge"
+                       string="Stiker"
+                       groups="stock.group_production_lot"
+                       decoration-success="label_state == 'printed'"
+                       decoration-danger="label_state == 'not_printed'"
+                       decoration-muted="label_state == 'na'"
+                       optional="show"/>
+                <field name="label_printed_at"
+                       string="Stiker sanasi"
+                       widget="datetime"
+                       groups="stock.group_production_lot"
+                       optional="show"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- PHYSICAL INVENTORY ro'yxati. Bu yerda wizard tugmasi YO'Q: sahifaning
+         vazifasi mavjud qoldiqni sanash, yangi tovar kiritish emas. Faqat
+         stiker ustuni va chop etish tugmasi qo'shiladi. -->
+    <record id="view_stock_quant_tree_inventory_qr" model="ir.ui.view">
+        <field name="name">stock.quant.inventory.list.qr.label</field>
+        <field name="model">stock.quant</field>
+        <field name="inherit_id" ref="stock.view_stock_quant_tree_inventory_editable"/>
+        <field name="arch" type="xml">
+
+            <!-- Tanlangan qatorlar uchun. `display` berilmaydi — shunda tugma
+                 faqat qator belgilanganda chiqadi (Odoo standart xulqi). -->
+            <xpath expr="//header/button[@name='action_reset']" position="after">
+                <button name="action_print_lot_labels" type="object"
+                        string="QR stikerlarni chop etish"
+                        groups="stock.group_production_lot"/>
+            </xpath>
+
+            <!-- Stiker va skanerlash holati. -->
+            <xpath expr="//field[@name='lot_id']" position="after">
+                <field name="qr_scan_required" widget="boolean_toggle"
+                       string="QR skanerlash"
+                       groups="stock.group_production_lot"
+                       optional="show"/>
+                <field name="label_state" widget="badge"
+                       string="Stiker"
+                       groups="stock.group_production_lot"
+                       decoration-success="label_state == 'printed'"
+                       decoration-danger="label_state == 'not_printed'"
+                       decoration-muted="label_state == 'na'"
+                       optional="show"/>
+                <field name="label_printed_at"
+                       string="Stiker sanasi"
+                       widget="datetime"
+                       groups="stock.group_production_lot"
+                       optional="show"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Stiker va QR holati bo'yicha filtr -->
+    <record id="quant_search_view_qr" model="ir.ui.view">
+        <field name="name">stock.quant.search.qr.label</field>
+        <field name="model">stock.quant</field>
+        <field name="inherit_id" ref="stock.quant_search_view"/>
+        <field name="arch" type="xml">
+            <!-- `to_apply` dan keyin — bu oddiy filtrlar guruhi.
+                 `Lot_Serial_number` esa guruhlash guruhida, u yerga tushmasligi kerak. -->
+            <filter name="to_apply" position="after">
+                <separator/>
+                <filter string="QR skanerlash shart" name="filter_qr_scan_required"
+                        domain="[('qr_scan_required', '=', True)]"
+                        groups="stock.group_production_lot"/>
+                <filter string="QR skanersiz (Eski tovarlar)" name="filter_qr_scan_not_required"
+                        domain="[('qr_scan_required', '=', False)]"
+                        groups="stock.group_production_lot"/>
+                <separator/>
+                <filter string="Stiker chop etilmagan" name="label_not_printed"
+                        domain="[('label_state', '=', 'not_printed')]"
+                        groups="stock.group_production_lot"/>
+                <filter string="Stiker chop etilgan" name="label_printed"
+                        domain="[('label_state', '=', 'printed')]"
+                        groups="stock.group_production_lot"/>
+            </filter>
+        </field>
+    </record>
+
+</odoo>

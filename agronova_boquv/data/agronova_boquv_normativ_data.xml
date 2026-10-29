@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Normativ ko'rsatkichlar — QASDDAN BO'SH.
+
+        Umumiy TZ §10 «Buyurtmachi zimmasidagi majburiyatlar», 4-band:
+        «Normativ ko'rsatkichlarni berish: FCR normasi, nobudgarchilik
+        normasi, chiqim foizi — 3-bosqich».
+
+        Aniq qiymatlar hali olinmagan. Taxminiy raqam kiritilsa, reja-fakt
+        hisoboti va og'ish ogohlantirishi noto'g'ri signal beradi — bu
+        yo'qligidan yomonroq. Shuning uchun jadval bo'sh qoldiriladi:
+        `agronova.boquv.normativ.qiymat()` 0.0 qaytaradi va taqqoslash
+        o'tkazib yuboriladi.
+
+        Buyurtmachi qiymatlarni bergach shu faylga qatorlar qo'shiladi
+        yoki interfeysdan kiritiladi — kodga tegilmaydi.
+
+        Namunaviy hisobdagi ma'lumot (yakuniy TZ, PT-2026-014):
+            FCR norma 1,60 (fakt 1,65)
+            nobudgarchilik norma 3,5% (fakt 4,0%)
+        Bular tasdiqlangach quyidagi ko'rinishda kiritiladi:
+
+        <record id="normativ_broyler_0_45" model="agronova.boquv.normativ">
+            <field name="yosh_kun_dan">0</field>
+            <field name="yosh_kun_gacha">45</field>
+            <field name="fcr_norma">1.60</field>
+            <field name="nobud_foiz_norma">3.5</field>
+        </record>
+    -->
+    <data noupdate="1">
+    </data>
+</odoo>

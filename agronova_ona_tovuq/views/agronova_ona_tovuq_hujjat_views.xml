@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================== TUXUM KIRIMI -->
+    <record id="view_ot_tuxum_kirim_list" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.tuxum.kirim.list</field>
+        <field name="model">agronova.ona_tovuq.tuxum.kirim</field>
+        <field name="arch" type="xml">
+            <list string="Tuxum kirimlari" decoration-muted="holat == 'draft'">
+                <field name="date"/>
+                <field name="name"/>
+                <field name="sex_id"/>
+                <field name="partiya_id"/>
+                <field name="jami_dona" sum="Jami dona"/>
+                <field name="jami_qiymat" sum="Jami qiymat"/>
+                <field name="holat" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ot_tuxum_kirim_form" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.tuxum.kirim.form</field>
+        <field name="model">agronova.ona_tovuq.tuxum.kirim</field>
+        <field name="arch" type="xml">
+            <form string="Tuxum kirimi">
+                <header>
+                    <button name="action_kirim" type="object" string="Omborga kirim"
+                            class="btn-primary" invisible="holat != 'draft'"/>
+                    <field name="holat" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="date"/>
+                            <field name="partiya_id" options="{'no_create': True}"/>
+                            <field name="sex_id"/>
+                        </group>
+                        <group>
+                            <field name="jurnal_id"/>
+                            <field name="jami_dona"/>
+                            <field name="jami_qiymat"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <field name="qator_ids" readonly="holat == 'done'">
+                        <list editable="bottom">
+                            <field name="sifat"/>
+                            <field name="dona"/>
+                            <field name="lot_id" readonly="1" optional="show"/>
+                            <field name="qiymat" readonly="1" sum="Jami"/>
+                            <field name="currency_id" column_invisible="1"/>
+                        </list>
+                    </field>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ot_tuxum_kirim" model="ir.actions.act_window">
+        <field name="name">Tuxum kirimi</field>
+        <field name="res_model">agronova.ona_tovuq.tuxum.kirim</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ==================================================== ICHKI NARX -->
+    <record id="view_ot_narx_list" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.narx.list</field>
+        <field name="model">agronova.ona_tovuq.narx</field>
+        <field name="arch" type="xml">
+            <list string="Ichki narxlar" decoration-muted="holat == 'expired'"
+                  decoration-success="holat == 'confirmed'">
+                <field name="tur"/>
+                <field name="narx"/>
+                <field name="amal_sana"/>
+                <field name="tugash_sana" optional="show"/>
+                <field name="taklif_qildi_id" optional="hide"/>
+                <field name="tasdiqladi_id" optional="show"/>
+                <field name="holat" widget="badge"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ot_narx_form" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.narx.form</field>
+        <field name="model">agronova.ona_tovuq.narx</field>
+        <field name="arch" type="xml">
+            <form string="Ichki narx">
+                <header>
+                    <button name="action_tasdiqlash" type="object" string="Tasdiqlash"
+                            class="btn-primary" invisible="holat != 'draft'"
+                            groups="agronova_ona_tovuq.group_ot_hisobchi"
+                            confirm="Tasdiqlangan narx keyin o'zgartirilmaydi. Davom etamizmi?"/>
+                    <field name="holat" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="tur"/>
+                            <field name="narx"/>
+                            <field name="amal_sana"/>
+                            <field name="tugash_sana"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="taklif_qildi_id"/>
+                            <field name="tasdiqladi_id"/>
+                            <field name="tasdiq_sana"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Asos">
+                        <field name="asos" nolabel="1"
+                               placeholder="Narx nimaga asoslanadi — bozor narxi, tannarx tahlili..."/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ot_narx" model="ir.actions.act_window">
+        <field name="name">Ichki narxlar</field>
+        <field name="res_model">agronova.ona_tovuq.narx</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- =================================================== ICHKI SOTUV -->
+    <record id="view_ot_ichki_sotuv_list" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.ichki_sotuv.list</field>
+        <field name="model">agronova.ona_tovuq.ichki_sotuv</field>
+        <field name="arch" type="xml">
+            <list expand="context.get('expand', False)" string="Ichki sotuv" decoration-muted="holat == 'draft'" create="0">
+                <field name="date"/>
+                <field name="name"/>
+                <field name="tur"/>
+                <field name="partiya_id" string="Partiya"/>
+                <field name="dona" string="Miqdor" sum="Miqdor"/>
+                <field name="birlik_narx"/>
+                <field name="summa" sum="Daromad"/>
+                <field name="tannarx_summa" string="Tannarx" sum="Tannarx" width="90px"/>
+                <field name="ichki_foyda" sum="Marja"/>
+                <field name="qabul_company_id" string="Qabul qiluvchi" optional="show"/>
+                <field name="soyish_qabul_id" optional="hide"/>
+                <field name="holat" widget="badge"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ot_ichki_sotuv_form" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.ichki_sotuv.form</field>
+        <field name="model">agronova.ona_tovuq.ichki_sotuv</field>
+        <field name="arch" type="xml">
+            <form string="Ichki sotuv" create="0" edit="0">
+                <header>
+                    <button name="action_otkazish" type="object" string="O'tkazish"
+                            class="btn-primary" invisible="holat != 'draft'"
+                            confirm="Mahsulot qabul qiluvchi bo'lim omboriga o'tkaziladi va bo'lim daromadi yoziladi. Davom etamizmi?"/>
+                    <button name="action_open_soyish_qabul" type="object"
+                            string="So'yishdagi qabul hujjati"
+                            invisible="not soyish_qabul_id"/>
+                    <field name="holat" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Asosiy">
+                            <field name="tur"/>
+                            <field name="date"/>
+                            <field name="partiya_id" options="{'no_create': True}"/>
+                            <field name="sex_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Miqdor va narx">
+                            <field name="dona"/>
+                            <field name="tirik_vazn"
+                                   invisible="tur != 'poda_soyish'"
+                                   required="tur == 'poda_soyish'"/>
+                            <field name="narx_id"/>
+                            <field name="birlik_narx"/>
+                        </group>
+                    </group>
+                    <group string="Mahsulot va yo'nalish">
+                        <group>
+                            <field name="product_id" options="{'no_create': True}"/>
+                            <field name="qabul_company_id"
+                                   options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="move_id" readonly="1"
+                                   invisible="not move_id"/>
+                            <field name="move_kirim_id" readonly="1"
+                                   invisible="not move_kirim_id"/>
+                            <field name="lot_id" readonly="1"
+                                   invisible="not lot_id"/>
+                        </group>
+                    </group>
+                    <group string="Moliyaviy natija">
+                        <group>
+                            <field name="summa"/>
+                            <field name="tannarx_summa"/>
+                            <field name="ichki_foyda"/>
+                        </group>
+                    </group>
+                    <div class="text-muted">
+                        Ichki sotuvda QQS hisob-fakturasi rasmiylashtirilmaydi —
+                        faqat bo'lim daromadi va tannarxi boshqaruv hisobiga yoziladi.
+                        <br/>
+                        Mahsulotning o'zi ham ko'chadi: tuxum omboridan chiqib,
+                        korxonalararo transit orqali qabul qiluvchi bo'lim
+                        omboriga kiradi.
+                        <b>Poda</b> esa ombor qoldig'ida yuritilmaydi (u partiya
+                        hisobida sanaladi) — shuning uchun faqat So'yish
+                        tomonida kirim bo'ladi, partiyaning bosh soni esa
+                        kamayadi.
+                    </div>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ot_ichki_sotuv" model="ir.actions.act_window">
+        <field name="name">Ichki sotuv</field>
+        <field name="res_model">agronova.ona_tovuq.ichki_sotuv</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ======================================================= XARAJAT -->
+    <record id="view_ot_xarajat_list" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.xarajat.list</field>
+        <field name="model">agronova.ona_tovuq.xarajat</field>
+        <field name="arch" type="xml">
+            <list string="Xarajatlar" decoration-muted="holat == 'storno'">
+                <field name="sana"/>
+                <field name="name"/>
+                <field name="kategoriya_id"/>
+                <field name="nom"/>
+                <field name="maqsad_turi"/>
+                <field name="taqsimlash_bazasi" optional="show"/>
+                <field name="tolov_turi"/>
+                <field name="summa" sum="Jami"/>
+                <field name="holat" widget="badge"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ot_xarajat_form" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.xarajat.form</field>
+        <field name="model">agronova.ona_tovuq.xarajat</field>
+        <field name="arch" type="xml">
+            <form string="Xarajat hujjati">
+                <header>
+                    <button name="action_tasdiqlash" type="object" string="Tasdiqlash"
+                            class="btn-primary" invisible="holat != 'draft'"/>
+                    <button name="action_storno" type="object" string="Storno"
+                            invisible="holat != 'tasdiqlangan'"
+                            confirm="Xarajat storno qilinadi. Davom etamizmi?"/>
+                    <field name="holat" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group readonly="holat != 'draft'">
+                        <group string="Xarajat">
+                            <field name="sana"/>
+                            <field name="kategoriya_id"/>
+                            <field name="nom"/>
+                            <field name="miqdor"/>
+                            <field name="narx"/>
+                            <field name="summa"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="To'lov">
+                            <field name="tolov_turi" widget="radio"/>
+                            <field name="kontragent_id"
+                                   invisible="tolov_turi != 'qarz'"
+                                   required="tolov_turi == 'qarz'"/>
+                            <!-- Chek rasmi formadan turib ko'rinsin:
+                                 yuklab olish shart emas, ustiga borilsa
+                                 kattalashadi. -->
+                            <field name="foto" widget="image"
+                                   filename="foto_filename"
+                                   options="{'size': [90, 90], 'zoom': true, 'zoom_delay': 400}"
+                                   invisible="tolov_turi != 'naqd'"
+                                   required="tolov_turi == 'naqd'"/>
+                            <field name="foto_filename" invisible="1"/>
+                            <!-- Naqd to'lovda depozit majburiy
+                                 (`agronova_savdo_moliya`): pul qaysi
+                                 mas'ul xodimning qo'lidan chiqqani
+                                 ko'rinishi kerak. Maydon formada
+                                 bo'lmasa saqlashda tushunarsiz xato
+                                 chiqadi. -->
+                            <field name="depozit_id"
+                                   invisible="tolov_turi != 'naqd'"
+                                   required="tolov_turi == 'naqd'"
+                                   options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    <group string="Maqsad va taqsimlash" readonly="holat != 'draft'">
+                        <group>
+                            <field name="maqsad_turi" widget="radio"/>
+                            <field name="sex_id" invisible="maqsad_turi != 'bitta'"
+                                   required="maqsad_turi == 'bitta'"/>
+                            <field name="sex_ids" widget="many2many_tags"
+                                   invisible="maqsad_turi != 'bir_necha'"
+                                   required="maqsad_turi == 'bir_necha'"/>
+                        </group>
+                        <group>
+                            <field name="taqsimlash_bazasi"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Analitik qatorlar" name="analitik">
+                            <field name="analytic_line_ids" readonly="1">
+                                <list>
+                                    <field name="date"/>
+                                    <field name="name"/>
+                                    <field name="amount"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Izoh" name="izoh">
+                            <field name="izoh" nolabel="1" readonly="holat != 'draft'"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ot_xarajat" model="ir.actions.act_window">
+        <field name="name">Xarajatlar</field>
+        <field name="res_model">agronova.ona_tovuq.xarajat</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

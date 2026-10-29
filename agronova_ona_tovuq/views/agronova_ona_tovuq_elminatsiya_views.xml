@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_ot_elminatsiya_list" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.elminatsiya.list</field>
+        <field name="model">agronova.ona_tovuq.elminatsiya</field>
+        <field name="arch" type="xml">
+            <list string="Ichki marja elminatsiyasi"
+                  decoration-muted="holat == 'storno'">
+                <field name="name"/>
+                <field name="davr_boshi"/>
+                <field name="davr_oxiri"/>
+                <field name="jami_ichki_sotuv" optional="hide" sum="Ichki sotuv"/>
+                <field name="jami_marja" sum="Ichki marja"/>
+                <field name="realizatsiya_marja" optional="show" sum="Realizatsiya"/>
+                <field name="jami_elminatsiya" sum="Elminatsiya"/>
+                <field name="holat" widget="badge"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ot_elminatsiya_form" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.elminatsiya.form</field>
+        <field name="model">agronova.ona_tovuq.elminatsiya</field>
+        <field name="arch" type="xml">
+            <form string="Ichki marja elminatsiyasi">
+                <header>
+                    <button name="action_yigish" type="object" string="Yig'ish"
+                            class="btn-secondary" invisible="holat != 'draft'"
+                            help="Davrdagi ichki sotuvlarni qatorlarga yig'adi."/>
+                    <button name="action_tasdiqlash" type="object"
+                            string="Tasdiqlash" class="btn-primary"
+                            invisible="holat != 'draft'"
+                            confirm="Realizatsiya qilinmagan ichki marja konsolidatsiyadan chiqariladi. Davom etamizmi?"/>
+                    <button name="action_storno" type="object" string="Storno"
+                            invisible="holat != 'posted'"
+                            confirm="Teskari analitik qatorlar yoziladi. Davom etamizmi?"/>
+                    <button name="action_qoralamaga" type="object"
+                            string="Qoralamaga" invisible="holat != 'storno'"/>
+                    <field name="holat" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_analytic" type="object"
+                                class="oe_stat_button" icon="fa-list"
+                                invisible="holat == 'draft'">
+                            <span class="o_stat_text">Analitik<br/>qatorlar</span>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Davr">
+                            <field name="davr_boshi"/>
+                            <field name="davr_oxiri"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Natija">
+                            <field name="jami_ichki_sotuv"/>
+                            <field name="jami_marja"/>
+                            <field name="realizatsiya_marja"/>
+                            <field name="jami_elminatsiya"
+                                   class="oe_subtotal_footer_separator"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-info" role="alert">
+                        Ona tovuq tuxumni Inkubatsiyaga tannarxidan qimmatga
+                        bergani <b>bo'lim uchun</b> foyda, <b>korxona uchun</b>
+                        esa hali emas — tuxum tashqariga sotilmagan. Shu
+                        realizatsiya qilinmagan marja konsolidatsiyalangan
+                        hisobotdan chiqariladi.
+                        <br/>
+                        Bo'lim hisobotida marja o'z o'rnida qoladi: teskari
+                        qator partiyaga emas, alohida
+                        <b>«Konsolidatsiya»</b> analitik rejasiga tushadi.
+                    </div>
+                    <notebook>
+                        <page string="Ichki sotuvlar" name="qatorlar">
+                            <field name="qator_ids" readonly="holat != 'draft'">
+                                <list editable="bottom" create="0">
+                                    <field name="date" readonly="1"/>
+                                    <field name="ichki_sotuv_id" readonly="1"/>
+                                    <field name="tur" readonly="1"/>
+                                    <field name="partiya_id" readonly="1"
+                                           optional="show"/>
+                                    <field name="miqdor" readonly="1"/>
+                                    <field name="summa" readonly="1"
+                                           optional="hide" sum="Sotuv"/>
+                                    <field name="tannarx_summa" readonly="1"
+                                           optional="hide" sum="Tannarx"/>
+                                    <field name="ichki_marja" readonly="1"
+                                           sum="Marja"/>
+                                    <field name="qolgan_miqdor"/>
+                                    <field name="realizatsiya_foiz" readonly="1"
+                                           optional="show"/>
+                                    <field name="elminatsiya_summa" readonly="1"
+                                           sum="Elminatsiya"/>
+                                    <field name="izoh" optional="hide"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                            <div class="text-muted">
+                                «Qabul qiluvchida qolgan» — berilgan miqdordan
+                                qanchasi qabul qiluvchi bo'lim omborida hali
+                                turgani. Boshlang'ich qiymat butun miqdor:
+                                realizatsiya isbotlanmaguncha foyda haqiqiy
+                                emas. Qancha sotilganini bilsangiz — qoldiqni
+                                kamaytiring.
+                            </div>
+                        </page>
+                        <page string="Izoh" name="izoh">
+                            <field name="izoh" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ot_elminatsiya_search" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.elminatsiya.search</field>
+        <field name="model">agronova.ona_tovuq.elminatsiya</field>
+        <field name="arch" type="xml">
+            <search string="Elminatsiya">
+                <field name="name"/>
+                <filter name="filter_draft" string="Qoralama"
+                        domain="[('holat', '=', 'draft')]"/>
+                <filter name="filter_posted" string="Tasdiqlangan"
+                        domain="[('holat', '=', 'posted')]"/>
+                <separator/>
+                <filter name="group_holat" string="Holati"
+                        context="{'group_by': 'holat'}"/>
+                <filter name="group_davr" string="Davr"
+                        context="{'group_by': 'davr_boshi:month'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_ot_elminatsiya" model="ir.actions.act_window">
+        <field name="name">Ichki marja elminatsiyasi</field>
+        <field name="res_model">agronova.ona_tovuq.elminatsiya</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Oylik elminatsiya hujjatini yarating</p>
+            <p>Davr tanlanadi, «Yig'ish» bosiladi — davrdagi ichki sotuvlar
+               chiqadi. Qabul qiluvchi bo'lim omborida qolgan miqdorga
+               to'g'ri keladigan ichki marja konsolidatsiyalangan hisobotdan
+               chiqariladi.</p>
+        </field>
+    </record>
+
+</odoo>

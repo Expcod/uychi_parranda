@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_lot_qr_label">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs" t-as="lot">
+                <div class="page" style="font-family: Arial, sans-serif; text-align: center; padding: 2px; margin: 0;">
+                    <!-- Mahsulot nomi -->
+                    <div t-esc="lot.product_id.display_name"
+                         style="font-size: 9px; font-weight: bold; line-height: 1.1; word-wrap: break-word; margin-bottom: 2px;"/>
+
+                    <!-- QR kod (lot nomini kodlaydi) -->
+                    <img t-if="lot.name"
+                         t-att-src="'/report/barcode/?barcode_type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('QR', lot.name, 200, 200)"
+                         style="width: 22mm; height: 22mm;"/>
+
+                    <!-- Lot raqami -->
+                    <div t-esc="lot.name"
+                         style="font-size: 10px; font-weight: bold; margin-top: 1px;"/>
+
+                    <!-- Og'irligi (lotda kiritilgan bo'lsa) -->
+                    <div t-if="lot.label_weight"
+                         style="font-size: 9px;">
+                        <span t-esc="lot.label_weight"/>
+                        <span t-esc="lot.product_id.weight_uom_name or 'kg'"/>
+                    </div>
+
+                    <!-- Yaratilgan sana -->
+                    <div t-esc="lot.create_date"
+                         t-options='{"widget": "date"}'
+                         style="font-size: 8px;"/>
+
+                    <!-- Yaroqlilik muddati -->
+                    <div t-if="lot.expiration_date" style="font-size: 8px;">
+                        Muddat: <span t-esc="lot.expiration_date"
+                                      t-options='{"widget": "date"}'/>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>

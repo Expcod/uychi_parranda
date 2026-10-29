@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_sale_order_form_qx_partiya" model="ir.ui.view">
+        <field name="name">sale.order.form.qx.partiya</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <!-- Yem zavodiga ichki berishda hosil qaysi ekin
+                 partiyasidan chiqayotgani — partiyaning rentabelligi
+                 shu bo'yicha hisoblanadi. Tashqi sotuvda bo'sh
+                 qoldiriladi. -->
+            <xpath expr="//field[@name='order_line']/list/field[@name='product_uom_qty']"
+                   position="after">
+                <field name="agronova_qx_partiya_id" optional="hide"
+                       options="{'no_create': True}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

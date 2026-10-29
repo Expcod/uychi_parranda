@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_agronova_trip_list" model="ir.ui.view">
+        <field name="name">agronova.trip.list</field>
+        <field name="model">agronova.trip</field>
+        <field name="arch" type="xml">
+            <list string="Reyslar"
+                  decoration-success="profit &gt; 0 and state == 'done'"
+                  decoration-danger="profit &lt; 0"
+                  decoration-muted="state == 'new'">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="trip_type"/>
+                <field name="vehicle_id"/>
+                <field name="driver_id"/>
+                <field name="origin" optional="show"/>
+                <field name="destination" optional="show"/>
+                <field name="arrival_datetime" optional="hide"/>
+                <field name="trip_duration" widget="float_time" optional="hide"/>
+                <field name="distance_km" optional="hide" sum="Masofa"/>
+                <field name="cargo_qty" optional="hide" sum="Yuk"/>
+                <field name="revenue" sum="Daromad"/>
+                <field name="expense_total" sum="Xarajat"/>
+                <field name="profit" sum="Foyda"/>
+                <field name="driver_share" sum="Haydovchi ulushi" optional="show"/>
+                <field name="balance_due" sum="Qoldiq" optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'done'"
+                       decoration-info="state in ('departed', 'delivered')"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_agronova_trip_form" model="ir.ui.view">
+        <field name="name">agronova.trip.form</field>
+        <field name="model">agronova.trip</field>
+        <field name="arch" type="xml">
+            <form string="Reys">
+                <header>
+                    <!-- Hujjat reys boshida biriktiriladi, shuning uchun tugma
+                         holat tugmalari yonida, eng ko'rinadigan joyda turadi -->
+                    <button name="action_attach_picking" type="object"
+                            string="Hujjat biriktirish" icon="fa-link"
+                            invisible="state == 'done'"/>
+                    <button name="action_plan" type="object" string="Rejalashtirish"
+                            class="btn-primary" invisible="state != 'new'"/>
+                    <button name="action_depart" type="object" string="Yo'lga chiqdi"
+                            class="btn-primary" invisible="state != 'planned'"/>
+                    <button name="action_deliver" type="object" string="Yetkazib berildi"
+                            class="btn-primary" invisible="state != 'departed'"/>
+                    <button name="action_settle" type="object" string="Hisob-kitobga"
+                            class="btn-primary" invisible="state != 'delivered'"/>
+                    <button name="action_done" type="object" string="Yakunlash"
+                            class="btn-primary" invisible="state != 'settling'"/>
+                    <button name="action_reset" type="object" string="Qayta ochish"
+                            invisible="state in ('new', 'done')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="new,planned,departed,delivered,settling,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_pickings" type="object"
+                                class="oe_stat_button" icon="fa-truck">
+                            <field name="picking_count" widget="statinfo" string="Ombor hujjati"/>
+                        </button>
+                        <button name="action_open_expenses" type="object"
+                                class="oe_stat_button" icon="fa-money">
+                            <field name="expense_total" widget="statinfo" string="Xarajat"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Asosiy">
+                            <field name="date"/>
+                            <field name="trip_type" widget="radio" options="{'horizontal': true}"/>
+                            <field name="vehicle_id"/>
+                            <field name="driver_id"/>
+                            <field name="partner_id" invisible="trip_type != 'external'"
+                                   required="trip_type == 'external'"/>
+                            <field name="analytic_account_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Yuk va yo'nalish">
+                            <field name="origin"/>
+                            <field name="destination"/>
+                            <field name="departed_datetime"
+                                   invisible="not departed_datetime"/>
+                            <field name="arrival_datetime"
+                                   invisible="not arrival_datetime"/>
+                            <field name="trip_duration" widget="float_time"
+                                   invisible="not trip_duration"/>
+                            <field name="distance_km"/>
+                            <field name="cargo_type"/>
+                            <field name="cargo_weight_kg"/>
+                            <field name="cargo_weight_ton"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Moliyaviy natija">
+                            <field name="revenue"/>
+                            <field name="expense_manual"/>
+                            <field name="expense_total"/>
+                            <field name="profit"/>
+                        </group>
+                        <group string="Haydovchi hisob-kitobi">
+                            <field name="driver_share_pct"/>
+                            <field name="driver_share"/>
+                            <field name="collected"/>
+                            <field name="handed_over"/>
+                            <field name="balance_due"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Ombor hujjatlari" name="pickings">
+                            <field name="picking_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="scheduled_date"/>
+                                    <field name="location_id" string="Qayerdan"/>
+                                    <field name="location_dest_id" string="Qayerga"/>
+                                    <field name="partner_id" optional="hide"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                            <separator string="Tashilgan mahsulotlar"/>
+                            <field name="move_ids" nolabel="1" readonly="1">
+                                <list>
+                                    <field name="picking_id"/>
+                                    <field name="product_id"/>
+                                    <field name="quantity" sum="Miqdor"/>
+                                    <field name="product_uom"/>
+                                    <field name="location_id" string="Qayerdan"/>
+                                    <field name="location_dest_id" string="Qayerga"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Haydovchi xarajatlari" name="expenses">
+                            <field name="expense_ids" readonly="1">
+                                <list>
+                                    <field name="date"/>
+                                    <field name="name"/>
+                                    <field name="product_id"/>
+                                    <field name="employee_id"/>
+                                    <field name="total_amount" sum="Jami"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Ta'mir va texnik xizmat" name="services">
+                            <field name="service_ids" readonly="1">
+                                <list>
+                                    <field name="date"/>
+                                    <field name="service_type_id"/>
+                                    <field name="description"/>
+                                    <field name="vendor_id"/>
+                                    <field name="amount" sum="Jami"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Izoh" name="note">
+                            <field name="note" nolabel="1" placeholder="Reys haqida qo'shimcha ma'lumot..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_agronova_trip_search" model="ir.ui.view">
+        <field name="name">agronova.trip.search</field>
+        <field name="model">agronova.trip</field>
+        <field name="arch" type="xml">
+            <search string="Reyslar">
+                <field name="name"/>
+                <field name="vehicle_id"/>
+                <field name="driver_id"/>
+                <field name="partner_id"/>
+                <field name="origin"/>
+                <field name="destination"/>
+                <filter name="internal" string="Ichki reys"
+                        domain="[('trip_type', '=', 'internal')]"/>
+                <filter name="external" string="Tashqi reys"
+                        domain="[('trip_type', '=', 'external')]"/>
+                <separator/>
+                <filter name="open" string="Yakunlanmagan"
+                        domain="[('state', '!=', 'done')]"/>
+                <filter name="loss" string="Zarar bilan"
+                        domain="[('profit', '&lt;', 0)]"/>
+                <separator/>
+                <filter name="this_month" string="Shu oy"
+                        domain="[('date', '&gt;=', (context_today() + relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                <group>
+                    <filter name="g_vehicle" string="Avtomobil" context="{'group_by': 'vehicle_id'}"/>
+                    <filter name="g_driver" string="Haydovchi" context="{'group_by': 'driver_id'}"/>
+                    <filter name="g_type" string="Reys turi" context="{'group_by': 'trip_type'}"/>
+                    <filter name="g_state" string="Holati" context="{'group_by': 'state'}"/>
+                    <filter name="g_partner" string="Mijoz" context="{'group_by': 'partner_id'}"/>
+                    <filter name="g_date" string="Sana" context="{'group_by': 'date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_agronova_trip_graph" model="ir.ui.view">
+        <field name="name">agronova.trip.graph</field>
+        <field name="model">agronova.trip</field>
+        <field name="arch" type="xml">
+            <graph string="Reyslar tahlili" sample="1">
+                <field name="vehicle_id"/>
+                <field name="profit" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_agronova_trip_pivot" model="ir.ui.view">
+        <field name="name">agronova.trip.pivot</field>
+        <field name="model">agronova.trip</field>
+        <field name="arch" type="xml">
+            <pivot string="Reyslar tahlili" sample="1">
+                <field name="driver_id" type="row"/>
+                <field name="trip_type" type="col"/>
+                <field name="revenue" type="measure"/>
+                <field name="expense_total" type="measure"/>
+                <field name="profit" type="measure"/>
+                <field name="driver_share" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_agronova_trip" model="ir.actions.act_window">
+        <field name="name">Reyslar</field>
+        <field name="res_model">agronova.trip</field>
+        <field name="view_mode">list,form,graph,pivot</field>
+        <field name="search_view_id" ref="view_agronova_trip_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Birinchi reysni yarating</p>
+            <p>
+                Har bir reysga avtomat lot (analitik hisob) ochiladi.
+                Haydovchi xarajatlari va yo'ldagi ta'mir shu lotga yig'iladi,
+                foyda va haydovchi ulushi avtomat hisoblanadi.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_agronova_trip"
+              name="Reyslar"
+              parent="fleet.menu_root"
+              action="action_agronova_trip"
+              sequence="5"
+              groups="fleet.fleet_group_user"/>
+
+</odoo>

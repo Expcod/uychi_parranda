@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Form View (A Ilovasi shakli) -->
+        <record id="view_agronova_batch_cost_report_form" model="ir.ui.view">
+            <field name="name">agronova.batch.cost.report.form</field>
+            <field name="model">agronova.batch.cost.report</field>
+            <field name="arch" type="xml">
+                <form string="A Ilovasi: Partiya Tannarxi Hisoboti">
+                    <sheet>
+                        <field name="currency_id" invisible="1"/>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                            <h3>
+                                <field name="filial_id" readonly="1"/> — <field name="bino_id" readonly="1"/>
+                            </h3>
+                        </div>
+
+                        <!-- PARTIYA ASOSIY PARAMETRLARI -->
+                        <group string="1. Partiya Parametrlari va Natijalari">
+                            <group>
+                                <field name="partiya_id"/>
+                                <field name="davr_kun"/>
+                                <field name="boshlangich_son"/>
+                                <field name="nobud_son"/>
+                                <field name="nobud_foiz" widget="percentage"/>
+                            </group>
+                            <group>
+                                <field name="yakuniy_son"/>
+                                <field name="ortacha_vazn"/>
+                                <field name="jami_tirik_vazn"/>
+                                <field name="yem_sarfi_kg"/>
+                                <field name="fcr"/>
+                            </group>
+                        </group>
+
+                        <!-- XARAJATLAR JADVALI (A ILOVASI) -->
+                        <div class="o_horizontal_separator">2. Xarajat Turlari Kesimida Tannarx Tuzilishi (A Ilovasi)</div>
+                        <div class="mb-3">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr class="table-primary">
+                                        <th style="width: 5%;">№</th>
+                                        <th style="width: 45%;">Xarajat turi</th>
+                                        <th style="width: 25%;">Summa (so'm)</th>
+                                        <th style="width: 25%;">Ulushi (%)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td><strong>Yem sarfi</strong></td>
+                                        <td><field name="yem_xarajat" widget="monetary"/></td>
+                                        <td><field name="yem_ulush"/> %</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td><strong>Jo'ja (boshlang'ich mol)</strong></td>
+                                        <td><field name="joja_xarajat" widget="monetary"/></td>
+                                        <td><field name="joja_ulush"/> %</td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td><strong>Kommunal xarajatlar (gaz, elektr, suv)</strong></td>
+                                        <td><field name="kommunal_xarajat" widget="monetary"/></td>
+                                        <td><field name="kommunal_ulush"/> %</td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td><strong>Ish haqi</strong></td>
+                                        <td><field name="ish_haqi_xarajat" widget="monetary"/></td>
+                                        <td><field name="ish_haqi_ulush"/> %</td>
+                                    </tr>
+                                    <tr>
+                                        <td>5</td>
+                                        <td><strong>Veterinariya va dori-darmon</strong></td>
+                                        <td><field name="vet_dori_xarajat" widget="monetary"/></td>
+                                        <td><field name="vet_dori_ulush"/> %</td>
+                                    </tr>
+                                    <tr>
+                                        <td>6</td>
+                                        <td><strong>Amortizatsiya va boshqa xarajatlar</strong></td>
+                                        <td><field name="amortizatsiya_boshqa_xarajat" widget="monetary"/></td>
+                                        <td><field name="amortizatsiya_ulush"/> %</td>
+                                    </tr>
+                                    <tr class="table-success font-weight-bold">
+                                        <td></td>
+                                        <td><strong>JAMI XARAJAT</strong></td>
+                                        <td><strong><field name="jami_xarajat" widget="monetary"/></strong></td>
+                                        <td><strong>100.0 %</strong></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- BIRLIK TANNARX VA OG'ISHLAR -->
+                        <group string="3. Yakuniy Ko'rsatkichlar va Normativdan Og'ish Tahlili">
+                            <group>
+                                <field name="bir_bosh_tannarx" widget="monetary"/>
+                                <field name="bir_kg_tannarx" widget="monetary"/>
+                            </group>
+                            <group>
+                                <field name="normativ_fcr"/>
+                                <field name="fcr_ogish"/>
+                                <field name="normativ_nobud"/>
+                                <field name="nobud_ogish"/>
+                            </group>
+                        </group>
+
+                        <div class="alert alert-info" role="alert">
+                            <strong>Izoh:</strong> Tizim aynan shu og'ishlar orqali «foyda nega kam bo'ldi» degan savolga javob beradi: yem sarfi normadan oshgani yoki nobudgarchilik yuqori bo'lgani tannarxni oshiradi.
+                        </div>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- List View -->
+        <record id="view_agronova_batch_cost_report_list" model="ir.ui.view">
+            <field name="name">agronova.batch.cost.report.list</field>
+            <field name="model">agronova.batch.cost.report</field>
+            <field name="arch" type="xml">
+                <list string="A Ilovasi: Partiya Tannarxi">
+                    <field name="name"/>
+                    <field name="filial_id"/>
+                    <field name="bino_id"/>
+                    <field name="davr_kun"/>
+                    <field name="boshlangich_son"/>
+                    <field name="yakuniy_son"/>
+                    <field name="nobud_foiz" widget="percentage"/>
+                    <field name="ortacha_vazn"/>
+                    <field name="jami_tirik_vazn"/>
+                    <field name="fcr"/>
+                    <field name="fcr_ogish"/>
+                    <field name="jami_xarajat" widget="monetary"/>
+                    <field name="bir_bosh_tannarx" widget="monetary"/>
+                    <field name="bir_kg_tannarx" widget="monetary"/>
+                    <field name="currency_id" column_invisible="True"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_agronova_batch_cost_report" model="ir.actions.act_window">
+            <field name="name">📋 A Ilovasi: Partiya Tannarxi Hisoboti</field>
+            <field name="res_model">agronova.batch.cost.report</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

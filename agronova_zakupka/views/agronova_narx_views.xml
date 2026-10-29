@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_narx_normasi_list" model="ir.ui.view">
+        <field name="name">agronova.narx.normasi.list</field>
+        <field name="model">agronova.narx.normasi</field>
+        <field name="arch" type="xml">
+            <list string="Norma narxlar" editable="bottom"
+                  decoration-warning="eski">
+                <field name="product_id"/>
+                <field name="norma_narx"/>
+                <field name="sana"/>
+                <field name="manba"/>
+                <field name="manba_izoh" optional="hide"/>
+                <field name="eski"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_narx_normasi_form" model="ir.ui.view">
+        <field name="name">agronova.narx.normasi.form</field>
+        <field name="model">agronova.narx.normasi</field>
+        <field name="arch" type="xml">
+            <form string="Norma narx">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="product_id"/>
+                            <field name="norma_narx"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="sana"/>
+                            <field name="manba"/>
+                            <field name="eski"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <field name="manba_izoh"/>
+                    <div class="text-muted">
+                        Xarid tarixi bo'lgan tovarda bu yozuv har hisoblashda
+                        avtomat yangilanadi. Qo'lda kiritish faqat manba
+                        «Qo'lda» bo'lganda saqlanib qoladi.
+                    </div>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_narx_normasi_search" model="ir.ui.view">
+        <field name="name">agronova.narx.normasi.search</field>
+        <field name="model">agronova.narx.normasi</field>
+        <field name="arch" type="xml">
+            <search string="Norma narxlar">
+                <field name="product_id"/>
+                <filter name="eski" string="Eskirgan" domain="[('eski', '=', True)]"/>
+                <filter name="birinchi_xarid" string="Birinchi xariddan"
+                        domain="[('manba', '=', 'birinchi_xarid')]"/>
+                <group>
+                    <filter name="g_manba" string="Manba" context="{'group_by': 'manba'}"/>
+                    <filter name="g_sana" string="Sana" context="{'group_by': 'sana'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_zakupka_narx_normasi" model="ir.actions.act_window">
+        <field name="name">Norma narxlar</field>
+        <field name="res_model">agronova.narx.normasi</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_narx_normasi_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Norma narx yozuvi yo'q</p>
+            <p>Norma narx uch qatlamda aniqlanadi: xarid tarixi → kategoriya
+               limiti → «birinchi xarid». Yozuvlar birinchi xariddan yoki
+               tarix hisoblanganda o'zidan-o'zi paydo bo'ladi.</p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_agronova_xarajat_kategoriya_list" model="ir.ui.view">
+        <field name="name">agronova.xarajat.kategoriya.list</field>
+        <field name="model">agronova.xarajat.kategoriya</field>
+        <field name="arch" type="xml">
+            <list string="Xarajat kategoriyalari" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="taqsimlash_bazasi"/>
+                <field name="is_ish_haqi"/>
+                <field name="account_id" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_agronova_xarajat_kategoriya_form" model="ir.ui.view">
+        <field name="name">agronova.xarajat.kategoriya.form</field>
+        <field name="model">agronova.xarajat.kategoriya</field>
+        <field name="arch" type="xml">
+            <form string="Xarajat kategoriyasi">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Kategoriya nomi"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="taqsimlash_bazasi"/>
+                            <field name="is_ish_haqi"/>
+                        </group>
+                        <group>
+                            <field name="account_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    <field name="note" placeholder="Izoh..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_agronova_xarajat_kategoriya" model="ir.actions.act_window">
+        <field name="name">Xarajat kategoriyalari</field>
+        <field name="res_model">agronova.xarajat.kategoriya</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Birinchi xarajat kategoriyasini yarating</p>
+            <p>Kategoriyani faqat administrator yaratadi. Har kategoriyaga standart
+               taqsimlash bazasi bog'lanadi — xarajat hujjatida u avtomat qo'yiladi.</p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Umumiy TZ §6, rollar matritsasi:
+           «Ferma ishchisi — faqat o'z sehi»
+           «Ferma boshlig'i — o'z filiali sehlari»
+         Yakuniy TZ M05 rollari ham shu tartibda. -->
+
+    <!-- ====================================================== BINO -->
+
+    <record id="rule_boquv_bino_ishchi" model="ir.rule">
+        <field name="name">Boquv: ishchi faqat o'z binosi</field>
+        <field name="model_id" ref="model_agronova_boquv_bino"/>
+        <field name="domain_force">
+            ['|', ('operator_id.user_id', '=', user.id),
+                  ('brigadir_id.user_id', '=', user.id)]
+        </field>
+        <field name="groups" eval="[(4, ref('group_boquv_ishchi'))]"/>
+    </record>
+
+    <record id="rule_boquv_bino_brigadir" model="ir.rule">
+        <field name="name">Boquv: brigadir o'z filiali binolarini ko'radi</field>
+        <field name="model_id" ref="model_agronova_boquv_bino"/>
+        <field name="domain_force">
+            ['|', ('filial_id.boshliq_id.user_id', '=', user.id),
+                  ('brigadir_id.user_id', '=', user.id)]
+        </field>
+        <field name="groups" eval="[(4, ref('group_boquv_brigadir'))]"/>
+    </record>
+
+    <record id="rule_boquv_bino_boshliq" model="ir.rule">
+        <field name="name">Boquv: boshliq barcha binolarni ko'radi</field>
+        <field name="model_id" ref="model_agronova_boquv_bino"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_boquv_boshliq'))]"/>
+    </record>
+
+    <!-- =================================================== PARTIYA -->
+
+    <record id="rule_boquv_partiya_ishchi" model="ir.rule">
+        <field name="name">Boquv: ishchi faqat o'z binosi partiyalari</field>
+        <field name="model_id" ref="model_agronova_boquv_partiya"/>
+        <field name="domain_force">
+            ['|', ('bino_id.operator_id.user_id', '=', user.id),
+                  ('brigadir_id.user_id', '=', user.id)]
+        </field>
+        <field name="groups" eval="[(4, ref('group_boquv_ishchi'))]"/>
+    </record>
+
+    <record id="rule_boquv_partiya_brigadir" model="ir.rule">
+        <field name="name">Boquv: brigadir o'z filiali partiyalari</field>
+        <field name="model_id" ref="model_agronova_boquv_partiya"/>
+        <field name="domain_force">
+            ['|', ('filial_id.boshliq_id.user_id', '=', user.id),
+                  ('brigadir_id.user_id', '=', user.id)]
+        </field>
+        <field name="groups" eval="[(4, ref('group_boquv_brigadir'))]"/>
+    </record>
+
+    <record id="rule_boquv_partiya_boshliq" model="ir.rule">
+        <field name="name">Boquv: boshliq barcha partiyalarni ko'radi</field>
+        <field name="model_id" ref="model_agronova_boquv_partiya"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_boquv_boshliq'))]"/>
+    </record>
+
+    <!-- ==================================================== JURNAL -->
+
+    <record id="rule_boquv_jurnal_ishchi" model="ir.rule">
+        <field name="name">Boquv: ishchi faqat o'z binosi jurnali</field>
+        <field name="model_id" ref="model_agronova_boquv_jurnal"/>
+        <field name="domain_force">
+            ['|', ('bino_id.operator_id.user_id', '=', user.id),
+                  ('bino_id.brigadir_id.user_id', '=', user.id)]
+        </field>
+        <field name="groups" eval="[(4, ref('group_boquv_ishchi'))]"/>
+    </record>
+
+    <record id="rule_boquv_jurnal_brigadir" model="ir.rule">
+        <field name="name">Boquv: brigadir o'z filiali jurnallari</field>
+        <field name="model_id" ref="model_agronova_boquv_jurnal"/>
+        <field name="domain_force">
+            ['|', ('filial_id.boshliq_id.user_id', '=', user.id),
+                  ('bino_id.brigadir_id.user_id', '=', user.id)]
+        </field>
+        <field name="groups" eval="[(4, ref('group_boquv_brigadir'))]"/>
+    </record>
+
+    <record id="rule_boquv_jurnal_boshliq" model="ir.rule">
+        <field name="name">Boquv: boshliq barcha jurnallarni ko'radi</field>
+        <field name="model_id" ref="model_agronova_boquv_jurnal"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_boquv_boshliq'))]"/>
+    </record>
+
+    <!-- ===================================================== OBXOD -->
+
+    <record id="rule_boquv_obxod_ishchi" model="ir.rule">
+        <field name="name">Boquv: ishchi faqat o'z obxodlari</field>
+        <field name="model_id" ref="model_agronova_boquv_obxod"/>
+        <field name="domain_force">
+            ['|', ('brigadir_id.user_id', '=', user.id),
+                  ('bino_id.operator_id.user_id', '=', user.id)]
+        </field>
+        <field name="groups" eval="[(4, ref('group_boquv_ishchi'))]"/>
+    </record>
+
+    <record id="rule_boquv_obxod_boshliq" model="ir.rule">
+        <field name="name">Boquv: boshliq barcha obxodlarni ko'radi</field>
+        <field name="model_id" ref="model_agronova_boquv_obxod"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_boquv_brigadir'))]"/>
+    </record>
+
+    <!-- =================================================== XARAJAT -->
+
+    <record id="rule_boquv_xarajat_brigadir" model="ir.rule">
+        <field name="name">Boquv: brigadir o'z filiali xarajatlari</field>
+        <field name="model_id" ref="model_agronova_boquv_xarajat"/>
+        <field name="domain_force">
+            ['|', ('filial_id.boshliq_id.user_id', '=', user.id),
+                  ('create_uid', '=', user.id)]
+        </field>
+        <field name="groups" eval="[(4, ref('group_boquv_brigadir'))]"/>
+    </record>
+
+    <record id="rule_boquv_xarajat_boshliq" model="ir.rule">
+        <field name="name">Boquv: boshliq barcha xarajatlarni ko'radi</field>
+        <field name="model_id" ref="model_agronova_boquv_xarajat"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_boquv_boshliq'))]"/>
+    </record>
+
+</odoo>

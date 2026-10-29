@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- TZ 18-bo'lim hisobotlari.
+         Alohida model yozilmagan: har biri mavjud hujjatning domain va
+         guruhlash bilan ochilgan ko'rinishi — ma'lumot bitta joyda turadi,
+         hisobot esa undan chetga chiqmaydi. -->
+
+    <record id="view_kirim_pivot" model="ir.ui.view">
+        <field name="name">agronova.kirim.pivot</field>
+        <field name="model">agronova.kirim</field>
+        <field name="arch" type="xml">
+            <pivot string="Xaridlar" sample="1">
+                <field name="kontragent_id" type="row"/>
+                <field name="xarid_turi" type="col"/>
+                <field name="jami_summa" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_kirim_graph" model="ir.ui.view">
+        <field name="name">agronova.kirim.graph</field>
+        <field name="model">agronova.kirim</field>
+        <field name="arch" type="xml">
+            <graph string="Xaridlar" type="bar" sample="1">
+                <field name="kontragent_id"/>
+                <field name="jami_summa" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- 1. Ochiq zayavkalar — qaysi bosqichda, qancha kechikkan -->
+    <record id="action_hisobot_ochiq_zayavka" model="ir.actions.act_window">
+        <field name="name">Ochiq zayavkalar</field>
+        <field name="res_model">agronova.zayavka</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('holat', 'in', ('zakupchikka_yuborildi', 'qabul_qilindi', 'qisman_bajarildi'))]</field>
+        <field name="context">{'search_default_g_holat': 1}</field>
+    </record>
+
+    <!-- 2. Tasdiq kutayotgan ruxsatlar — kim ushlab turibdi -->
+    <record id="action_hisobot_tasdiq_kutmoqda" model="ir.actions.act_window">
+        <field name="name">Tasdiq kutayotgan ruxsatlar</field>
+        <field name="res_model">agronova.ruxsat</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('holat', 'in', ('bolim_boshligi', 'sifat_nazorat'))]</field>
+        <field name="context">{'search_default_g_holat': 1}</field>
+    </record>
+
+    <!-- 3. Tranzitda turgan tovarlar — zakupchik zimmasida, necha kundan beri -->
+    <record id="action_hisobot_tranzit" model="ir.actions.act_window">
+        <field name="name">Tranzitda turgan tovarlar</field>
+        <field name="res_model">agronova.kirim</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('holat', '=', 'tasdiqlangan')]</field>
+        <field name="context">{'search_default_g_zakupchik': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Tranzitda tovar yo'q</p>
+            <p>Bu ro'yxat bo'sh bo'lishi yaxshi belgi: sotib olingan har bir
+               tovar omborchiga topshirilgan.</p>
+        </field>
+    </record>
+
+    <!-- 4. Faktura kutilayotgan tovarlar -->
+    <record id="action_hisobot_faktura_kutmoqda" model="ir.actions.act_window">
+        <field name="name">Faktura kutilayotgan tovarlar</field>
+        <field name="res_model">agronova.kirim</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('faktura_holati', '=', 'kutilmoqda')]</field>
+        <field name="context">{'search_default_g_kontragent': 1}</field>
+    </record>
+
+    <!-- 5. Fakturasi bor, tovari yo'q (teskari holat) -->
+    <record id="action_hisobot_faktura_ortiqcha" model="ir.actions.act_window">
+        <field name="name">Fakturasi bor, tovari yo'q</field>
+        <field name="res_model">agronova.didox.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('holat', 'in', ('kutilmoqda', 'nomos'))]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Bog'lanmagan faktura yo'q</p>
+            <p>Didox'dan kelgan, lekin biror kirim hujjatiga to'g'ri
+               kelmagan fakturalar shu yerda. QQS zachyoti yo'qolmasligi
+               uchun har birini tekshirish kerak.</p>
+        </field>
+    </record>
+
+    <!-- 6. Narx og'ishi -->
+    <record id="action_hisobot_narx_ogishi" model="ir.actions.act_window">
+        <field name="name">Narx og'ishi</field>
+        <field name="res_model">agronova.ruxsat</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('ogish_foizi', '!=', 0)]</field>
+        <field name="context">{'search_default_g_tovar': 1}</field>
+    </record>
+
+    <!-- 7. Kechikib kiritilgan yozuvlar -->
+    <record id="action_hisobot_kechikib_kiritilgan" model="ir.actions.act_window">
+        <field name="name">Kechikib kiritilgan yozuvlar</field>
+        <field name="res_model">agronova.kirim</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('kechikib_kiritilgan', '=', True)]</field>
+        <field name="context">{'search_default_g_zakupchik': 1}</field>
+    </record>
+
+    <!-- 8. Depozit qoldiqlari (agronova_savdo_moliya modeli) -->
+    <record id="action_hisobot_depozit" model="ir.actions.act_window">
+        <field name="name">Depozit qoldiqlari</field>
+        <field name="res_model">agronova.depozit</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- 10. Kontragent bo'yicha xaridlar -->
+    <record id="action_hisobot_kontragent_xarid" model="ir.actions.act_window">
+        <field name="name">Kontragent bo'yicha xaridlar</field>
+        <field name="res_model">agronova.kirim</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="domain">[('holat', '!=', 'bekor')]</field>
+    </record>
+
+    <!-- 11. Muddati tugayotgan tovarlar (dori va oziq-ovqat) -->
+    <record id="action_hisobot_muddat_tugayotgan" model="ir.actions.act_window">
+        <field name="name">Muddati tugayotgan tovarlar</field>
+        <field name="res_model">stock.lot</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('expiration_date', '!=', False)]</field>
+        <field name="context">{'search_default_expiration_alerts': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Muddati yaqin lot yo'q</p>
+            <p>Yaroqlilik muddati yoqilgan tovarlarda FEFO avtomat ishlaydi —
+               muddati oldin tugaydigani birinchi chiqariladi.</p>
+        </field>
+    </record>
+
+    <!-- 12. Import holati -->
+    <record id="action_hisobot_import_holati" model="ir.actions.act_window">
+        <field name="name">Import holati</field>
+        <field name="res_model">agronova.import</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('holat', 'in', ('yolda', 'bojxonada', 'keldi'))]</field>
+        <field name="context">{'search_default_g_holat': 1}</field>
+    </record>
+
+</odoo>

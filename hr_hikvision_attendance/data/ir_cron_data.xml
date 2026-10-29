@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Hikvision qurilmasidan loglarni olish (har 1 daqiqada) -->
+        <record id="ir_cron_fetch_hikvision_logs" model="ir.cron">
+            <field name="name">Hikvision: Fetch Attendance Logs</field>
+            <field name="model_id" ref="model_hikvision_device"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_fetch_logs()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">minutes</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <!--
+            Ochiq qolgan davomatlarni yopish (har kuni soat 01:00).
+
+            Chiqishni unutgan xodim ertasi kuni kira olmay qolardi -
+            core hr.attendance bitta ochiq davomatdan ortig'iga ruxsat
+            bermaydi. Bu cron kechasi tiqilinchni ochadi.
+
+            Quyidagi OLIB TASHLANGAN "Auto Close" croni bilan ADASHTIRMANG:
+            u soxta 17:00 yozardi va ish soatini shishirardi. Bu esa
+            check_out = check_in qo'yadi (ish soati 0) va yozuvni
+            "Yopilmagan" deb belgilaydi - soxta soat yozilmaydi.
+        -->
+        <record id="ir_cron_close_stale_attendances" model="ir.cron">
+            <field name="name">Hikvision: Ochiq davomatlarni yopish</field>
+            <field name="model_id" ref="model_hikvision_device"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_close_stale_attendances()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <!-- ir.cron.nextcall UTC saqlanadi. 20:00 UTC = 01:00
+                 Toshkent (UTC+5). O'zbekistonda yozgi vaqt yo'q,
+                 shuning uchun siljish bo'lmaydi.
+
+                 Eng yaqin 20:00 UTC tanlanadi: o'rnatish 20:00 UTC dan
+                 OLDIN bo'lsa o'sha kuni, keyin bo'lsa ertasi kuni.
+                 Ilgari shartsiz +1 kun qo'shilardi — kunduzi o'rnatilsa
+                 cron bir kun bekorga kutardi (18-avgustda o'rnatilsa
+                 20-avgust kechasi ishlardi) va o'sha oraliqdagi ochiq
+                 davomatlar yopilmay qolardi. -->
+            <field name="nextcall" eval="(DateTime.now().replace(hour=20, minute=0, second=0, microsecond=0) + timedelta(days=1 if DateTime.now().hour >= 20 else 0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="active" eval="True"/>
+        </record>
+
+        <!--
+            OLIB TASHLANDI: "Hikvision: Auto Close Attendance"
+
+            Bu cron ochiq davomatlarga jadval bo'yicha soxta check_out
+            yozardi (hammaga bir xil 17:00). Natijada ish soatlari
+            haqiqatga mos kelmasdi va raw SQL ishlatgani uchun
+            worked_hours/overtime ham qayta hisoblanmasdi.
+
+            Endi chiqishlar faqat qurilmadan olinadi. Xodim chiqishni
+            unutsa - davomat ochiq qoladi va HR uni ko'radi.
+
+            Eski cron yozuvini bazadan o'chirish uchun migratsiya:
+            migrations/*/post-remove_autoclose_cron.py
+        -->
+
+        <!--
+            OLIB TASHLANDI: "Hikvision: Ta'til holatini sinxronlash"
+
+            Bu cron har kuni ta'til/dam olish kuniga qarab xodimlarni
+            qurilmada blocklist'ga qo'yardi va qaytarardi.
+
+            Nega olib tashlandi:
+              - Odoo va qurilma holati muntazam ajralib ketardi
+                (Odoo 15 ta bloklangan deb bilardi, qurilmada 19 ta edi)
+              - Qurilmada Odoo bilmaydigan barcode'lar bloklanib qolardi
+                va ularni hech narsa blokdan chiqarmasdi
+              - Ta'tildan qaytgan xodim qurilmadan o'ta olmay qolardi
+
+            Endi qurilma faqat davomat yig'adi; kimni kiritish/kiritmaslik
+            qurilma panelidan hal qilinadi.
+
+            Eski cron yozuvini bazadan o'chirish uchun migratsiya:
+            migrations/19.0.1.5.0/post-migration.py
+        -->
+
+        <!--
+            OLIB TASHLANDI:
+              "Hikvision: Log Telegram Notification"  (har 1 daqiqada)
+              "Hikvision: Haftalik Log Tozalash"
+
+            Modul endi o'z log faylini yozmaydi - Odoo standart
+            logging'idan foydalanadi. Shu sababli Telegram ga yuborish
+            ham, haftalik fayl tozalash ham kerak emas.
+
+            Telegram cron xodim ismlari va davomat vaqtlarini har
+            daqiqada tashqi guruhga yuborardi (bot tokeni kodda ochiq
+            turgan edi).
+        -->
+    </data>
+</odoo>
+
+

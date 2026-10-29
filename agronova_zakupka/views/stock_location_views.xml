@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_location_form_zakupka" model="ir.ui.view">
+        <field name="name">stock.location.form.zakupka</field>
+        <field name="model">stock.location</field>
+        <field name="inherit_id" ref="stock.view_location_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <group string="Xarid tranziti" name="zakupka"
+                       groups="agronova_zakupka.group_zakupka_bolim_boshligi">
+                    <field name="zakupchik_tranzit"/>
+                    <field name="zakupchik_user_id"
+                           invisible="not zakupchik_tranzit"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_zakupka_tranzit" model="ir.actions.act_window">
+        <field name="name">Zakupchik tranzit omborlari</field>
+        <field name="res_model">stock.location</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('zakupchik_tranzit', '=', True)]</field>
+        <field name="context">{'default_zakupchik_tranzit': True, 'default_usage': 'internal'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Tranzit ombori yo'q</p>
+            <p>Har bir zakupchikka shaxsiy tranzit ombori ochiladi: sotib
+               olingan, lekin omborchi qabul qilmagan tovar shu yerda, uning
+               zimmasida turadi. Xodim kartochkasidagi «Tranzit ombori
+               ochish» tugmasi shu joyni yaratadi.</p>
+        </field>
+    </record>
+
+</odoo>

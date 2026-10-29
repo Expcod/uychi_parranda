@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Yopilmagan davomatlarni ro'yxatda ko'rsatish.
+
+        Bunday yozuv xato emas, lekin e'tibor talab qiladi: xodim
+        chiqishda qurilmadan o'tmagan, cron uni kechasi yopgan va ish
+        vaqti 0 bo'lib qolgan. HR haqiqiy chiqish vaqtini bilsa,
+        check_out ni tuzatadi - yozuv o'zi 'normal' ga qaytadi
+        (hr_attendance.py: write).
+    -->
+    <record id="view_attendance_tree_status" model="ir.ui.view">
+        <field name="name">hr.attendance.list.status</field>
+        <field name="model">hr.attendance</field>
+        <field name="inherit_id" ref="hr_attendance.view_attendance_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="decoration-warning">attendance_status == 'unclosed'</attribute>
+            </xpath>
+            <xpath expr="//field[@name='worked_hours']" position="after">
+                <field name="attendance_status" widget="badge"
+                       decoration-warning="attendance_status == 'unclosed'"
+                       decoration-success="attendance_status == 'normal'"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_attendance_form_status" model="ir.ui.view">
+        <field name="name">hr.attendance.form.status</field>
+        <field name="model">hr.attendance</field>
+        <field name="inherit_id" ref="hr_attendance.hr_attendance_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='worked_hours']" position="after">
+                <field name="attendance_status"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Yopilmaganlarni tez topish uchun filtr -->
+    <record id="view_attendance_search_status" model="ir.ui.view">
+        <field name="name">hr.attendance.search.status</field>
+        <field name="model">hr.attendance</field>
+        <field name="inherit_id" ref="hr_attendance.hr_attendance_view_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <filter name="filter_unclosed" string="Yopilmagan"
+                        domain="[('attendance_status', '=', 'unclosed')]"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

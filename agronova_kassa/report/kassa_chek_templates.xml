@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================= 80mm CHEK ================= -->
+    <template id="kassa_chek_document">
+        <t t-call="web.basic_layout">
+            <div class="page" style="width:74mm; font-family:'DejaVu Sans',sans-serif; font-size:10px; color:#000;">
+                <div style="text-align:center; border-bottom:1px dashed #000; padding-bottom:4px; margin-bottom:4px;">
+                    <div style="font-size:13px; font-weight:bold;">
+                        <span t-field="doc.company_id.name"/>
+                    </div>
+                    <div t-if="doc.company_id.vat">
+                        STIR: <span t-field="doc.company_id.vat"/>
+                    </div>
+                    <div t-if="doc.company_id.street">
+                        <span t-field="doc.company_id.street"/>
+                    </div>
+                    <div style="margin-top:3px; font-size:12px; font-weight:bold;">
+                        <t t-if="doc.direction == 'in'">KASSA KIRIM ORDERI</t>
+                        <t t-else="">KASSA CHIQIM ORDERI</t>
+                    </div>
+                </div>
+
+                <table style="width:100%; font-size:10px;">
+                    <tr>
+                        <td>Hujjat №</td>
+                        <td style="text-align:right; font-weight:bold;">
+                            <span t-field="doc.name"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Sana</td>
+                        <td style="text-align:right;">
+                            <span t-field="doc.date" t-options="{'tz_name': 'Asia/Tashkent'}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Kassa</td>
+                        <td style="text-align:right;">
+                            <span t-field="doc.kassa_id.name"/>
+                        </td>
+                    </tr>
+                    <tr t-if="doc.modda_id">
+                        <td>Modda</td>
+                        <td style="text-align:right;">
+                            <span t-field="doc.modda_id.name"/>
+                        </td>
+                    </tr>
+                    <tr t-if="doc._panel_kim()">
+                        <td>
+                            <t t-if="doc.direction == 'in'">Kimdan</t>
+                            <t t-else="">Kimga</t>
+                        </td>
+                        <td style="text-align:right;">
+                            <span t-esc="doc._panel_kim()"/>
+                        </td>
+                    </tr>
+                </table>
+
+                <div t-if="doc.izoh" style="margin-top:4px; padding-top:3px; border-top:1px dotted #000;">
+                    <span t-field="doc.izoh"/>
+                </div>
+
+                <div style="margin-top:6px; padding:5px 0; border-top:1px dashed #000; border-bottom:1px dashed #000; text-align:center;">
+                    <div style="font-size:10px;">
+                        <t t-if="doc.direction == 'in'">QABUL QILINDI</t>
+                        <t t-else="">BERILDI</t>
+                    </div>
+                    <div style="font-size:17px; font-weight:bold;">
+                        <span t-field="doc.amount"
+                              t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                    </div>
+                </div>
+
+                <div t-if="doc.state == 'storno'"
+                     style="margin-top:5px; text-align:center; font-weight:bold; border:2px solid #000; padding:3px;">
+                    ⚠ BU HUJJAT STORNO QILINGAN
+                    <div t-if="doc.storno_sabab" style="font-weight:normal;">
+                        <span t-field="doc.storno_sabab"/>
+                    </div>
+                </div>
+
+                <table style="width:100%; margin-top:10px; font-size:9px;">
+                    <tr>
+                        <td style="padding-top:10px; border-top:1px solid #000;">Kassir</td>
+                        <td style="padding-top:10px; border-top:1px solid #000; text-align:right;">
+                            <span t-field="doc.user_id.name"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-top:14px; border-top:1px solid #000;">Imzo</td>
+                        <td style="padding-top:14px; border-top:1px solid #000;"></td>
+                    </tr>
+                </table>
+
+                <div style="text-align:center; margin-top:8px;">
+                    <img t-if="doc.chek_qr_src" t-att-src="doc.chek_qr_src"
+                         style="width:26mm; height:26mm;" alt="QR"/>
+                    <div style="font-size:8px; margin-top:2px;">
+                        Chekni tekshirish uchun QR kodni skanerlang
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_kassa_chek">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="agronova_kassa.kassa_chek_document"/>
+            </t>
+        </t>
+    </template>
+
+    <!-- ================= OCHIQ TEKSHIRISH SAHIFASI =================
+         MUHIM: bu yerda `web.frontend_layout` ISHLATILMAYDI. U portal
+         til tanlagichini chaqiradi, u esa `languages` kontekstisiz
+         yiqiladi (`object of type 'NoneType' has no len()`), chunki bu
+         marshrut portal/website qatlamidan o'tmaydi. Shuning uchun
+         minimal `web.layout` + o'z ichiga joylashtirilgan uslub
+         ishlatilgan — sahifa hech qanday asset'ga bog'liq emas va
+         telefonda ham tez ochiladi. -->
+
+    <template id="chek_uslub" name="Chek sahifasi uslubi">
+        <style>
+            body { margin:0; background:#f2f4f7; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; color:#1c2536; }
+            .sk-wrap { max-width:520px; margin:32px auto; padding:0 16px; }
+            .sk-card { background:#fff; border-radius:14px; box-shadow:0 2px 14px rgba(0,0,0,.09); overflow:hidden; }
+            .sk-head { padding:18px 20px; color:#fff; }
+            .sk-head h1 { margin:0; font-size:20px; }
+            .sk-ok { background:#198754; }
+            .sk-bad { background:#dc3545; }
+            .sk-warn { background:#fd7e14; }
+            .sk-body { padding:20px; }
+            .sk-org { margin:0 0 14px; font-size:17px; font-weight:600; }
+            table { width:100%; border-collapse:collapse; }
+            td { padding:8px 0; border-bottom:1px solid #eceff3; font-size:15px; }
+            td.k { color:#6b7684; }
+            td.v { text-align:right; font-weight:600; }
+            td.big { font-size:20px; }
+            .sk-note { margin-top:16px; padding:12px 14px; border-radius:9px; font-size:14px; }
+            .sk-note-bad { background:#fdeaec; color:#8a1c26; }
+            .sk-note-warn { background:#fff4e5; color:#8a4b00; }
+            .sk-note-muted { color:#6b7684; }
+        </style>
+    </template>
+
+    <template id="chek_sahifa" name="Kassa cheki — tekshirish">
+        <t t-call="web.layout">
+            <t t-set="title">Kassa cheki</t>
+            <t t-set="head">
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <t t-call="agronova_kassa.chek_uslub"/>
+            </t>
+            <div class="sk-wrap">
+                <div class="sk-card">
+                    <div t-attf-class="sk-head #{harakat.state == 'storno' and 'sk-bad' or (harakat.state == 'draft' and 'sk-warn' or 'sk-ok')}">
+                        <h1>
+                            <t t-if="harakat.state == 'storno'">Bu chek bekor qilingan</t>
+                            <t t-elif="harakat.state == 'draft'">Chek hali tasdiqlanmagan</t>
+                            <t t-else="">Chek haqiqiy</t>
+                        </h1>
+                    </div>
+                    <div class="sk-body">
+                        <p class="sk-org"><span t-field="company.name"/></p>
+                        <table>
+                            <tr>
+                                <td class="k">Hujjat</td>
+                                <td class="v"><span t-field="harakat.name"/></td>
+                            </tr>
+                            <tr>
+                                <td class="k">Sana</td>
+                                <td class="v">
+                                    <span t-field="harakat.date"
+                                          t-options="{'tz_name': 'Asia/Tashkent'}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="k">Turi</td>
+                                <td class="v">
+                                    <t t-if="harakat.direction == 'in'">Kirim (qabul qilindi)</t>
+                                    <t t-else="">Chiqim (berildi)</t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="k">Kassa</td>
+                                <td class="v"><span t-field="kassa.name"/></td>
+                            </tr>
+                            <tr>
+                                <td class="k">Summa</td>
+                                <td class="v big">
+                                    <span t-field="harakat.amount"
+                                          t-options="{'widget': 'monetary', 'display_currency': harakat.currency_id}"/>
+                                </td>
+                            </tr>
+                        </table>
+                        <div t-if="harakat.state == 'storno'" class="sk-note sk-note-bad">
+                            Bu hujjat storno qilingan — pul harakati bekor
+                            qilingan. Savol bo'lsa korxona buxgalteriyasiga
+                            murojaat qiling.
+                        </div>
+                        <div t-elif="harakat.state == 'draft'" class="sk-note sk-note-warn">
+                            Hujjat hali tasdiqlanmagan.
+                        </div>
+                        <div t-else="" class="sk-note sk-note-muted">
+                            Ushbu ma'lumot korxonaning kassa kitobidan olindi.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="chek_topilmadi" name="Chek topilmadi">
+        <t t-call="web.layout">
+            <t t-set="title">Chek topilmadi</t>
+            <t t-set="head">
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <t t-call="agronova_kassa.chek_uslub"/>
+            </t>
+            <div class="sk-wrap">
+                <div class="sk-card">
+                    <div class="sk-head sk-bad"><h1>Bunday chek topilmadi</h1></div>
+                    <div class="sk-body">
+                        <div class="sk-note sk-note-muted">
+                            QR kod noto'g'ri o'qilgan bo'lishi mumkin. Qayta
+                            urinib ko'ring yoki korxona buxgalteriyasiga
+                            murojaat qiling.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

@@ -1,0 +1,18 @@
+/* Ro'yxat ustunlarining sarlavhasi kesilmasin.
+
+   Odoo sarlavhani bitta qatorga siqadi va sig'masa «Tovuq (b...» qilib
+   qirqadi (Bootstrap `text-truncate`). Hisobotlarda ustun nomi uzun
+   bo'ladi — «Inkubatsion», «Tovuq (boshi)» — va foydalanuvchi qaysi
+   ustun ekanini taxmin qilib o'tiradi. Har bir hisobotga alohida
+   kenglik tanlab chiqish o'rniga sarlavha ikki qatorga o'tsin.
+
+   Faqat sarlavhaga tegadi: qatorlardagi qiymatlar avvalgidek bitta
+   qatorda turadi. SCSS emas, oddiy CSS — kompilyatsiya bosqichi yo'q,
+   xato bo'lsa butun backend uslubi buzilmaydi. */
+.o_list_renderer thead th > div > span.text-truncate {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    line-height: 1.15;
+    word-break: break-word;
+}

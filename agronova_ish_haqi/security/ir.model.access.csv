@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_tarif_korish,tarif korish,model_agronova_ish_haqi_tarif,agronova_ish_haqi.group_ih_korish,1,0,0,0
+access_tarif_hisobchi,tarif hisobchi,model_agronova_ish_haqi_tarif,agronova_ish_haqi.group_ih_hisobchi,1,1,1,1
+access_harakat_korish,harakat korish,model_agronova_ish_haqi_harakat,agronova_ish_haqi.group_ih_korish,1,0,0,0
+access_harakat_hisobchi,harakat hisobchi,model_agronova_ish_haqi_harakat,agronova_ish_haqi.group_ih_hisobchi,1,1,1,1
+access_davr_korish,davr korish,model_agronova_ish_haqi_davr,agronova_ish_haqi.group_ih_korish,1,0,0,0
+access_davr_hisobchi,davr hisobchi,model_agronova_ish_haqi_davr,agronova_ish_haqi.group_ih_hisobchi,1,1,1,1
+access_davr_qator_korish,davr qator korish,model_agronova_ish_haqi_davr_qator,agronova_ish_haqi.group_ih_korish,1,0,0,0
+access_davr_qator_hisobchi,davr qator hisobchi,model_agronova_ish_haqi_davr_qator,agronova_ish_haqi.group_ih_hisobchi,1,1,1,1

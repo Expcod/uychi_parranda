@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="pos_config_view_form_agronova" model="ir.ui.view">
+        <field name="name">pos.config.form.agronova</field>
+        <field name="model">pos.config</field>
+        <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <separator string="AgroNova qoidalari"/>
+                <div class="row mt16 o_settings_container">
+                    <setting string="Kassa kitobi"
+                             help="Smena yopilganda naqd tushum shu kassaga kirim bo'lib tushadi (TZ M04)">
+                        <field name="agronova_kassa_id" options="{'no_create': True}"/>
+                        <div class="text-muted" invisible="agronova_kassa_id">
+                            Kassa tanlanmasa POS naqdi kassa kitobiga tushmaydi —
+                            korxonada ikkita parallel naqd hisobi paydo bo'ladi.
+                        </div>
+                    </setting>
+                    <setting string="FEFO — lotni avtomat tanlash"
+                             help="Muddati oldin tugaydigan partiya birinchi ketadi (TZ M01, M06)">
+                        <field name="agronova_fefo"/>
+                        <div class="text-muted" invisible="agronova_fefo">
+                            O'chirilsa kassir har bir lot bilan kuzatiladigan
+                            mahsulotda lot raqamini qo'lda kiritishi kerak,
+                            aks holda tovar ombordan hisobdan chiqmaydi.
+                        </div>
+                    </setting>
+                    <setting string="Tannarxdan past sotuv taqiqi"
+                             help="TZ M08. Tannarxi kiritilmagan mahsulot tekshirilmaydi">
+                        <field name="agronova_tannarx_nazorati"/>
+                    </setting>
+                    <setting string="Kredit limitini tekshirish"
+                             help="TZ M08. «Keyin to'lash» usulida mijoz limiti nazorat qilinadi">
+                        <field name="agronova_kredit_nazorati"/>
+                    </setting>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

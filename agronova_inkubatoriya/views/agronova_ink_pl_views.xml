@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_ink_pl_form" model="ir.ui.view">
+        <field name="name">agronova.ink.pl.form</field>
+        <field name="model">agronova.ink.pl</field>
+        <field name="arch" type="xml">
+            <form string="Inkubatoriya — foyda va zarar">
+                <header>
+                    <button name="action_yangilash" type="object"
+                            string="Yangilash" class="btn-primary"
+                            help="Davrni o'zgartirgandan keyin xarajat tarkibini qayta hisoblaydi."/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Inkubatoriya — foyda va zarar</h1>
+                        <h3 class="text-muted">
+                            <field name="company_id" readonly="1"
+                                   options="{'no_open': True}"/>
+                        </h3>
+                    </div>
+                    <group>
+                        <group string="Davr">
+                            <field name="davr_boshi"/>
+                            <field name="davr_oxiri"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Inkubatsiya (ma'lumot uchun)">
+                            <field name="tuxum_dona"/>
+                            <field name="ochilgan_joja"/>
+                            <field name="sof_joja"/>
+                            <field name="ochilish_foiz"/>
+                            <field name="tannarx_1_joja"/>
+                            <field name="ishlab_chiqarish"/>
+                            <field name="ombor_ozgarishi"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Daromad">
+                            <field name="ichki_sotuv"/>
+                            <field name="tashqi_sotuv"/>
+                            <field name="boshqa_daromad"/>
+                            <field name="jami_daromad"
+                                   class="oe_subtotal_footer_separator"/>
+                        </group>
+                        <group string="Xarajat">
+                            <field name="sotilgan_tannarx"/>
+                            <field name="jami_xarajat"
+                                   class="oe_subtotal_footer_separator"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Bo'lim natijasi">
+                            <field name="bolim_foyda"/>
+                            <field name="bolim_rentabellik"/>
+                        </group>
+                        <group string="Konsolidatsiya">
+                            <field name="elminatsiya"/>
+                            <field name="konsolidatsiya_foyda"/>
+                            <field name="konsolidatsiya_rentabellik"/>
+                        </group>
+                    </group>
+
+                    <div class="alert alert-info" role="alert">
+                        <b>Ichki sotuv</b> — Boquv filialiga berilgan jo'ja.
+                        Bu oddiy ko'chirish emas: bo'limning o'z natijasi
+                        ko'rinishi uchun kelishilgan narxda daromad
+                        hisoblanadi.
+                        <br/>
+                        <b>Ochilish foizi</b> bu bo'limning asosiy
+                        ko'rsatkichi — qo'yilgan tuxumdan necha foizi jo'ja
+                        bo'lib chiqqani.
+                        <br/>
+                        <b>Elminatsiya</b> — jo'ja hali korxona ichida
+                        bo'lgani uchun realizatsiya qilinmagan marja
+                        konsolidatsiyalangan foydadan chiqariladi.
+                    </div>
+
+                    <notebook>
+                        <page string="Ishlab chiqarish xarajati tarkibi"
+                              name="tarkib">
+                            <field name="qator_ids" readonly="1">
+                                <list create="0" delete="0">
+                                    <field name="nom"/>
+                                    <field name="summa" sum="Jami"/>
+                                    <field name="ulush"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                            <div class="text-muted">
+                                Tuxum qiymati eng katta qismni tashkil qiladi.
+                                Qolgani — elektr, gaz, suv, ish haqi,
+                                veterinariya va dori-darmon.
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ink_pl_sahifa" model="ir.actions.server">
+        <field name="name">Foyda-zarar hisoboti</field>
+        <field name="model_id" ref="model_agronova_ink_pl"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_ochish()</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_boquv_root"
+              name="Boquv"
+              web_icon="agronova_boquv,static/description/icon.png"
+              sequence="52"
+              groups="group_boquv_ishchi"/>
+
+    <!-- ================================================ OPERATSIYALAR -->
+    <menuitem id="menu_boquv_operatsiya"
+              name="Operatsiyalar"
+              parent="menu_boquv_root"
+              sequence="10"/>
+
+    <menuitem id="menu_boquv_partiya"
+              name="Partiyalar"
+              parent="menu_boquv_operatsiya"
+              action="action_boquv_partiya"
+              sequence="10"/>
+
+    <menuitem id="menu_boquv_jurnal"
+              name="Kunlik jurnal"
+              parent="menu_boquv_operatsiya"
+              action="action_boquv_jurnal"
+              sequence="20"/>
+
+    <menuitem id="menu_boquv_obxod"
+              name="Obxodlar"
+              parent="menu_boquv_operatsiya"
+              action="action_boquv_obxod"
+              sequence="30"/>
+
+    <menuitem id="menu_boquv_vazn"
+              name="Vazn nazorati"
+              parent="menu_boquv_operatsiya"
+              action="action_boquv_vazn"
+              sequence="40"/>
+
+    <!-- ==================================================== HUJJATLAR -->
+    <menuitem id="menu_boquv_hujjat"
+              name="Hujjatlar"
+              parent="menu_boquv_root"
+              sequence="20"
+              groups="group_boquv_brigadir"/>
+
+    <menuitem id="menu_boquv_kirim"
+              name="Jo'ja kirimi"
+              parent="menu_boquv_hujjat"
+              action="action_boquv_kirim"
+              sequence="10"/>
+
+    <menuitem id="menu_boquv_jonatma"
+              name="So'yimga jo'natma"
+              parent="menu_boquv_hujjat"
+              action="action_boquv_jonatma"
+              sequence="20"/>
+
+    <menuitem id="menu_boquv_xarajat"
+              name="Xarajat hujjatlari"
+              parent="menu_boquv_hujjat"
+              action="action_boquv_xarajat"
+              sequence="30"/>
+
+    <menuitem id="menu_boquv_dezinfeksiya"
+              name="Dezinfeksiya"
+              parent="menu_boquv_hujjat"
+              action="action_boquv_dezinfeksiya"
+              sequence="40"/>
+
+    <menuitem id="menu_boquv_otkazma"
+              name="Partiyalararo o'tkazma"
+              parent="menu_boquv_hujjat"
+              action="action_boquv_otkazma"
+              sequence="50"/>
+
+    <menuitem id="menu_boquv_ish_haqi"
+              name="Ish haqi taqsimoti"
+              parent="menu_boquv_hujjat"
+              action="action_boquv_ish_haqi"
+              sequence="60"
+              groups="group_boquv_hisobchi"/>
+
+    <!-- ===================================================== TAHLIL -->
+    <menuitem id="menu_boquv_tahlil"
+              name="Tahlil va Hisobotlar"
+              parent="menu_boquv_root"
+              sequence="30"
+              groups="group_boquv_boshliq"/>
+
+    <menuitem id="menu_boquv_pl"
+              name="Foyda va zarar"
+              parent="menu_boquv_tahlil"
+              action="action_boquv_pl_sahifa"
+              sequence="5"/>
+
+    <menuitem id="menu_boquv_tannarx"
+              name="Kunlik tannarx"
+              parent="menu_boquv_tahlil"
+              action="action_boquv_tannarx"
+              sequence="10"/>
+
+    <menuitem id="menu_boquv_partiya_tahlil"
+              name="Partiyalar samaradorligi"
+              parent="menu_boquv_tahlil"
+              action="action_boquv_partiya_tahlil"
+              sequence="20"/>
+
+    <!-- ============================================= MA'LUMOTNOMALAR -->
+    <menuitem id="menu_boquv_config"
+              name="Sozlamalar"
+              parent="menu_boquv_root"
+              sequence="90"
+              groups="group_boquv_boshliq"/>
+
+    <menuitem id="menu_boquv_filial"
+              name="Filiallar"
+              parent="menu_boquv_config"
+              action="action_boquv_filial"
+              sequence="10"/>
+
+    <menuitem id="menu_boquv_bino"
+              name="Binolar (sehlar)"
+              parent="menu_boquv_config"
+              action="action_boquv_bino"
+              sequence="20"/>
+
+    <menuitem id="menu_boquv_normativ"
+              name="Normativlar"
+              parent="menu_boquv_config"
+              action="action_boquv_normativ"
+              sequence="30"/>
+
+    <!-- Xarajat kategoriyasi umumiy ma'lumotnoma (`agronova_base`) — har
+         bo'lim o'z sozlamasidan ham ochadi, alohida ro'yxat yasalmaydi.
+         TZ bo'yicha yangi kategoriyani faqat administrator qo'shadi. -->
+    <menuitem id="menu_boquv_xarajat_kategoriya" name="Xarajat kategoriyalari"
+              parent="menu_boquv_config"
+              action="agronova_base.action_agronova_xarajat_kategoriya"
+              sequence="80"/>
+
+    <!-- Naqd xarajat depozitdan chiqadi, shuning uchun depozit
+         ro'yxati har bo'lim sozlamasidan ham ochiladi. Yangi depozitni
+         bosh buxgalter yoki administrator qo'shadi. -->
+    <menuitem id="menu_boquv_depozit" name="Depozitlar"
+              parent="menu_boquv_config"
+              action="agronova_savdo_moliya.action_agronova_depozit"
+              sequence="85"/>
+
+</odoo>

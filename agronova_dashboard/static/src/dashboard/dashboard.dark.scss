@@ -1,0 +1,60 @@
+// Qorong'i tema — faqat `web.assets_web_dark` ga kiradi (Odoo foydalanuvchi
+// sozlamasidagi «Dark» rejim). Bu yerda faqat tokenlar almashtiriladi;
+// tuzilma va o'lchamlar `dashboard.scss` da.
+//
+// Uslub: «boshqaruv markazi» — chuqur navy fon, yupqa moviy chegaralar,
+// sarlavha chiziqlari va asosiy raqamlarda yengil moviy nur.
+html .o_smd, html .o_s3d {
+    --smd-bg: #0a1120;
+    --smd-card: #0f1a2e;
+    --smd-card-2: #0c1628;
+    --smd-border: rgba(56, 189, 248, 0.13);
+    --smd-border-strong: rgba(56, 189, 248, 0.32);
+    --smd-ink: #e6edf7;
+    --smd-ink-2: #cbd5e1;
+    --smd-muted: #8b9bb4;
+    --smd-faint: #5f708a;
+    --smd-hover: rgba(148, 163, 184, 0.07);
+    --smd-hover-accent: rgba(56, 189, 248, 0.10);
+    --smd-track: rgba(148, 163, 184, 0.14);
+    --smd-primary: #0ea5e9;
+    --smd-primary-ink: #ffffff;
+    --smd-primary-soft: rgba(56, 189, 248, 0.14);
+    --smd-title-bar: #38bdf8;
+    --smd-title-glow: 0 0 8px rgba(56, 189, 248, 0.8);
+    --smd-shadow: none;
+    --smd-shadow-hover: 0 0 0 1px rgba(56, 189, 248, 0.22), 0 12px 26px rgba(0, 0, 0, 0.4);
+    --smd-value-glow: 0 0 18px rgba(56, 189, 248, 0.22);
+    --smd-input-bg: #0c1628;
+    --smd-ok: #22c55e;
+    --smd-bad: #f87171;
+    --smd-ok-soft: rgba(34, 197, 94, 0.14);
+    --smd-bad-soft: rgba(248, 113, 113, 0.14);
+    --smd-bad-border: rgba(248, 113, 113, 0.4);
+    --smd-alert-bad-bg: rgba(248, 113, 113, 0.10);
+    --smd-alert-bad-fg: #fca5a5;
+    --smd-alert-warn-bg: rgba(245, 158, 11, 0.10);
+    --smd-alert-warn-fg: #fcd34d;
+    --smd-alert-ok-bg: rgba(34, 197, 94, 0.10);
+    --smd-alert-ok-fg: #86efac;
+    --smd-alert-info-bg: rgba(56, 189, 248, 0.10);
+    --smd-alert-info-fg: #7dd3fc;
+    --smd-tone-green-bg: rgba(34, 197, 94, 0.16);
+    --smd-tone-green-fg: #86efac;
+    --smd-tone-yellow-bg: rgba(245, 158, 11, 0.16);
+    --smd-tone-yellow-fg: #fcd34d;
+    --smd-tone-red-bg: rgba(248, 113, 113, 0.16);
+    --smd-tone-red-fg: #fca5a5;
+    --smd-tip-bg: #020817;
+    --smd-tip-fg: #e2e8f0;
+    --smd-sk-1: #13203a;
+    --smd-sk-2: #1a2a47;
+    --smd-side-bg: #070d19;
+    --smd-side-border: rgba(56, 189, 248, 0.10);
+    --smd-backdrop: rgba(2, 8, 23, 0.6);
+    --s3d-label-bg: rgba(10, 17, 32, 0.9);
+    --s3d-label-border: rgba(56, 189, 248, 0.32);
+    --s3d-label-ink: #e6edf7;
+    --s3d-label-muted: #94a3b8;
+    --s3d-sky: linear-gradient(180deg, #050b18 0%, #0b1a33 55%, #12233d 100%);
+}

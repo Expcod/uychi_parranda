@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="seq_soyish_qabul" model="ir.sequence">
+        <field name="name">So'yish — qabul hujjati</field>
+        <field name="code">agronova.soyish.qabul</field>
+        <field name="prefix">QBL-%(year)s-</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_soyish_partiya" model="ir.sequence">
+        <field name="name">So'yish — partiya</field>
+        <field name="code">agronova.soyish.partiya</field>
+        <field name="prefix">SOY-%(year)s-</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_soyish_xizmat" model="ir.sequence">
+        <field name="name">So'yish — xizmat hujjati</field>
+        <field name="code">agronova.soyish.xizmat</field>
+        <field name="prefix">SOY-X-%(year)s-</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_soyish_xarajat" model="ir.sequence">
+        <field name="name">So'yish — xarajat</field>
+        <field name="code">agronova.soyish.xarajat</field>
+        <field name="prefix">SOY-XR-%(year)s-</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+</odoo>

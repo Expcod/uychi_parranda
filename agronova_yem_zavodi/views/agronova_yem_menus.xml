@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Tannarx hisoboti MRP ning «Hisobot» menyusiga qo'shiladi —
+         alohida ilova yasash shart emas, ishlab chiqarish shu yerda. -->
+    <menuitem id="menu_agronova_yem_tannarx" name="Yem tannarxi"
+              parent="mrp.menu_mrp_reporting"
+              action="action_agronova_yem_tannarx" sequence="15"/>
+
+</odoo>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Operatsiya turi: majburiy QR skanerlashdan ozod qilish.
+         "Lots/Serial Numbers" guruhiga qo'yildi — sozlama aynan serial
+         mahsulotlarga tegishli, foydalanuvchi uni o'sha yerdan qidiradi. -->
+    <record id="view_picking_type_form_qr_scan" model="ir.ui.view">
+        <field name="name">stock.picking.type.form.qr.scan</field>
+        <field name="model">stock.picking.type</field>
+        <field name="inherit_id" ref="stock.view_picking_type_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='stock_picking_type_lot']" position="inside">
+                <field name="qr_scan_exempt"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

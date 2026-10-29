@@ -1,0 +1,20 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ink_inkubator_omborchi,agronova.ink.inkubator omborchi,model_agronova_ink_inkubator,agronova_inkubatoriya.group_ink_omborchi,1,0,0,0
+access_ink_inkubator_operator,agronova.ink.inkubator operator,model_agronova_ink_inkubator,agronova_inkubatoriya.group_ink_operator,1,1,0,0
+access_ink_inkubator_boshliq,agronova.ink.inkubator boshliq,model_agronova_ink_inkubator,agronova_inkubatoriya.group_ink_boshliq,1,1,1,1
+access_ink_qabul_omborchi,agronova.ink.qabul omborchi,model_agronova_ink_qabul,agronova_inkubatoriya.group_ink_omborchi,1,0,0,0
+access_ink_qabul_operator,agronova.ink.qabul operator,model_agronova_ink_qabul,agronova_inkubatoriya.group_ink_operator,1,1,1,0
+access_ink_qabul_boshliq,agronova.ink.qabul boshliq,model_agronova_ink_qabul,agronova_inkubatoriya.group_ink_boshliq,1,1,1,1
+access_ink_partiya_omborchi,agronova.ink.partiya omborchi,model_agronova_ink_partiya,agronova_inkubatoriya.group_ink_omborchi,1,0,0,0
+access_ink_partiya_operator,agronova.ink.partiya operator,model_agronova_ink_partiya,agronova_inkubatoriya.group_ink_operator,1,1,1,0
+access_ink_partiya_boshliq,agronova.ink.partiya boshliq,model_agronova_ink_partiya,agronova_inkubatoriya.group_ink_boshliq,1,1,1,1
+access_ink_ochilish_operator,agronova.ink.ochilish operator,model_agronova_ink_ochilish,agronova_inkubatoriya.group_ink_operator,1,1,1,0
+access_ink_ochilish_boshliq,agronova.ink.ochilish boshliq,model_agronova_ink_ochilish,agronova_inkubatoriya.group_ink_boshliq,1,1,1,1
+access_ink_xarajat_operator,agronova.ink.xarajat operator,model_agronova_ink_xarajat,agronova_inkubatoriya.group_ink_operator,1,1,1,0
+access_ink_xarajat_hisobchi,agronova.ink.xarajat hisobchi,model_agronova_ink_xarajat,agronova_inkubatoriya.group_ink_hisobchi,1,1,1,1
+access_ink_ichki_sotuv_operator,agronova.ink.ichki_sotuv operator,model_agronova_ink_ichki_sotuv,agronova_inkubatoriya.group_ink_operator,1,0,0,0
+access_ink_ichki_sotuv_boshliq,agronova.ink.ichki_sotuv boshliq,model_agronova_ink_ichki_sotuv,agronova_inkubatoriya.group_ink_boshliq,1,1,1,1
+access_ink_elminatsiya_hisobchi,agronova.ink.elminatsiya hisobchi,model_agronova_ink_elminatsiya,agronova_inkubatoriya.group_ink_hisobchi,1,1,1,1
+access_ink_elminatsiya_qator_hisobchi,agronova.ink.elminatsiya.qator hisobchi,model_agronova_ink_elminatsiya_qator,agronova_inkubatoriya.group_ink_hisobchi,1,1,1,1
+access_ink_pl_boshliq,agronova.ink.pl boshliq,model_agronova_ink_pl,agronova_inkubatoriya.group_ink_boshliq,1,1,1,1
+access_ink_pl_qator_boshliq,agronova.ink.pl.qator boshliq,model_agronova_ink_pl_qator,agronova_inkubatoriya.group_ink_boshliq,1,1,1,1

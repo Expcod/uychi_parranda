@@ -1,0 +1,49 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_filial_ishchi,filial ishchi,model_agronova_boquv_filial,agronova_boquv.group_boquv_ishchi,1,0,0,0
+access_filial_brigadir,filial brigadir,model_agronova_boquv_filial,agronova_boquv.group_boquv_brigadir,1,0,0,0
+access_filial_boshliq,filial boshliq,model_agronova_boquv_filial,agronova_boquv.group_boquv_boshliq,1,1,1,0
+access_filial_hisobchi,filial hisobchi,model_agronova_boquv_filial,agronova_boquv.group_boquv_hisobchi,1,1,1,1
+access_bino_ishchi,bino ishchi,model_agronova_boquv_bino,agronova_boquv.group_boquv_ishchi,1,0,0,0
+access_bino_brigadir,bino brigadir,model_agronova_boquv_bino,agronova_boquv.group_boquv_brigadir,1,1,0,0
+access_bino_boshliq,bino boshliq,model_agronova_boquv_bino,agronova_boquv.group_boquv_boshliq,1,1,1,0
+access_bino_hisobchi,bino hisobchi,model_agronova_boquv_bino,agronova_boquv.group_boquv_hisobchi,1,1,1,1
+access_normativ_ishchi,normativ ishchi,model_agronova_boquv_normativ,agronova_boquv.group_boquv_ishchi,1,0,0,0
+access_normativ_boshliq,normativ boshliq,model_agronova_boquv_normativ,agronova_boquv.group_boquv_boshliq,1,1,1,1
+access_partiya_ishchi,partiya ishchi,model_agronova_boquv_partiya,agronova_boquv.group_boquv_ishchi,1,0,0,0
+access_partiya_brigadir,partiya brigadir,model_agronova_boquv_partiya,agronova_boquv.group_boquv_brigadir,1,0,0,0
+access_partiya_boshliq,partiya boshliq,model_agronova_boquv_partiya,agronova_boquv.group_boquv_boshliq,1,1,1,1
+access_jurnal_ishchi,jurnal ishchi,model_agronova_boquv_jurnal,agronova_boquv.group_boquv_ishchi,1,1,1,1
+access_jurnal_brigadir,jurnal brigadir,model_agronova_boquv_jurnal,agronova_boquv.group_boquv_brigadir,1,1,1,1
+access_jurnal_boshliq,jurnal boshliq,model_agronova_boquv_jurnal,agronova_boquv.group_boquv_boshliq,1,1,1,1
+access_jurnal_sarf_ishchi,jurnal sarf ishchi,model_agronova_boquv_jurnal_sarf,agronova_boquv.group_boquv_ishchi,1,1,1,1
+access_jurnal_sarf_boshliq,jurnal sarf boshliq,model_agronova_boquv_jurnal_sarf,agronova_boquv.group_boquv_boshliq,1,1,1,1
+access_obxod_ishchi,obxod ishchi,model_agronova_boquv_obxod,agronova_boquv.group_boquv_ishchi,1,1,1,0
+access_obxod_brigadir,obxod brigadir,model_agronova_boquv_obxod,agronova_boquv.group_boquv_brigadir,1,1,1,1
+access_obxod_boshliq,obxod boshliq,model_agronova_boquv_obxod,agronova_boquv.group_boquv_boshliq,1,1,1,1
+access_vazn_ishchi,vazn ishchi,model_agronova_boquv_vazn,agronova_boquv.group_boquv_ishchi,1,1,1,0
+access_vazn_brigadir,vazn brigadir,model_agronova_boquv_vazn,agronova_boquv.group_boquv_brigadir,1,1,1,1
+access_vazn_boshliq,vazn boshliq,model_agronova_boquv_vazn,agronova_boquv.group_boquv_boshliq,1,1,1,1
+access_kirim_brigadir,joja kirim brigadir,model_agronova_boquv_joja_kirim,agronova_boquv.group_boquv_brigadir,1,1,1,0
+access_kirim_boshliq,joja kirim boshliq,model_agronova_boquv_joja_kirim,agronova_boquv.group_boquv_boshliq,1,1,1,1
+access_jonatma_brigadir,jonatma brigadir,model_agronova_boquv_jonatma,agronova_boquv.group_boquv_brigadir,1,1,1,0
+access_jonatma_boshliq,jonatma boshliq,model_agronova_boquv_jonatma,agronova_boquv.group_boquv_boshliq,1,1,1,1
+access_xarajat_brigadir,xarajat brigadir,model_agronova_boquv_xarajat,agronova_boquv.group_boquv_brigadir,1,1,1,0
+access_xarajat_boshliq,xarajat boshliq,model_agronova_boquv_xarajat,agronova_boquv.group_boquv_boshliq,1,1,1,0
+access_xarajat_hisobchi,xarajat hisobchi,model_agronova_boquv_xarajat,agronova_boquv.group_boquv_hisobchi,1,1,1,1
+access_tannarx_ishchi,tannarx kunlik ishchi,model_agronova_boquv_tannarx_kunlik,agronova_boquv.group_boquv_boshliq,1,0,0,0
+access_tannarx_hisobchi,tannarx kunlik hisobchi,model_agronova_boquv_tannarx_kunlik,agronova_boquv.group_boquv_hisobchi,1,1,1,1
+access_dezinfeksiya_brigadir,dezinfeksiya brigadir,model_agronova_boquv_dezinfeksiya,agronova_boquv.group_boquv_brigadir,1,1,1,0
+access_dezinfeksiya_boshliq,dezinfeksiya boshliq,model_agronova_boquv_dezinfeksiya,agronova_boquv.group_boquv_boshliq,1,1,1,1
+access_dezinfeksiya_sarf_brigadir,dezinfeksiya sarf brigadir,model_agronova_boquv_dezinfeksiya_sarf,agronova_boquv.group_boquv_brigadir,1,1,1,1
+access_dezinfeksiya_sarf_boshliq,dezinfeksiya sarf boshliq,model_agronova_boquv_dezinfeksiya_sarf,agronova_boquv.group_boquv_boshliq,1,1,1,1
+access_otkazma_brigadir,otkazma brigadir,model_agronova_boquv_otkazma,agronova_boquv.group_boquv_brigadir,1,1,1,0
+access_otkazma_boshliq,otkazma boshliq,model_agronova_boquv_otkazma,agronova_boquv.group_boquv_boshliq,1,1,1,1
+access_ish_haqi_boshliq,ish haqi boshliq,model_agronova_boquv_ish_haqi,agronova_boquv.group_boquv_boshliq,1,0,0,0
+access_ish_haqi_hisobchi,ish haqi hisobchi,model_agronova_boquv_ish_haqi,agronova_boquv.group_boquv_hisobchi,1,1,1,1
+access_ish_haqi_qator_boshliq,ish haqi qator boshliq,model_agronova_boquv_ish_haqi_qator,agronova_boquv.group_boquv_boshliq,1,0,0,0
+access_ish_haqi_qator_hisobchi,ish haqi qator hisobchi,model_agronova_boquv_ish_haqi_qator,agronova_boquv.group_boquv_hisobchi,1,1,1,1
+access_bino_tarix_boshliq,xodim bino tarix boshliq,model_agronova_boquv_xodim_bino_tarix,agronova_boquv.group_boquv_boshliq,1,1,1,1
+access_pl_boshliq,pl boshliq,model_agronova_boquv_pl,agronova_boquv.group_boquv_boshliq,1,1,1,1
+access_pl_hisobchi,pl hisobchi,model_agronova_boquv_pl,agronova_boquv.group_boquv_hisobchi,1,1,1,1
+access_pl_qator_boshliq,pl qator boshliq,model_agronova_boquv_pl_qator,agronova_boquv.group_boquv_boshliq,1,1,1,1
+access_pl_qator_hisobchi,pl qator hisobchi,model_agronova_boquv_pl_qator,agronova_boquv.group_boquv_hisobchi,1,1,1,1

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="user_app_launcher.AppAccessGrid">
+        <div class="o_app_access_grid">
+            <t t-if="!userId">
+                <p class="text-muted">Avval foydalanuvchini saqlang, keyin ilovalar ro'yxati ko'rinadi.</p>
+            </t>
+            <t t-elif="state.loading">
+                <i class="fa fa-spin fa-circle-o-notch"/> Yuklanmoqda...
+            </t>
+            <t t-else="">
+                <!-- Boshqaruv: qidiruv + hisob + ommaviy amallar -->
+                <div class="o_app_access_toolbar">
+                    <div class="o_app_access_search">
+                        <i class="fa fa-search"/>
+                        <input type="text" placeholder="Ilova nomi bo'yicha qidirish..."
+                               t-att-value="state.query" t-on-input="onSearch"/>
+                        <button t-if="state.query" class="o_app_access_clear"
+                                t-on-click="clearSearch" title="Tozalash">&#10005;</button>
+                    </div>
+                    <div class="o_app_access_count">
+                        <strong t-esc="enabledCount"/>
+                        <span class="text-muted"> / <t t-esc="state.apps.length"/> ilova yoqilgan</span>
+                    </div>
+                    <div class="o_app_access_bulk">
+                        <button class="btn btn-sm btn-outline-secondary" type="button"
+                                t-att-disabled="state.saving"
+                                t-on-click="() => this.setAll(true)">Hammasini yoqish</button>
+                        <button class="btn btn-sm btn-outline-secondary" type="button"
+                                t-att-disabled="state.saving"
+                                t-on-click="() => this.setAll(false)">Hammasini o'chirish</button>
+                    </div>
+                </div>
+
+                <div class="o_app_access_grid_container">
+                    <t t-foreach="visibleApps" t-as="app" t-key="app.id">
+                        <div class="o_app_access_tile"
+                             t-att-class="{ 'o_app_access_on': app.has_access,
+                                            'o_app_access_locked': !app.toggleable }"
+                             t-on-click="() => this.onToggle(app)">
+                            <span class="o_app_access_check">
+                                <i t-if="app.has_access" class="fa fa-check"/>
+                            </span>
+                            <img class="o_app_access_icon" t-att-src="getIconUrl(app)" alt=""/>
+                            <div class="o_app_access_name" t-esc="app.name" t-att-title="app.name"/>
+                        </div>
+                    </t>
+                </div>
+
+                <div t-if="!visibleApps.length" class="text-muted p-3 text-center">
+                    «<t t-esc="state.query"/>» bo'yicha ilova topilmadi
+                </div>
+            </t>
+        </div>
+    </t>
+
+</templates>

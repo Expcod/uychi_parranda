@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_soyish_root" name="So'yish" sequence="47"
+              web_icon="agronova_soyish,static/description/icon.png"/>
+
+    <menuitem id="menu_soyish_kunlik" name="Kunlik ish"
+              parent="menu_soyish_root" sequence="10"/>
+    <menuitem id="menu_soyish_qabul" name="Qabul va tortish"
+              parent="menu_soyish_kunlik" action="action_soyish_qabul" sequence="10"/>
+    <menuitem id="menu_soyish_jarayon" name="So'yish jarayoni"
+              parent="menu_soyish_kunlik" action="action_soyish_jarayon" sequence="20"/>
+
+    <menuitem id="menu_soyish_partiyalar" name="Partiyalar"
+              parent="menu_soyish_root" sequence="20"/>
+    <menuitem id="menu_soyish_partiya" name="So'yish partiyalari"
+              parent="menu_soyish_partiyalar" action="action_soyish_partiya" sequence="10"/>
+
+    <menuitem id="menu_soyish_moliya" name="Moliya"
+              parent="menu_soyish_root" sequence="30"
+              groups="agronova_soyish.group_soyish_boshliq"/>
+    <menuitem id="menu_soyish_xizmat" name="Tashqi mijoz xizmati"
+              parent="menu_soyish_moliya" action="action_soyish_xizmat" sequence="10"/>
+    <menuitem id="menu_soyish_xarajat" name="Xarajatlar"
+              parent="menu_soyish_moliya" action="action_soyish_xarajat" sequence="20"/>
+
+
+    <menuitem id="menu_soyish_config" name="Sozlamalar"
+              parent="menu_soyish_root" sequence="90"
+              groups="agronova_soyish.group_soyish_boshliq"/>
+
+    <!-- Xarajat kategoriyasi umumiy ma'lumotnoma (`agronova_base`) — har
+         bo'lim o'z sozlamasidan ham ochadi, alohida ro'yxat yasalmaydi.
+         TZ bo'yicha yangi kategoriyani faqat administrator qo'shadi. -->
+    <menuitem id="menu_soyish_xarajat_kategoriya" name="Xarajat kategoriyalari"
+              parent="menu_soyish_config"
+              action="agronova_base.action_agronova_xarajat_kategoriya"
+              sequence="80"/>
+
+    <!-- Naqd xarajat depozitdan chiqadi, shuning uchun depozit
+         ro'yxati har bo'lim sozlamasidan ham ochiladi. Yangi depozitni
+         bosh buxgalter yoki administrator qo'shadi. -->
+    <menuitem id="menu_soyish_depozit" name="Depozitlar"
+              parent="menu_soyish_config"
+              action="agronova_savdo_moliya.action_agronova_depozit"
+              sequence="85"/>
+
+    <!-- TZ 13-band bo'yicha hisobotlar. Barchasi hujjatlarning
+         o'zidan guruhlanib ochiladi, foyda-zarar esa alohida sahifa. -->
+    <menuitem id="menu_soyish_hisobot" name="Hisobotlar"
+              parent="menu_soyish_root" sequence="40"
+              groups="agronova_soyish.group_soyish_boshliq"/>
+    <menuitem id="menu_soyish_pl" name="Foyda-zarar"
+              parent="menu_soyish_hisobot" action="action_soyish_pl_sahifa"
+              sequence="10"/>
+    <menuitem id="menu_soyish_hisobot_soyish" name="So'yish hisoboti"
+              parent="menu_soyish_hisobot" action="action_soyish_hisobot_soyish"
+              sequence="20"/>
+    <menuitem id="menu_soyish_hisobot_mijoz" name="Tashqi mijozlar hisoboti"
+              parent="menu_soyish_hisobot" action="action_soyish_hisobot_mijoz"
+              sequence="30"/>
+    <menuitem id="menu_soyish_hisobot_ichki" name="Ichki ishlab chiqarish"
+              parent="menu_soyish_hisobot" action="action_soyish_hisobot_ichki"
+              sequence="40"/>
+    <menuitem id="menu_soyish_hisobot_tannarx" name="Tannarx hisoboti"
+              parent="menu_soyish_hisobot" action="action_soyish_hisobot_tannarx"
+              sequence="50" groups="agronova_soyish.group_soyish_hisobchi"/>
+</odoo>

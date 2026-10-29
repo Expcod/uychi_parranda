@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_ink_partiya_list" model="ir.ui.view">
+        <field name="name">agronova.ink.partiya.list</field>
+        <field name="model">agronova.ink.partiya</field>
+        <field name="arch" type="xml">
+            <list expand="context.get('expand', False)" string="Inkubatsiya partiyalari"
+                  decoration-info="holat == 'inkubatsiyada'"
+                  decoration-muted="holat == 'done'">
+                <field name="name"/>
+                <field name="inkubator_id"/>
+                <field name="sana_qoyilgan" string="Qo'yilgan"/>
+                <field name="sana_kutilayotgan" string="Kutilgan"/>
+                <field name="sana_ochilgan" string="Ochilgan" optional="show"/>
+                <field name="tuxum_dona" string="Tuxum (dona)" sum="Jami tuxum" width="122px"/>
+                <field name="ochilgan_joja" string="Jo'ja (dona)" sum="Jami jo'ja" width="122px"/>
+                <field name="ochilish_foiz" string="Ochilish %" widget="float" digits="[12,1]" width="106px"/>
+                <field name="sof_joja" optional="hide"/>
+                <field name="qoldiq_joja" string="Qoldiq" optional="show"/>
+                <field name="tannarx_1_joja" string="1 jo'ja tannarx" optional="show" width="146px"/>
+                <field name="holat" widget="badge"
+                       decoration-info="holat == 'inkubatsiyada'"
+                       decoration-success="holat == 'done'"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ink_partiya_form" model="ir.ui.view">
+        <field name="name">agronova.ink.partiya.form</field>
+        <field name="model">agronova.ink.partiya</field>
+        <field name="arch" type="xml">
+            <form string="Inkubatsiya partiyasi">
+                <header>
+                    <button name="action_inkubatsiyaga" type="object"
+                            string="Inkubatsiyaga qo'yish" class="btn-primary"
+                            invisible="holat != 'draft'"/>
+                    <button name="action_yakunlash" type="object"
+                            string="Yakunlash" class="btn-primary"
+                            invisible="holat != 'inkubatsiyada'"
+                            confirm="Partiya yakunlanadi va tannarx qotadi. Davom etilsinmi?"/>
+                    <button name="action_qayta_ochish" type="object"
+                            string="Qayta ochish" invisible="holat != 'done'"
+                            groups="agronova_inkubatoriya.group_ink_hisobchi"/>
+                    <field name="holat" widget="statusbar"
+                           statusbar_visible="draft,inkubatsiyada,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_qabullar" type="object"
+                                class="oe_stat_button" icon="fa-inbox">
+                            <field name="tuxum_dona" widget="statinfo"
+                                   string="Tuxum (dona)" width="122px"/>
+                        </button>
+                        <button name="action_open_ochilish" type="object"
+                                class="oe_stat_button" icon="fa-child">
+                            <field name="ochilgan_joja" widget="statinfo"
+                                   string="Ochilgan jo'ja" width="138px"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Joylashuv">
+                            <field name="inkubator_id"
+                                   readonly="holat != 'draft'"/>
+                            <field name="masul_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Sanalar">
+                            <field name="sana_qoyilgan" readonly="holat == 'done'"/>
+                            <field name="inkubatsiya_kun"
+                                   readonly="holat != 'draft'"/>
+                            <field name="sana_kutilayotgan"/>
+                            <field name="sana_ochilgan"/>
+                            <field name="kechikish_kun"
+                                   invisible="not sana_ochilgan"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Natija">
+                            <field name="tuxum_dona"/>
+                            <field name="ochilgan_joja"/>
+                            <field name="ochilmagan_tuxum"/>
+                            <field name="nobud_son"/>
+                            <field name="brak_son"/>
+                            <field name="sof_joja"/>
+                        </group>
+                        <group string="Ko'rsatkichlar">
+                            <field name="ochilish_foiz"/>
+                            <field name="nobud_foiz"/>
+                            <field name="brak_foiz"/>
+                            <field name="koeffitsient"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Moliya">
+                            <field name="tuxum_qiymat"/>
+                            <field name="jami_xarajat"/>
+                            <field name="jami_daromad"/>
+                            <field name="foyda"/>
+                            <field name="tannarx_1_joja"/>
+                            <field name="tannarx_qotgan"/>
+                        </group>
+                        <group string="Jo'ja qoldig'i">
+                            <field name="berilgan_joja"/>
+                            <field name="qoldiq_joja"/>
+                        </group>
+                    </group>
+
+                    <div class="alert alert-info" role="alert"
+                         invisible="holat != 'draft'">
+                        Tuxum qabul qilinib bo'lgach «Inkubatsiyaga qo'yish»
+                        tugmasini bosing. Shundan keyin partiyaga yangi tuxum
+                        qo'shilmaydi va kutilayotgan ochilish sanasi
+                        belgilanadi.
+                    </div>
+
+                    <notebook>
+                        <page string="Tuxum qabullari" name="qabul">
+                            <field name="qabul_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="date"/>
+                                    <field name="ot_company_id"/>
+                                    <field name="ot_partiya_id" optional="show"/>
+                                    <field name="dona" sum="Jami"/>
+                                    <field name="qiymat" sum="Jami"/>
+                                    <field name="narx_1_dona"/>
+                                    <field name="holat" widget="badge"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Ochilish hujjatlari" name="ochilish">
+                            <field name="ochilish_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="sana"/>
+                                    <field name="ochilgan_joja" sum="Jami"/>
+                                    <field name="ochilmagan_tuxum" sum="Jami"/>
+                                    <field name="nobud_son" sum="Jami"/>
+                                    <field name="brak_son" sum="Jami"/>
+                                    <field name="sof_joja" sum="Jami"/>
+                                    <field name="holat" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Izoh" name="izoh">
+                            <field name="izoh"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ink_partiya_search" model="ir.ui.view">
+        <field name="name">agronova.ink.partiya.search</field>
+        <field name="model">agronova.ink.partiya</field>
+        <field name="arch" type="xml">
+            <search string="Inkubatsiya partiyalari">
+                <field name="name"/>
+                <field name="inkubator_id"/>
+                <field name="masul_id"/>
+                <filter name="f_draft" string="Qoralama"
+                        domain="[('holat', '=', 'draft')]"/>
+                <filter name="f_active" string="Inkubatsiyada"
+                        domain="[('holat', '=', 'inkubatsiyada')]"/>
+                <filter name="f_done" string="Yakunlangan"
+                        domain="[('holat', '=', 'done')]"/>
+                <separator/>
+                <filter name="f_kechikkan" string="Muddati o'tgan"
+                        domain="[('holat', '=', 'inkubatsiyada'),
+                                 ('sana_kutilayotgan', '&lt;', context_today().strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter name="g_inkubator" string="Inkubator"
+                        context="{'group_by': 'inkubator_id'}"/>
+                <filter name="g_holat" string="Holat"
+                        context="{'group_by': 'holat'}"/>
+                <filter name="g_oy" string="Qo'yilgan oy"
+                        context="{'group_by': 'sana_qoyilgan:month'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_ink_partiya" model="ir.actions.act_window">
+        <field name="name">Inkubatsiya partiyalari</field>
+        <field name="res_model">agronova.ink.partiya</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_ink_partiya_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Birinchi partiyani oching</p>
+            <p>Partiya — inkubatorga bir martada qo'yiladigan tuxum to'plami.
+               Barcha xarajat va jo'ja tannarxi shunga yig'iladi.</p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============ KASSA MODDALARI ============
+             Smena yopilganda yoziladigan yig'ma yozuvning moddasi.
+             Buxgalteriya hisobi kerak emas: provodkani smenaning o'zi
+             yozadi, modda faqat kassa kitobida qatorni nomlash uchun. -->
+
+        <record id="modda_pos_tushum" model="agronova.kassa.modda">
+            <field name="name">POS smenasi tushumi</field>
+            <field name="direction">in</field>
+            <field name="sequence">3</field>
+            <field name="izoh_majburiy" eval="False"/>
+            <field name="note">Savdo nuqtasi smenasi yopilganda naqd
+                tushum yig'ma qator bo'lib tushadi — provodka smenada
+                yozilgan</field>
+        </record>
+
+        <record id="modda_pos_chiqim" model="agronova.kassa.modda">
+            <field name="name">POS smenasi chiqimi</field>
+            <field name="direction">out</field>
+            <field name="sequence">3</field>
+            <field name="izoh_majburiy" eval="False"/>
+            <field name="note">Smena davomida kassadan chiqarilgan naqd
+                (qaytarish, inkassatsiya) sof manfiy bo'lsa</field>
+        </record>
+
+        <!-- ============ TAROZI SHTRIX KODI ============
+             Bu yerda hech narsa yaratilmaydi — Odooning standart
+             nomenklaturasida vazn qoidasi ALLAQACHON bor:
+
+               «Weight Barcodes 3 Decimals», shablon `21.....{NNDDD}`
+
+             ya'ni «21» + 5 xonali mahsulot kodi + 5 xonali vazn
+             (kg, 3 kasr) + nazorat raqami. Do'kondagi tarozi shu
+             formatda chop etsa kifoya, qo'shimcha sozlash kerak emas.
+
+             Dublikat qoida qo'shilsa ikkalasi bir xil shablonga mos
+             kelib, qaysi biri ishlashi tartib raqamiga bog'liq bo'lib
+             qolardi — shuning uchun ataylab qo'shilmagan. -->
+
+    </data>
+</odoo>

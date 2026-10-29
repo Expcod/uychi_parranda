@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_didox_log_list" model="ir.ui.view">
+        <field name="name">agronova.didox.log.list</field>
+        <field name="model">agronova.didox.log</field>
+        <field name="arch" type="xml">
+            <list string="Didox fakturalari"
+                  decoration-danger="holat == 'nomos'"
+                  decoration-warning="holat == 'kutilmoqda'"
+                  decoration-success="holat == 'moslashtirildi'">
+                <field name="name"/>
+                <field name="sana"/>
+                <field name="hujjat_turi"/>
+                <field name="stir"/>
+                <field name="kontragent_id"/>
+                <field name="summa" sum="Jami"/>
+                <field name="qqs_summasi" optional="hide"/>
+                <field name="moslashtirilgan_kirim_id" optional="show"/>
+                <field name="holat" widget="badge"/>
+                <field name="nomoslik_izohi" optional="show"/>
+                <field name="currency_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_didox_log_form" model="ir.ui.view">
+        <field name="name">agronova.didox.log.form</field>
+        <field name="model">agronova.didox.log</field>
+        <field name="arch" type="xml">
+            <form string="Didox fakturasi">
+                <header>
+                    <button name="action_solishtirish" type="object"
+                            string="Qayta solishtirish" class="btn-primary"
+                            invisible="holat == 'moslashtirildi'"/>
+                    <button name="action_qolda_moslashtirish" type="object"
+                            string="Kirimni qo'lda tanlash"
+                            invisible="holat == 'moslashtirildi'"/>
+                    <field name="holat" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="sana"/>
+                            <field name="hujjat_turi"/>
+                            <field name="stir"/>
+                            <field name="kontragent_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="summa"/>
+                            <field name="qqs_summasi"/>
+                            <field name="moslashtirilgan_kirim_id" readonly="1"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Nomuvofiqlik" invisible="not nomoslik_izohi">
+                        <field name="nomoslik_izohi" nolabel="1" readonly="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Didox javobi (xom)" name="xom"
+                              groups="base.group_system">
+                            <field name="xom_javob" nolabel="1" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_didox_log_search" model="ir.ui.view">
+        <field name="name">agronova.didox.log.search</field>
+        <field name="model">agronova.didox.log</field>
+        <field name="arch" type="xml">
+            <search string="Didox fakturalari">
+                <field name="name"/>
+                <field name="stir"/>
+                <field name="kontragent_id"/>
+                <filter name="kutilmoqda" string="Fakturasi bor, tovari yo'q"
+                        domain="[('holat', '=', 'kutilmoqda')]"/>
+                <filter name="nomos" string="Nomuvofiqlik"
+                        domain="[('holat', '=', 'nomos')]"/>
+                <filter name="moslashtirildi" string="Moslashtirilgan"
+                        domain="[('holat', '=', 'moslashtirildi')]"/>
+                <group>
+                    <filter name="g_holat" string="Holati" context="{'group_by': 'holat'}"/>
+                    <filter name="g_kontragent" string="Kontragent" context="{'group_by': 'kontragent_id'}"/>
+                    <filter name="g_sana" string="Sana" context="{'group_by': 'sana'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_zakupka_didox" model="ir.actions.act_window">
+        <field name="name">Didox fakturalari</field>
+        <field name="res_model">agronova.didox.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_didox_log_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Didox yozuvi yo'q</p>
+            <p>Fakturalar `ir.cron` orqali avtomat tortiladi va STIR + summa +
+               sana bo'yicha kirim hujjatlariga solishtiriladi. Didox
+               rekvizitlari «Sozlamalar → Xarid» bo'limida ko'rsatiladi.</p>
+        </field>
+    </record>
+
+</odoo>

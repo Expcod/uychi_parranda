@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_ink_inkubator_list" model="ir.ui.view">
+        <field name="name">agronova.ink.inkubator.list</field>
+        <field name="model">agronova.ink.inkubator</field>
+        <field name="arch" type="xml">
+            <list string="Inkubatorlar"
+                  decoration-warning="holat == 'tamir'"
+                  decoration-info="holat == 'band'">
+                <field name="kod"/>
+                <field name="name"/>
+                <field name="turi"/>
+                <field name="sigim" sum="Jami sig'im"/>
+                <field name="band_dona" sum="Band"/>
+                <field name="joriy_partiya_id" optional="show"/>
+                <field name="holat" widget="badge"
+                       decoration-success="holat == 'bosh'"
+                       decoration-info="holat == 'band'"
+                       decoration-warning="holat == 'tamir'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ink_inkubator_form" model="ir.ui.view">
+        <field name="name">agronova.ink.inkubator.form</field>
+        <field name="model">agronova.ink.inkubator</field>
+        <field name="arch" type="xml">
+            <form string="Inkubator">
+                <header>
+                    <button name="action_tamirga" type="object"
+                            string="Ta'mirga qo'yish"
+                            invisible="holat == 'tamir'"/>
+                    <button name="action_tamirdan" type="object"
+                            string="Ta'mirdan chiqarish" class="btn-primary"
+                            invisible="holat != 'tamir'"/>
+                    <field name="holat" widget="statusbar"
+                           statusbar_visible="bosh,band"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Arxiv" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <label for="kod"/>
+                        <h1><field name="kod" placeholder="INK-01"/></h1>
+                        <field name="name" placeholder="Nomi"/>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="turi"/>
+                            <field name="sigim"/>
+                            <field name="band_dona"/>
+                        </group>
+                        <group>
+                            <field name="joriy_partiya_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Partiyalar" name="partiya">
+                            <field name="partiya_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="sana_qoyilgan"/>
+                                    <field name="sana_kutilayotgan"/>
+                                    <field name="tuxum_dona"/>
+                                    <field name="ochilgan_joja"/>
+                                    <field name="ochilish_foiz"/>
+                                    <field name="holat" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Izoh" name="izoh">
+                            <field name="izoh"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ink_inkubator" model="ir.actions.act_window">
+        <field name="name">Inkubatorlar</field>
+        <field name="res_model">agronova.ink.inkubator</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Inkubator qo'shing</p>
+            <p>Har bir inkubator raqami va sig'imi bilan qayd etiladi.
+               Shunda hisobotda inkubatorlar kesimida natijalarni
+               taqqoslash mumkin bo'ladi.</p>
+        </field>
+    </record>
+
+</odoo>

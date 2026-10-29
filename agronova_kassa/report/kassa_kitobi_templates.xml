@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================= KASSA KITOBI (kunlik varaq) =================
+         O'zbekistonda kassa kitobi rasmiy hujjat: har kun uchun ochilish
+         qoldig'i, kirim va chiqim orderlari ro'yxati, kun oxiridagi
+         qoldiq va imzolar. Shakl shu talabga qarab tuzilgan. -->
+
+    <template id="kassa_kitobi_document">
+        <t t-call="web.external_layout">
+            <div class="page">
+                <h4 class="text-center mb-0">KASSA KITOBI</h4>
+                <p class="text-center text-muted">
+                    <span t-field="doc.company_id.name"/>
+                    <t t-if="doc.company_id.vat"> · STIR <span t-field="doc.company_id.vat"/></t>
+                </p>
+
+                <table class="table table-sm table-borderless mb-3">
+                    <tr>
+                        <td style="width:25%;"><strong>Kassa</strong></td>
+                        <td style="width:35%;"><span t-field="doc.kassa_id.name"/></td>
+                        <td style="width:20%;"><strong>Sana</strong></td>
+                        <td><span t-field="doc.date"/></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mas'ul kassir</strong></td>
+                        <td><span t-field="doc.kassa_id.mas_ul_id.name"/></td>
+                        <td><strong>Holati</strong></td>
+                        <td>
+                            <t t-if="doc.state == 'closed'">Yopilgan</t>
+                            <t t-else="">Ochiq</t>
+                        </td>
+                    </tr>
+                </table>
+
+                <table class="table table-sm table-bordered">
+                    <thead>
+                        <tr class="table-light">
+                            <th style="width:16%;">Hujjat №</th>
+                            <th style="width:10%;">Vaqt</th>
+                            <th>Kimdan olindi / kimga berildi</th>
+                            <th style="width:20%;">Modda</th>
+                            <th class="text-end" style="width:14%;">Kirim</th>
+                            <th class="text-end" style="width:14%;">Chiqim</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="4"><strong>Kun boshidagi qoldiq</strong></td>
+                            <td class="text-end" colspan="2">
+                                <strong>
+                                    <span t-field="doc.opening"
+                                          t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                </strong>
+                            </td>
+                        </tr>
+                        <tr t-foreach="doc._kitob_qatorlari()" t-as="qator">
+                            <td><span t-field="qator.name"/></td>
+                            <td>
+                                <span t-field="qator.date"
+                                      t-options="{'widget': 'datetime', 'format': 'HH:mm', 'tz_name': 'Asia/Tashkent'}"/>
+                            </td>
+                            <td>
+                                <span t-esc="qator._panel_kim()"/>
+                                <div t-if="qator.izoh" class="text-muted small">
+                                    <span t-field="qator.izoh"/>
+                                </div>
+                            </td>
+                            <td><span t-field="qator.modda_id.name"/></td>
+                            <td class="text-end">
+                                <span t-if="qator.direction == 'in'" t-field="qator.amount"
+                                      t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                            </td>
+                            <td class="text-end">
+                                <span t-if="qator.direction == 'out'" t-field="qator.amount"
+                                      t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                            </td>
+                        </tr>
+                        <tr class="table-light">
+                            <td colspan="4"><strong>Kun bo'yicha jami</strong></td>
+                            <td class="text-end">
+                                <strong>
+                                    <span t-field="doc.total_kirim"
+                                          t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                </strong>
+                            </td>
+                            <td class="text-end">
+                                <strong>
+                                    <span t-field="doc.total_chiqim"
+                                          t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                </strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4"><strong>Kun oxiridagi qoldiq</strong></td>
+                            <td class="text-end" colspan="2">
+                                <strong>
+                                    <span t-field="doc.closing"
+                                          t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                </strong>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table t-if="doc.state == 'closed'" class="table table-sm table-bordered w-50">
+                    <tr>
+                        <td>Sanab olindi</td>
+                        <td class="text-end">
+                            <span t-field="doc.sanoq"
+                                  t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Farq</td>
+                        <td class="text-end">
+                            <strong>
+                                <span t-field="doc.farq"
+                                      t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                            </strong>
+                        </td>
+                    </tr>
+                </table>
+
+                <p t-if="doc.note" class="mt-2">
+                    <strong>Izoh:</strong> <span t-field="doc.note"/>
+                </p>
+
+                <table class="table table-sm table-borderless mt-5">
+                    <tr>
+                        <td style="width:50%;">
+                            Kassir: ______________________
+                            <div class="text-muted small">
+                                <span t-field="doc.kassa_id.mas_ul_id.name"/>
+                            </div>
+                        </td>
+                        <td>
+                            Bosh buxgalter: ______________________
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_kassa_kitobi">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="agronova_kassa.kassa_kitobi_document"/>
+            </t>
+        </t>
+    </template>
+
+</odoo>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- Odoo 19 da res.groups `privilege_id` ishlatadi (res.groups.privilege). -->
+        <record id="module_category_agronova_dashboard" model="ir.module.category">
+            <field name="name">AgroNova — Analitika</field>
+            <field name="sequence">25</field>
+        </record>
+
+        <record id="res_groups_privilege_agronova_dashboard" model="res.groups.privilege">
+            <field name="name">AgroNova — Analitika</field>
+            <field name="category_id" ref="module_category_agronova_dashboard"/>
+            <field name="sequence">25</field>
+        </record>
+
+        <record id="group_agronova_dashboard_user" model="res.groups">
+            <field name="name">Analitika: Ko'rish huquqi</field>
+            <field name="privilege_id" ref="res_groups_privilege_agronova_dashboard"/>
+            <field name="sequence">10</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Dashboardlar va analitik hisobotlarni ko'rish imkoniyati.</field>
+        </record>
+
+        <record id="group_agronova_dashboard_manager" model="res.groups">
+            <field name="name">Analitika: Rahbariyat / Boshqaruvchi</field>
+            <field name="privilege_id" ref="res_groups_privilege_agronova_dashboard"/>
+            <field name="sequence">20</field>
+            <field name="implied_ids" eval="[(4, ref('group_agronova_dashboard_user'))]"/>
+            <!-- Yo'nalish MUHIM. Ilgari bu yerda `implied_ids` ichida Bosh buxgalter
+                 va Direktor turgan edi — ya'ni analitika rolini olgan har kim
+                 yashirincha storno qilish, kassa boshqarish va ichki narx
+                 tasdiqlash huquqini ham olardi. To'g'risi teskarisi: Direktor va
+                 Bosh buxgalter analitikani ko'radi, analitikachi buxgalter bo'lmaydi. -->
+            <field name="implied_by_ids" eval="[(4, ref('agronova_base.group_agronova_direktor')), (4, ref('agronova_base.group_agronova_bosh_buxgalter'))]"/>
+            <field name="comment">Barcha rahbar dashboardlari, maxfiy moliyaviy hisobotlar va P&amp;L ko'rsatkichlariga to'liq kirish.</field>
+        </record>
+
+    </data>
+</odoo>

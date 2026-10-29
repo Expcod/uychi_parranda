@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- TZ 13-band: to'rtta hisobot. Inkubatoriyadagi kabi alohida
+         model yasalmaydi — hisobot hujjatlarning o'zidan, oldindan
+         guruhlangan ko'rinishda ochiladi. Shunda raqam bitta manbadan
+         keladi va hisobot bilan hujjat bir-biriga zid chiqmaydi. -->
+
+    <!-- Natija qatorining o'z ro'yxati yo'q edi: u faqat so'yish
+         hujjati ichida ko'rinardi. Sortirovka hisoboti uchun kerak. -->
+    <record id="view_soyish_natija_list" model="ir.ui.view">
+        <field name="name">agronova.soyish.natija.list</field>
+        <field name="model">agronova.soyish.natija</field>
+        <field name="arch" type="xml">
+            <list expand="context.get('expand', False)" string="Chiqqan mahsulotlar" create="false" edit="false">
+                <field name="jarayon_id" string="Hujjat"/>
+                <field name="product_id"/>
+                <field name="miqdor_kg" sum="Jami kg"/>
+                <field name="ulush_foiz" string="Ulush %" optional="show" width="90px"/>
+                <field name="lot_id" optional="hide"/>
+                <field name="qiymat" sum="Jami" widget="monetary"/>
+                <field name="currency_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_soyish_hisobot_soyish" model="ir.actions.act_window">
+        <field name="name">So'yish hisoboti</field>
+        <field name="res_model">agronova.soyish.jarayon</field>
+        <field name="view_mode">list,pivot,form</field>
+        <field name="domain">[('holat', '=', 'done')]</field>
+        <field name="context">{'expand': True, 'group_by': ['sana:month']}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Ma'lumot yo'q</p>
+            <p>Kunlik so'yilgan tovuq soni, tirik va so'yilgan vazn,
+               chiqim foizi va o'rtacha vazn.</p>
+        </field>
+    </record>
+
+    <record id="action_soyish_hisobot_mijoz" model="ir.actions.act_window">
+        <field name="name">Tashqi mijozlar hisoboti</field>
+        <field name="res_model">agronova.soyish.xizmat</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'expand': True, 'group_by': ['partner_id']}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Ma'lumot yo'q</p>
+            <p>Mijoz kesimida: kelgan tovuq va vazn, so'yilgani, xizmat
+               narxi va summasi, qaytarilgan va omborda qolgan mahsulot.</p>
+        </field>
+    </record>
+
+    <record id="action_soyish_hisobot_ichki" model="ir.actions.act_window">
+        <field name="name">Ichki ishlab chiqarish hisoboti</field>
+        <field name="res_model">agronova.soyish.natija</field>
+        <field name="view_mode">list</field>
+        <field name="context">{'expand': True, 'group_by': ['product_id']}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Ma'lumot yo'q</p>
+            <p>Sortirovka natijasi: qaysi mahsulotdan qancha chiqdi,
+               ulushi va qiymati. Tayyor mahsulot qoldig'i Ombor
+               hisobotlarida.</p>
+        </field>
+    </record>
+
+    <record id="action_soyish_hisobot_tannarx" model="ir.actions.act_window">
+        <field name="name">Tannarx hisoboti</field>
+        <field name="res_model">account.analytic.line</field>
+        <field name="view_mode">list,pivot</field>
+        <!-- Bo'sh analitik reja ustunlari chiqmasin: umumiy ro'yxat
+             `agronova_base` da, bitta «Obyekt» ustuni bilan. -->
+        <field name="view_id" ref="agronova_base.view_agronova_analitik_tannarx_list"/>
+        <field name="search_view_id"
+               ref="agronova_base.view_agronova_analitik_tannarx_search"/>
+        <field name="domain">[('agronova_tannarx_bazasi', '=', True),
+                              ('amount', '&lt;', 0)]</field>
+        <field name="context">{'expand': True, 'group_by': ['agronova_kategoriya_id']}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Ma'lumot yo'q</p>
+            <p>Tirik tovuq qiymati, so'yish va qayta ishlash xarajatlari
+               — partiyalar kesimida. 1 kg tannarxi partiya
+               kartochkasida.</p>
+        </field>
+    </record>
+
+</odoo>

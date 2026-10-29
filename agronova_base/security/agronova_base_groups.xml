@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- Bo'limlararo umumiy rollar. Har bir bo'lim moduli (Boquv, Ona Tovuq,
+             So'yish) o'z rollarini shu guruhlarga `implied_ids` orqali bog'laydi —
+             tahrirlash muddati pog'onasi va storno huquqi shu yerda hal bo'ladi. -->
+
+        <record id="res_groups_privilege_agronova" model="res.groups.privilege">
+            <field name="name">AgroNova — umumiy rollar</field>
+            <field name="category_id" ref="base.module_category_accounting"/>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="group_agronova_bolim_boshliq" model="res.groups">
+            <field name="name">Bo'lim boshlig'i</field>
+            <field name="privilege_id" ref="res_groups_privilege_agronova"/>
+            <field name="sequence">10</field>
+            <field name="comment">Xarajat hujjatini 24 soat ichida tahrirlaydi, partiya ochadi/yopadi.</field>
+        </record>
+
+        <record id="group_agronova_hisobchi" model="res.groups">
+            <field name="name">Bo'lim hisobchisi</field>
+            <field name="privilege_id" ref="res_groups_privilege_agronova"/>
+            <field name="sequence">20</field>
+            <field name="implied_ids" eval="[(4, ref('group_agronova_bolim_boshliq'))]"/>
+            <field name="comment">Xarajatlarni tasdiqlaydi, 36 soat ichida tahrirlaydi.</field>
+        </record>
+
+        <record id="group_agronova_bosh_buxgalter" model="res.groups">
+            <field name="name">Bosh buxgalter</field>
+            <field name="privilege_id" ref="res_groups_privilege_agronova"/>
+            <field name="sequence">30</field>
+            <field name="implied_ids" eval="[(4, ref('group_agronova_hisobchi'))]"/>
+            <field name="comment">Ichki narxni tasdiqlaydi, storno qiladi, muddat cheklovisiz tahrirlaydi.</field>
+        </record>
+
+        <record id="group_agronova_direktor" model="res.groups">
+            <field name="name">Direktor (faqat ko'radi)</field>
+            <field name="privilege_id" ref="res_groups_privilege_agronova"/>
+            <field name="sequence">40</field>
+            <field name="comment">Barcha bo'limlar ma'lumotini ko'radi, o'zgartirmaydi.</field>
+        </record>
+
+    </data>
+</odoo>

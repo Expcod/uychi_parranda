@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================= KPI ball yozuvi ================= -->
+    <record id="view_kpi_list" model="ir.ui.view">
+        <field name="name">agronova.kpi.list</field>
+        <field name="model">agronova.kpi</field>
+        <field name="arch" type="xml">
+            <list string="KPI ballari"
+                  decoration-danger="ball &lt; 5"
+                  decoration-success="ball &gt;= 9"
+                  decoration-muted="holat == 'qulflangan'">
+                <field name="sana"/>
+                <field name="xodim_id" widget="many2one_avatar_user"/>
+                <field name="davr_id"/>
+                <field name="mezon_turi"/>
+                <field name="qiymat" optional="show"/>
+                <field name="norma" optional="hide"/>
+                <field name="ball" sum="Jami" avg="O'rtacha"/>
+                <field name="manba_nomi" optional="show"/>
+                <field name="nizoli" optional="hide"/>
+                <field name="holat" widget="badge"
+                       decoration-warning="holat == 'etiroz'"/>
+                <button name="action_etiroz" type="object" string="E'tiroz"
+                        icon="fa-gavel" invisible="holat == 'qulflangan'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_kpi_form" model="ir.ui.view">
+        <field name="name">agronova.kpi.form</field>
+        <field name="model">agronova.kpi</field>
+        <field name="arch" type="xml">
+            <form string="KPI ball">
+                <header>
+                    <button name="action_etiroz" type="object" string="E'tiroz bildirish"
+                            class="btn-secondary" invisible="holat == 'qulflangan'"/>
+                    <field name="holat" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="xodim_id" widget="many2one_avatar_user"/>
+                            <field name="davr_id"/>
+                            <field name="sana"/>
+                            <field name="mezon_turi"/>
+                        </group>
+                        <group>
+                            <field name="qiymat"/>
+                            <field name="norma"/>
+                            <field name="ball"/>
+                            <field name="nizoli"/>
+                            <field name="manba_nomi"/>
+                        </group>
+                    </group>
+                    <group string="Ball qanday hisoblandi (ochiq formula)">
+                        <field name="formula_izohi" nolabel="1"/>
+                    </group>
+                    <field name="izoh"/>
+                    <notebook>
+                        <page string="E'tirozlar" name="etirozlar">
+                            <field name="etiroz_ids" readonly="1">
+                                <list>
+                                    <field name="create_date"/>
+                                    <field name="eski_ball"/>
+                                    <field name="yangi_ball"/>
+                                    <field name="sabab"/>
+                                    <field name="korib_chiquvchi_id"/>
+                                    <field name="holat"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_kpi_pivot" model="ir.ui.view">
+        <field name="name">agronova.kpi.pivot</field>
+        <field name="model">agronova.kpi</field>
+        <field name="arch" type="xml">
+            <pivot string="KPI hisoboti" sample="1">
+                <field name="xodim_id" type="row"/>
+                <field name="mezon_turi" type="col"/>
+                <field name="ball" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_kpi_graph" model="ir.ui.view">
+        <field name="name">agronova.kpi.graph</field>
+        <field name="model">agronova.kpi</field>
+        <field name="arch" type="xml">
+            <graph string="KPI" type="bar" sample="1">
+                <field name="xodim_id"/>
+                <field name="ball" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_kpi_search" model="ir.ui.view">
+        <field name="name">agronova.kpi.search</field>
+        <field name="model">agronova.kpi</field>
+        <field name="arch" type="xml">
+            <search string="KPI">
+                <field name="xodim_id"/>
+                <field name="davr_id"/>
+                <filter name="menikim" string="Mening ballarim"
+                        domain="[('xodim_id', '=', uid)]"/>
+                <filter name="past" string="Past ball (&lt; 5)"
+                        domain="[('ball', '&lt;', 5)]"/>
+                <filter name="nizoli" string="Nizoli" domain="[('nizoli', '=', True)]"/>
+                <filter name="etiroz" string="E'tiroz bildirilgan"
+                        domain="[('holat', '=', 'etiroz')]"/>
+                <group>
+                    <filter name="g_xodim" string="Xodim" context="{'group_by': 'xodim_id'}"/>
+                    <filter name="g_mezon" string="Mezon" context="{'group_by': 'mezon_turi'}"/>
+                    <filter name="g_davr" string="Davr" context="{'group_by': 'davr_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_zakupka_kpi" model="ir.actions.act_window">
+        <field name="name">KPI hisoboti</field>
+        <field name="res_model">agronova.kpi</field>
+        <field name="view_mode">list,pivot,graph,form</field>
+        <field name="search_view_id" ref="view_kpi_search"/>
+    </record>
+
+    <record id="action_zakupka_kpi_meniki" model="ir.actions.act_window">
+        <field name="name">Mening KPI'im</field>
+        <field name="res_model">agronova.kpi</field>
+        <field name="view_mode">list,pivot,form</field>
+        <field name="search_view_id" ref="view_kpi_search"/>
+        <field name="domain">[('xodim_id', '=', uid)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Hali ball yozilmagan</p>
+            <p>Ball hodisa sodir bo'lgan zahoti yoziladi — oy oxirini kutish
+               shart emas. Ball noto'g'ri deb hisoblasangiz «E'tiroz»
+               tugmasidan foydalaning.</p>
+        </field>
+    </record>
+
+    <!-- ================= KPI davri ================= -->
+    <record id="view_kpi_davr_list" model="ir.ui.view">
+        <field name="name">agronova.kpi.davr.list</field>
+        <field name="model">agronova.kpi.davr</field>
+        <field name="arch" type="xml">
+            <list string="KPI davrlari">
+                <field name="name"/>
+                <field name="boshlanish"/>
+                <field name="tugash"/>
+                <field name="ball_narxi"/>
+                <field name="holat" widget="badge"
+                       decoration-success="holat == 'yopilgan'"/>
+                <field name="currency_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_kpi_davr_form" model="ir.ui.view">
+        <field name="name">agronova.kpi.davr.form</field>
+        <field name="model">agronova.kpi.davr</field>
+        <field name="arch" type="xml">
+            <form string="KPI davri">
+                <header>
+                    <button name="action_yopish" type="object"
+                            string="Davrni yopish va ballarni qulflash"
+                            class="btn-primary" invisible="holat != 'ochiq'"/>
+                    <button name="action_ochish" type="object" string="Qayta ochish"
+                            invisible="holat != 'yopilgan'"
+                            groups="base.group_system"/>
+                    <field name="holat" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="boshlanish"/>
+                            <field name="tugash"/>
+                        </group>
+                        <group>
+                            <field name="ball_narxi"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <div class="text-muted">
+                        Bonus = o'rtacha ball × 1 ball bahosi. Formula
+                        ataylab ochiq — xodim o'z bonusini o'zi hisoblab
+                        ko'ra olishi kerak. Davr yopilgach ballar qulflanadi
+                        va orqaga o'zgartirilmaydi.
+                    </div>
+                    <notebook>
+                        <page string="Ballar" name="ballar">
+                            <field name="kpi_ids" readonly="1">
+                                <list>
+                                    <field name="sana"/>
+                                    <field name="xodim_id"/>
+                                    <field name="mezon_turi"/>
+                                    <field name="ball" avg="O'rtacha"/>
+                                    <field name="holat"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_zakupka_kpi_davr" model="ir.actions.act_window">
+        <field name="name">KPI davrlari</field>
+        <field name="res_model">agronova.kpi.davr</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ================= E'tiroz ================= -->
+    <record id="view_kpi_etiroz_list" model="ir.ui.view">
+        <field name="name">agronova.kpi.etiroz.list</field>
+        <field name="model">agronova.kpi.etiroz</field>
+        <field name="arch" type="xml">
+            <list string="E'tirozlar"
+                  decoration-warning="holat == 'korib_chiqilmoqda'">
+                <field name="create_date"/>
+                <field name="xodim_id" widget="many2one_avatar_user"/>
+                <field name="kpi_id"/>
+                <field name="eski_ball"/>
+                <field name="yangi_ball"/>
+                <field name="korib_chiquvchi_id" optional="show"/>
+                <field name="holat" widget="badge"
+                       decoration-success="holat == 'qondirildi'"
+                       decoration-danger="holat == 'rad_etildi'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_kpi_etiroz_form" model="ir.ui.view">
+        <field name="name">agronova.kpi.etiroz.form</field>
+        <field name="model">agronova.kpi.etiroz</field>
+        <field name="arch" type="xml">
+            <form string="Ballga e'tiroz">
+                <header>
+                    <button name="action_qondirish" type="object" string="Qondirish"
+                            class="btn-primary" invisible="holat != 'korib_chiqilmoqda'"
+                            groups="agronova_zakupka.group_zakupka_bolim_boshligi"/>
+                    <button name="action_rad_etish" type="object" string="Rad etish"
+                            invisible="holat != 'korib_chiqilmoqda'"
+                            groups="agronova_zakupka.group_zakupka_bolim_boshligi"/>
+                    <field name="holat" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="kpi_id"/>
+                            <field name="xodim_id" readonly="1"/>
+                            <field name="eski_ball" readonly="1"/>
+                            <field name="yangi_ball"/>
+                        </group>
+                        <group>
+                            <field name="korib_chiquvchi_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Xodim sababi">
+                        <field name="sabab" nolabel="1"/>
+                    </group>
+                    <group string="Rahbar qarori">
+                        <field name="qaror_izohi" nolabel="1"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_zakupka_kpi_etiroz" model="ir.actions.act_window">
+        <field name="name">KPI e'tirozlari</field>
+        <field name="res_model">agronova.kpi.etiroz</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

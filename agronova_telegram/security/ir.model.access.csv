@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_agronova_telegram_log_user,agronova.telegram.log user,model_agronova_telegram_log,base.group_user,1,0,0,0
+access_agronova_telegram_log_hr,agronova.telegram.log hr,model_agronova_telegram_log,hr.group_hr_user,1,1,1,0
+access_agronova_telegram_log_manager,agronova.telegram.log manager,model_agronova_telegram_log,hr.group_hr_manager,1,1,1,1
+access_agronova_telegram_request_hr,agronova.telegram.request hr,model_agronova_telegram_request,hr.group_hr_user,1,1,1,0
+access_agronova_telegram_request_manager,agronova.telegram.request manager,model_agronova_telegram_request,hr.group_hr_manager,1,1,1,1

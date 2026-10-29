@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================ KUNLIK JURNAL -->
+
+    <record id="view_boquv_jurnal_list" model="ir.ui.view">
+        <field name="name">agronova.boquv.jurnal.list</field>
+        <field name="model">agronova.boquv.jurnal</field>
+        <field name="arch" type="xml">
+            <list string="Kunlik jurnal"
+                  decoration-muted="holat == 'draft'">
+                <field name="sana"/>
+                <field name="partiya_id"/>
+                <field name="bino_id" optional="show"/>
+                <field name="kun_boshi_son"/>
+                <field name="nobud_son" sum="Jami nobud"/>
+                <field name="nobud_sabab" optional="show"/>
+                <field name="kun_oxiri_son"/>
+                <field name="yem_kg" sum="Jami yem (kg)"/>
+                <field name="suv_litr" optional="hide"/>
+                <field name="harorat" optional="hide"/>
+                <field name="sarf_qiymat" sum="Jami qiymat"/>
+                <field name="holat" widget="badge"
+                       decoration-success="holat == 'posted'"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_boquv_jurnal_form" model="ir.ui.view">
+        <field name="name">agronova.boquv.jurnal.form</field>
+        <field name="model">agronova.boquv.jurnal</field>
+        <field name="arch" type="xml">
+            <form string="Kunlik jurnal">
+                <header>
+                    <button name="action_tasdiqlash" type="object"
+                            string="Tasdiqlash" class="btn-primary"
+                            invisible="holat != 'draft'"/>
+                    <button name="action_storno" type="object"
+                            string="Storno"
+                            invisible="holat != 'posted'"
+                            confirm="Storno qilinganda resurs qiymati teskari yoziladi. Davom etasizmi?"/>
+                    <field name="holat" widget="statusbar"
+                           statusbar_visible="draft,posted"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Asosiy">
+                            <field name="sana"/>
+                            <field name="partiya_id"/>
+                            <field name="bino_id" readonly="1"/>
+                            <field name="filial_id" readonly="1"/>
+                            <field name="mas_ul_id"/>
+                            <field name="company_id" invisible="1"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Bosh soni">
+                            <field name="kun_boshi_son"/>
+                            <field name="nobud_son"/>
+                            <field name="nobud_sabab"
+                                   required="nobud_son &gt; 0"/>
+                            <field name="kun_oxiri_son"/>
+                        </group>
+                    </group>
+                    <group string="Sharoit">
+                        <group>
+                            <field name="suv_litr"/>
+                        </group>
+                        <group>
+                            <field name="harorat"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Resurs sarfi" name="sarf">
+                            <field name="sarf_ids"
+                                   readonly="holat == 'posted'">
+                                <list editable="bottom">
+                                    <field name="tur"/>
+                                    <field name="product_id"/>
+                                    <field name="miqdor"/>
+                                    <field name="uom_id"
+                                           options="{'no_create': True}"/>
+                                    <field name="miqdor_kg" readonly="1"/>
+                                    <field name="qiymat" readonly="1"
+                                           sum="Jami qiymat"/>
+                                    <field name="izoh" optional="hide"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer oe_right">
+                                <field name="yem_kg"/>
+                                <field name="sarf_qiymat"/>
+                            </group>
+                            <div class="alert alert-info" role="status">
+                                Turi <b>«Yem»</b> bo'lgan qatorlar kg ga
+                                o'girilib partiyaning <b>FCR</b> hisobiga
+                                kiradi. Tasdiqlanganda mahsulot bino
+                                lokatsiyasidan FIFO qiymati bilan hisobdan
+                                chiqadi.
+                            </div>
+                        </page>
+                        <page string="Izoh" name="izoh">
+                            <field name="izoh"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_boquv_jurnal_search" model="ir.ui.view">
+        <field name="name">agronova.boquv.jurnal.search</field>
+        <field name="model">agronova.boquv.jurnal</field>
+        <field name="arch" type="xml">
+            <search string="Kunlik jurnal">
+                <field name="partiya_id"/>
+                <field name="bino_id"/>
+                <field name="filial_id"/>
+                <filter name="filter_draft" string="Qoralama"
+                        domain="[('holat', '=', 'draft')]"/>
+                <filter name="filter_posted" string="Tasdiqlangan"
+                        domain="[('holat', '=', 'posted')]"/>
+                <separator/>
+                <filter name="filter_bugun" string="Bugun"
+                        domain="[('sana', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="filter_nobud" string="Nobud bo'lgan"
+                        domain="[('nobud_son', '>', 0)]"/>
+                <group>
+                    <filter name="group_partiya" string="Partiya"
+                            context="{'group_by': 'partiya_id'}"/>
+                    <filter name="group_bino" string="Bino"
+                            context="{'group_by': 'bino_id'}"/>
+                    <filter name="group_sana" string="Sana"
+                            context="{'group_by': 'sana:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_boquv_jurnal" model="ir.actions.act_window">
+        <field name="name">Kunlik jurnal</field>
+        <field name="res_model">agronova.boquv.jurnal</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Bugungi jurnalni kiriting</p>
+            <p>
+                Har partiya, har kun bitta yozuv: nobud, yem sarfi, suv,
+                harorat. Yem <b>kg</b> da yuritiladi — FCR shundan hisoblanadi.
+            </p>
+        </field>
+    </record>
+
+    <!-- ======================================================= OBXOD -->
+
+    <record id="view_boquv_obxod_list" model="ir.ui.view">
+        <field name="name">agronova.boquv.obxod.list</field>
+        <field name="model">agronova.boquv.obxod</field>
+        <field name="arch" type="xml">
+            <list string="Obxodlar"
+                  decoration-danger="harorat_holati in ('past', 'yuqori')">
+                <field name="vaqt"/>
+                <field name="partiya_id"/>
+                <field name="bino_id" optional="show"/>
+                <field name="brigadir_id"/>
+                <field name="harorat"/>
+                <field name="harorat_holati" widget="badge"
+                       decoration-danger="harorat_holati in ('past', 'yuqori')"
+                       decoration-success="harorat_holati == 'normal'"/>
+                <field name="namlik" optional="hide"/>
+                <field name="jojalar_holati"/>
+                <field name="yem_holati" optional="show"/>
+                <field name="suv_holati" optional="show"/>
+                <field name="olgan_joja" optional="hide"/>
+                <field name="muammo" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_boquv_obxod_form" model="ir.ui.view">
+        <field name="name">agronova.boquv.obxod.form</field>
+        <field name="model">agronova.boquv.obxod</field>
+        <field name="arch" type="xml">
+            <form string="Obxod">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Asosiy">
+                            <field name="vaqt"/>
+                            <field name="partiya_id"/>
+                            <field name="bino_id" readonly="1"/>
+                            <field name="brigadir_id"/>
+                            <field name="company_id" invisible="1"/>
+                        </group>
+                        <group string="O'lchov">
+                            <field name="harorat"/>
+                            <field name="harorat_holati" widget="badge"/>
+                            <field name="namlik"/>
+                            <field name="olgan_joja"/>
+                        </group>
+                    </group>
+                    <group string="Holat baholari">
+                        <group>
+                            <field name="jojalar_holati"/>
+                            <field name="yem_holati"/>
+                        </group>
+                        <group>
+                            <field name="suv_holati"/>
+                        </group>
+                    </group>
+                    <group string="Muammo va chora">
+                        <field name="muammo" nolabel="1" colspan="2"
+                               placeholder="Aniqlangan muammo…"/>
+                        <field name="chora" nolabel="1" colspan="2"
+                               placeholder="Ko'rilgan chora…"/>
+                    </group>
+                    <div class="alert alert-info" role="status">
+                        Obxod kuniga <b>kamida 3 marta</b> qilinadi.
+                        «O'lik jo'ja» maydoni ma'lumot uchun — rasmiy nobud
+                        hisobi kunlik jurnalda yuritiladi.
+                    </div>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_boquv_obxod" model="ir.actions.act_window">
+        <field name="name">Obxodlar</field>
+        <field name="res_model">agronova.boquv.obxod</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ======================================================== VAZN -->
+
+    <record id="view_boquv_vazn_list" model="ir.ui.view">
+        <field name="name">agronova.boquv.vazn.list</field>
+        <field name="model">agronova.boquv.vazn</field>
+        <field name="arch" type="xml">
+            <list string="Vazn nazorati" editable="bottom">
+                <field name="sana"/>
+                <field name="partiya_id"/>
+                <field name="yosh_kun"/>
+                <field name="tortilgan_son"/>
+                <field name="ortacha_vazn"/>
+                <field name="min_vazn" optional="show"/>
+                <field name="max_vazn" optional="show"/>
+                <field name="bir_xillik" optional="show"/>
+                <field name="tirik_son" readonly="1"/>
+                <field name="jami_tirik_vazn" readonly="1"/>
+                <field name="vazn_norma" readonly="1" optional="hide"/>
+                <field name="vazn_ogish" readonly="1" optional="show"/>
+                <field name="mas_ul_id" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_boquv_vazn_graph" model="ir.ui.view">
+        <field name="name">agronova.boquv.vazn.graph</field>
+        <field name="model">agronova.boquv.vazn</field>
+        <field name="arch" type="xml">
+            <graph string="O'sish dinamikasi" type="line">
+                <field name="sana" interval="day"/>
+                <field name="ortacha_vazn" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_boquv_vazn" model="ir.actions.act_window">
+        <field name="name">Vazn nazorati</field>
+        <field name="res_model">agronova.boquv.vazn</field>
+        <field name="view_mode">list,graph</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Birinchi tortishni kiriting</p>
+            <p>
+                Davriy tortish natijasi. Partiyaning <b>o'rtacha vazni</b>
+                oxirgi tortishdan olinadi va <b>1 kg tirik vazn tannarxi</b>
+                hamda <b>FCR</b> shundan hisoblanadi.
+            </p>
+        </field>
+    </record>
+
+</odoo>

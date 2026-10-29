@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Boquv TZ sidagi boshlang'ich kategoriyalar. `noupdate="1"` —
+             buyurtmachi ularni o'zgartirsa, modul yangilanishida qaytarilmasin. -->
+
+        <record id="xarajat_kat_ish_haqi" model="agronova.xarajat.kategoriya">
+            <field name="name">Ish haqi</field>
+            <field name="code">ISH_HAQI</field>
+            <field name="sequence">5</field>
+            <field name="taqsimlash_bazasi">m2</field>
+            <field name="is_ish_haqi" eval="True"/>
+        </record>
+
+        <record id="xarajat_kat_kunlik_ishchi" model="agronova.xarajat.kategoriya">
+            <field name="name">Kunlik ishchi</field>
+            <field name="code">KUNLIK_ISHCHI</field>
+            <field name="sequence">10</field>
+            <field name="taqsimlash_bazasi">m2</field>
+        </record>
+
+        <record id="xarajat_kat_dizinfeksiya" model="agronova.xarajat.kategoriya">
+            <field name="name">Dizinfeksiya ishchilari</field>
+            <field name="code">DIZINF</field>
+            <field name="sequence">20</field>
+            <field name="taqsimlash_bazasi">teng</field>
+        </record>
+
+        <record id="xarajat_kat_vaksina_xizmati" model="agronova.xarajat.kategoriya">
+            <field name="name">Vaksina xizmati</field>
+            <field name="code">VAKSINA_XIZ</field>
+            <field name="sequence">30</field>
+            <field name="taqsimlash_bazasi">bosh_soni</field>
+        </record>
+
+        <record id="xarajat_kat_laboratoriya" model="agronova.xarajat.kategoriya">
+            <field name="name">Laboratoriya xizmati</field>
+            <field name="code">LAB</field>
+            <field name="sequence">40</field>
+            <field name="taqsimlash_bazasi">teng</field>
+        </record>
+
+        <record id="xarajat_kat_tamirlash" model="agronova.xarajat.kategoriya">
+            <field name="name">Ta'mirlash</field>
+            <field name="code">TAMIR</field>
+            <field name="sequence">50</field>
+            <field name="taqsimlash_bazasi">togridan</field>
+        </record>
+
+        <record id="xarajat_kat_yolkira" model="agronova.xarajat.kategoriya">
+            <field name="name">Yo'lkira</field>
+            <field name="code">YOLKIRA</field>
+            <field name="sequence">60</field>
+            <field name="taqsimlash_bazasi">togridan</field>
+        </record>
+
+        <record id="xarajat_kat_yoqilgi" model="agronova.xarajat.kategoriya">
+            <field name="name">Yoqilg'i</field>
+            <field name="code">YOQILGI</field>
+            <field name="sequence">70</field>
+            <field name="taqsimlash_bazasi">togridan</field>
+        </record>
+
+        <record id="xarajat_kat_kommunal" model="agronova.xarajat.kategoriya">
+            <field name="name">Kommunal (elektr, gaz, suv)</field>
+            <field name="code">KOMMUNAL</field>
+            <field name="sequence">80</field>
+            <field name="taqsimlash_bazasi">m2</field>
+        </record>
+
+        <record id="xarajat_kat_ijara" model="agronova.xarajat.kategoriya">
+            <field name="name">Ijara</field>
+            <field name="code">IJARA</field>
+            <field name="sequence">90</field>
+            <field name="taqsimlash_bazasi">m2</field>
+        </record>
+
+        <record id="xarajat_kat_amortizatsiya" model="agronova.xarajat.kategoriya">
+            <field name="name">Amortizatsiya</field>
+            <field name="code">AMORT</field>
+            <field name="sequence">100</field>
+            <field name="taqsimlash_bazasi">m2</field>
+        </record>
+
+        <record id="xarajat_kat_mayda" model="agronova.xarajat.kategoriya">
+            <field name="name">Mayda xarajatlar</field>
+            <field name="code">MAYDA</field>
+            <field name="sequence">110</field>
+            <field name="taqsimlash_bazasi">teng</field>
+        </record>
+
+    </data>
+</odoo>

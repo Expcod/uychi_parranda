@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_agronova_kassa_panel" model="ir.actions.client">
+        <field name="name">Kassa</field>
+        <field name="tag">agronova_kassa.panel</field>
+    </record>
+
+    <menuitem id="menu_agronova_kassa_root"
+              name="Kassa"
+              web_icon="agronova_kassa,static/description/icon.png"
+              groups="group_agronova_kassir"
+              sequence="27"/>
+
+    <menuitem id="menu_agronova_kassa_panel"
+              name="Kassir paneli"
+              parent="menu_agronova_kassa_root"
+              action="action_agronova_kassa_panel"
+              sequence="5"/>
+
+    <menuitem id="menu_agronova_kassa_otkazma"
+              name="Kassalararo transfer"
+              parent="menu_agronova_kassa_root"
+              action="action_agronova_kassa_otkazma"
+              sequence="10"/>
+
+    <menuitem id="menu_agronova_kassa_inkassatsiya"
+              name="Inkassatsiya"
+              parent="menu_agronova_kassa_root"
+              action="action_agronova_kassa_inkassatsiya"
+              sequence="15"/>
+
+    <menuitem id="menu_agronova_kassa_kun"
+              name="Kassa kitobi"
+              parent="menu_agronova_kassa_root"
+              action="action_agronova_kassa_kun"
+              sequence="20"/>
+
+    <menuitem id="menu_agronova_kassa_tarix_root"
+              name="Tarix"
+              parent="menu_agronova_kassa_root"
+              sequence="30"/>
+
+    <menuitem id="menu_agronova_kassa_harakat"
+              name="Barcha harakatlar"
+              parent="menu_agronova_kassa_tarix_root"
+              action="action_agronova_kassa_harakat"
+              sequence="5"/>
+
+    <menuitem id="menu_agronova_kassa_kirim"
+              name="Kirimlar"
+              parent="menu_agronova_kassa_tarix_root"
+              action="action_agronova_kassa_harakat_kirim"
+              sequence="10"/>
+
+    <menuitem id="menu_agronova_kassa_chiqim"
+              name="Chiqimlar"
+              parent="menu_agronova_kassa_tarix_root"
+              action="action_agronova_kassa_harakat_chiqim"
+              sequence="15"/>
+
+    <menuitem id="menu_agronova_kassa_depozit"
+              name="Depozitlar"
+              parent="menu_agronova_kassa_root"
+              action="agronova_savdo_moliya.action_agronova_depozit"
+              sequence="35"/>
+
+    <menuitem id="menu_agronova_kassa_sozlama"
+              name="Sozlamalar"
+              parent="menu_agronova_kassa_root"
+              groups="group_agronova_kassa_menejer"
+              sequence="90"/>
+
+    <menuitem id="menu_agronova_kassa_config"
+              name="Kassalar"
+              parent="menu_agronova_kassa_sozlama"
+              action="action_agronova_kassa"
+              sequence="5"/>
+
+    <menuitem id="menu_agronova_kassa_modda"
+              name="Kirim/chiqim moddalari"
+              parent="menu_agronova_kassa_sozlama"
+              action="action_agronova_kassa_modda"
+              sequence="10"/>
+
+</odoo>

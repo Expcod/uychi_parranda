@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_nomenklatura_list" model="ir.ui.view">
+        <field name="name">agronova.nomenklatura.sorovi.list</field>
+        <field name="model">agronova.nomenklatura.sorovi</field>
+        <field name="arch" type="xml">
+            <list string="Nomenklatura so'rovlari"
+                  decoration-warning="oxshash_soni &gt; 0 and holat == 'tekshirilmoqda'">
+                <field name="name"/>
+                <field name="nom"/>
+                <field name="kategoriya_id"/>
+                <field name="olchov_birligi_id"/>
+                <field name="sorovchi_id" widget="many2one_avatar_user"/>
+                <field name="oxshash_soni" string="O'xshash"/>
+                <field name="product_tmpl_id" optional="show"/>
+                <field name="holat" widget="badge"
+                       decoration-success="holat == 'tasdiqlandi'"
+                       decoration-danger="holat == 'rad_etildi'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_nomenklatura_form" model="ir.ui.view">
+        <field name="name">agronova.nomenklatura.sorovi.form</field>
+        <field name="model">agronova.nomenklatura.sorovi</field>
+        <field name="arch" type="xml">
+            <form string="Nomenklatura so'rovi">
+                <header>
+                    <button name="action_tekshirishga_yuborish" type="object"
+                            string="Tekshirishga yuborish" class="btn-primary"
+                            invisible="holat != 'draft'"/>
+                    <button name="action_tasdiqlash" type="object"
+                            string="Tasdiqlash va bazaga qo'shish" class="btn-primary"
+                            invisible="holat != 'tekshirilmoqda'"
+                            groups="agronova_zakupka.group_zakupka_bolim_boshligi"/>
+                    <button name="action_rad_etish" type="object" string="Rad etish"
+                            invisible="holat != 'tekshirilmoqda'"
+                            groups="agronova_zakupka.group_zakupka_bolim_boshligi"/>
+                    <field name="holat" widget="statusbar"
+                           statusbar_visible="draft,tekshirilmoqda,tasdiqlandi"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="nom"/>
+                            <field name="olchov_birligi_id"/>
+                            <field name="kategoriya_id"/>
+                            <field name="xarajat_turi"/>
+                        </group>
+                        <group>
+                            <field name="sorovchi_id" widget="many2one_avatar_user"/>
+                            <field name="tekshiruvchi_id" widget="many2one_avatar_user"/>
+                            <field name="product_tmpl_id" readonly="1"/>
+                            <field name="surat" widget="image" filename="surat_filename"
+                                   options="{'size': [120, 120]}"/>
+                            <field name="surat_filename" invisible="1"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-warning" role="alert"
+                         invisible="oxshash_soni == 0">
+                        Bazada shunga o'xshash nom topildi — takroriy tovar
+                        yaratmaslik uchun quyidagi ro'yxatni ko'rib chiqing.
+                    </div>
+                    <notebook>
+                        <page string="O'xshash tovarlar" name="oxshash">
+                            <field name="oxshash_ids" readonly="1" nolabel="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="categ_id"/>
+                                    <field name="uom_id"/>
+                                    <field name="default_code"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Izoh" name="izoh">
+                            <field name="izoh" nolabel="1"/>
+                            <group string="Rad etilgan bo'lsa"
+                                   invisible="holat != 'rad_etildi'">
+                                <field name="rad_sababi" nolabel="1"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_zakupka_nomenklatura" model="ir.actions.act_window">
+        <field name="name">Nomenklatura so'rovlari</field>
+        <field name="res_model">agronova.nomenklatura.sorovi</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Yangi tovar so'rovi</p>
+            <p>Bazada yo'q tovarni zakupchik o'zi yaratmaydi — so'rov beradi.
+               Mas'ul xodim o'xshash nomlarni tekshirib tasdiqlaydi.</p>
+        </field>
+    </record>
+
+</odoo>

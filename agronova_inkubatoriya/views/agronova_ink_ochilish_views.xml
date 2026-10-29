@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_ink_ochilish_list" model="ir.ui.view">
+        <field name="name">agronova.ink.ochilish.list</field>
+        <field name="model">agronova.ink.ochilish</field>
+        <field name="arch" type="xml">
+            <list expand="context.get('expand', False)" string="Ochilish hujjatlari"
+                  decoration-info="holat == 'draft'">
+                <field name="name"/>
+                <field name="sana" string="Sana"/>
+                <field name="partiya_id" string="Partiya"/>
+                <field name="product_id" string="Mahsulot" optional="show"/>
+                <field name="ochilgan_joja" string="Ochilgan" sum="Jami" width="90px"/>
+                <field name="ochilmagan_tuxum" string="Ochilmagan" sum="Jami" width="106px"/>
+                <field name="nobud_son" string="Nobud" sum="Jami"/>
+                <field name="brak_son" string="Brak" sum="Jami"/>
+                <field name="sof_joja" string="Sof jo'ja" sum="Jami" width="98px"/>
+                <field name="joja_qiymat" string="Qiymat" optional="show" sum="Jami qiymat"/>
+                <field name="holat" widget="badge"
+                       decoration-info="holat == 'draft'"
+                       decoration-success="holat == 'done'"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ink_ochilish_form" model="ir.ui.view">
+        <field name="name">agronova.ink.ochilish.form</field>
+        <field name="model">agronova.ink.ochilish</field>
+        <field name="arch" type="xml">
+            <form string="Jo'ja ochilishi">
+                <header>
+                    <button name="action_tasdiqlash" type="object"
+                            string="Tasdiqlash" class="btn-primary"
+                            invisible="holat != 'draft'"/>
+                    <button name="action_bekor" type="object"
+                            string="Bekor qilish" invisible="holat != 'done'"
+                            confirm="Ombor harakatlari qaytariladi. Davom etilsinmi?"
+                            groups="agronova_inkubatoriya.group_ink_boshliq"/>
+                    <field name="holat" widget="statusbar"
+                           statusbar_visible="draft,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Partiya">
+                            <field name="partiya_id" readonly="holat != 'draft'"/>
+                            <field name="sana" readonly="holat != 'draft'"/>
+                            <field name="product_domain" invisible="1"/>
+                            <field name="product_id" domain="product_domain"
+                                   readonly="holat != 'draft'"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Natija">
+                            <field name="ochilgan_joja" readonly="holat != 'draft'"/>
+                            <field name="ochilmagan_tuxum" readonly="holat != 'draft'"/>
+                            <field name="nobud_son" readonly="holat != 'draft'"/>
+                            <field name="brak_son" readonly="holat != 'draft'"/>
+                            <field name="sof_joja"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-info" role="alert"
+                         invisible="holat != 'draft'">
+                        <b>Ochilgan jo'ja + ochilmagan tuxum</b> partiyaga
+                        qo'yilgan tuxumdan oshmasligi kerak. Nobud va brak
+                        ochilgan jo'jadan hisoblanadi — ochilmagan tuxum
+                        alohida ko'rsatkich.
+                        <br/>
+                        Tasdiqlanganda tuxum ombordan hisobdan chiqadi,
+                        yaroqli jo'ja esa jo'ja omboriga kiradi.
+                    </div>
+                    <group string="Ombor" invisible="holat != 'done'">
+                        <group>
+                            <field name="tuxum_move_id"/>
+                            <field name="joja_move_id"/>
+                        </group>
+                        <group>
+                            <field name="lot_id"/>
+                            <field name="joja_qiymat"/>
+                        </group>
+                    </group>
+                    <group string="Izoh">
+                        <field name="izoh" nolabel="1"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ink_ochilish_search" model="ir.ui.view">
+        <field name="name">agronova.ink.ochilish.search</field>
+        <field name="model">agronova.ink.ochilish</field>
+        <field name="arch" type="xml">
+            <search string="Ochilish hujjatlari">
+                <field name="name"/>
+                <field name="partiya_id"/>
+                <filter name="f_draft" string="Qoralama"
+                        domain="[('holat', '=', 'draft')]"/>
+                <filter name="f_done" string="Tasdiqlangan"
+                        domain="[('holat', '=', 'done')]"/>
+                <separator/>
+                <filter name="g_partiya" string="Partiya"
+                        context="{'group_by': 'partiya_id'}"/>
+                <filter name="g_oy" string="Oy"
+                        context="{'group_by': 'sana:month'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_ink_ochilish" model="ir.actions.act_window">
+        <field name="name">Jo'ja ochilishi</field>
+        <field name="res_model">agronova.ink.ochilish</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_ink_ochilish_search"/>
+    </record>
+
+</odoo>

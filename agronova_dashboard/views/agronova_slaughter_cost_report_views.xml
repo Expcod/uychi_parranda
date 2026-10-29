@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Form View (C Ilovasi shakli) -->
+        <record id="view_agronova_slaughter_cost_report_form" model="ir.ui.view">
+            <field name="name">agronova.slaughter.cost.report.form</field>
+            <field name="model">agronova.slaughter.cost.report</field>
+            <field name="arch" type="xml">
+                <form string="C Ilovasi: So'yishda Tannarxni Taqsimlash Hisoboti">
+                    <sheet>
+                        <field name="currency_id" invisible="1"/>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Masalan: Smena №14 — 1000 kg so'yish"/>
+                            </h1>
+                            <h3>
+                                <field name="sana"/>
+                            </h3>
+                        </div>
+
+                        <!-- 1. BOSH SICHIQ VA KIRIM MA'LUMOTI -->
+                        <group string="1. Boshlang'ich Kirim (Tirik Tovuq Qabuli)">
+                            <group>
+                                <field name="kirim_tirik_vazn_kg"/>
+                                <field name="kirim_bosh_soni"/>
+                            </group>
+                            <group>
+                                <field name="kirim_tirik_tannarx_kg" widget="monetary"/>
+                                <field name="kirim_jami_tannarx" widget="monetary"/>
+                            </group>
+                        </group>
+
+                        <!-- 2. CHIQIM MAHSULOTLARI VA NRV TAQSIMOT JADVALI (C ILOVASI) -->
+                        <group string="2. Chiqim Mahsulotlari va Sotuv Narxi Koeffitsienti (NRV) Bo'yicha Tannarx Taqsimoti">
+                            <field name="line_ids">
+                                <list editable="bottom">
+                                    <field name="mahsulot_nomi"/>
+                                    <field name="miqdor_kg" sum="Jami Chiqim (kg)"/>
+                                    <field name="sotuv_narxi_kg" widget="monetary"/>
+                                    <field name="sotuv_qiymati" widget="monetary" sum="Jami Sotuv Qiymati"/>
+                                    <field name="tannarx_kg" widget="monetary"/>
+                                    <field name="jami_tannarx" widget="monetary" sum="Jami Chiqim Tannarxi"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                </list>
+                            </field>
+                        </group>
+
+                        <!-- 3. TAQSIMLASH KOEFFITSIENTI VA CHIQIM FOIZI -->
+                        <group string="3. Hisoblangan Taqsimlash Koeffitsienti va Chiqim">
+                            <group>
+                                <field name="jami_sotuv_qiymati" widget="monetary"/>
+                                <field name="taqsimlash_koeffitsienti"/>
+                            </group>
+                            <group>
+                                <field name="chiqim_foizi" widget="percentage"/>
+                            </group>
+                        </group>
+
+                        <div class="alert alert-info" role="alert">
+                            <strong>Taqsimlash qoidasi:</strong> Taqsimlash koeffitsienti = Kirim jami tannarxi ÷ Jami sotuv qiymati. Har bir chiqim mahsulotining 1 kg tannarxi = uning sotuv narxi × taqsimlash koeffitsienti. Pat, teri va chiqindi qiymatsiz hisoblanadi (tannarx tushmaydi).
+                        </div>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- List View -->
+        <record id="view_agronova_slaughter_cost_report_list" model="ir.ui.view">
+            <field name="name">agronova.slaughter.cost.report.list</field>
+            <field name="model">agronova.slaughter.cost.report</field>
+            <field name="arch" type="xml">
+                <list string="C Ilovasi: So'yish NRV Taqsimoti">
+                    <field name="name"/>
+                    <field name="sana"/>
+                    <field name="kirim_tirik_vazn_kg"/>
+                    <field name="kirim_tirik_tannarx_kg" widget="monetary"/>
+                    <field name="kirim_jami_tannarx" widget="monetary"/>
+                    <field name="jami_sotuv_qiymati" widget="monetary"/>
+                    <field name="taqsimlash_koeffitsienti"/>
+                    <field name="chiqim_foizi" widget="percentage"/>
+                    <field name="currency_id" column_invisible="True"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_agronova_slaughter_cost_report" model="ir.actions.act_window">
+            <field name="name">🍗 C Ilovasi: So'yish NRV Tannarx Taqsimoti</field>
+            <field name="res_model">agronova.slaughter.cost.report</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

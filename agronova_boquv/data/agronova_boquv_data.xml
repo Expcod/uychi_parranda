@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============================================ KETMA-KETLIKLAR -->
+
+        <record id="seq_boquv_partiya" model="ir.sequence">
+            <field name="name">Boquv partiyasi</field>
+            <field name="code">agronova.boquv.partiya</field>
+            <field name="prefix">BQ-%(year)s-</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_boquv_joja_kirim" model="ir.sequence">
+            <field name="name">Boquv — jo'ja kirimi</field>
+            <field name="code">agronova.boquv.joja.kirim</field>
+            <field name="prefix">BQ-JK-%(year)s-</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_boquv_jonatma" model="ir.sequence">
+            <field name="name">Boquv — so'yimga jo'natma</field>
+            <field name="code">agronova.boquv.jonatma</field>
+            <field name="prefix">BQ-JN-%(year)s-</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_boquv_xarajat" model="ir.sequence">
+            <field name="name">Boquv — xarajat hujjati</field>
+            <field name="code">agronova.boquv.xarajat</field>
+            <field name="prefix">BQ-XR-%(year)s-</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_boquv_dezinfeksiya" model="ir.sequence">
+            <field name="name">Boquv — dezinfeksiya</field>
+            <field name="code">agronova.boquv.dezinfeksiya</field>
+            <field name="prefix">BQ-DZ-%(year)s-</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_boquv_otkazma" model="ir.sequence">
+            <field name="name">Boquv — partiyalararo o'tkazma</field>
+            <field name="code">agronova.boquv.otkazma</field>
+            <field name="prefix">BQ-OT-%(year)s-</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_boquv_ish_haqi" model="ir.sequence">
+            <field name="name">Boquv — ish haqi taqsimoti</field>
+            <field name="code">agronova.boquv.ish_haqi</field>
+            <field name="prefix">BQ-IH-%(year)s-</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- ==================================================== CRON -->
+
+        <!-- Kunlik tannarx snapshot. Kun oxirida ishlaydi, shunda o'sha
+             kunning barcha jurnal va xarajat yozuvlari hisobga kiradi.
+             Dashboarddagi «bugungi va kechagi tannarx» shu jadvaldan
+             oziqlanadi. -->
+        <record id="cron_boquv_kunlik_tannarx" model="ir.cron">
+            <field name="name">Boquv: kunlik tannarx snapshot</field>
+            <field name="model_id" ref="model_agronova_boquv_tannarx_kunlik"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_kunlik_tannarx()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

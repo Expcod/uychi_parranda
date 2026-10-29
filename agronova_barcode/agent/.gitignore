@@ -1,0 +1,9 @@
+# Exe yasashdan qoladigan fayllar — repoga kerak emas
+build/
+dist/
+__pycache__/
+*.pyc
+
+# Haqiqiy sozlama: parol va kalit bor, hech qachon repoga tushmasin
+agent.ini
+agent.log

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- Odoo 19 da res.groups `privilege_id` ishlatadi (res.groups.privilege).
+             Kategoriya o'zimizniki: `base.module_category_purchase` hamma
+             bazada bo'lavermaydi, tashqi xmlid ga tayanmaymiz. -->
+        <record id="module_category_zakupka" model="ir.module.category">
+            <field name="name">AgroNova — Xarid</field>
+            <field name="sequence">50</field>
+        </record>
+
+        <record id="res_groups_privilege_zakupka" model="res.groups.privilege">
+            <field name="name">AgroNova — Xarid</field>
+            <field name="category_id" ref="module_category_zakupka"/>
+            <field name="sequence">50</field>
+        </record>
+
+        <!-- Omborchi: zayavka beradi, tovarni qabul qiladi, ball qo'yadi. -->
+        <record id="group_zakupka_omborchi" model="res.groups">
+            <field name="name">Omborchi</field>
+            <field name="privilege_id" ref="res_groups_privilege_zakupka"/>
+            <field name="sequence">10</field>
+            <!-- Hujjatlarni oqim yaratadi (sudo), lekin omborchi ularni
+                 Inventory da ochib ko'ra olishi kerak. -->
+            <field name="implied_ids" eval="[(4, ref('stock.group_stock_user'))]"/>
+            <field name="comment">Zayavka beradi, tranzitdagi tovarni qabul qiladi va uch o'lchovda baholaydi.</field>
+        </record>
+
+        <!-- Zakupchik: zayavka qabul qiladi, ruxsat so'raydi, xarid qiladi. -->
+        <record id="group_zakupka_zakupchik" model="res.groups">
+            <field name="name">Zakupchik</field>
+            <field name="privilege_id" ref="res_groups_privilege_zakupka"/>
+            <field name="sequence">20</field>
+            <field name="implied_ids" eval="[(4, ref('stock.group_stock_user'))]"/>
+            <field name="comment">O'z zayavka va xaridlarini ko'radi, ruxsat so'raydi, kirim hujjatini rasmiylashtiradi. O'z depoziti bor.</field>
+        </record>
+
+        <!-- Sifat va narx nazorati: zanjirning ikkinchi tasdig'i. -->
+        <record id="group_zakupka_sifat_nazorat" model="res.groups">
+            <field name="name">Sifat va narx nazorati boshlig'i</field>
+            <field name="privilege_id" ref="res_groups_privilege_zakupka"/>
+            <field name="sequence">30</field>
+            <field name="comment">Tasdiq kutayotgan ruxsatlarni ikkinchi bo'lib tasdiqlaydi: narx maqbulmi, sifat mos keladimi.</field>
+        </record>
+
+        <!-- Buxgalter: faktura va qarz. -->
+        <record id="group_zakupka_buxgalter" model="res.groups">
+            <field name="name">Xarid buxgalteri</field>
+            <field name="privilege_id" ref="res_groups_privilege_zakupka"/>
+            <field name="sequence">40</field>
+            <field name="comment">Didox fakturasini solishtiradi, qarzni yopadi.</field>
+        </record>
+
+        <!-- Bo'lim boshlig'i: zanjirning birinchi tasdig'i; o'zi ham xarid qiladi. -->
+        <record id="group_zakupka_bolim_boshligi" model="res.groups">
+            <field name="name">Zakupka bo'lim boshlig'i</field>
+            <field name="privilege_id" ref="res_groups_privilege_zakupka"/>
+            <field name="sequence">50</field>
+            <field name="implied_ids" eval="[(4, ref('group_zakupka_zakupchik'))]"/>
+            <field name="comment">Ruxsatnomani birinchi bo'lib tasdiqlaydi, bo'lim hujjatlarini ko'radi, o'zi ham sotib oladi.</field>
+        </record>
+
+        <!-- Administrator: normativlar, chegaralar, sozlamalar. -->
+        <record id="group_zakupka_admin" model="res.groups">
+            <field name="name">Xarid administratori</field>
+            <field name="privilege_id" ref="res_groups_privilege_zakupka"/>
+            <field name="sequence">60</field>
+            <field name="implied_ids" eval="[(4, ref('group_zakupka_bolim_boshligi')),
+                                             (4, ref('group_zakupka_sifat_nazorat')),
+                                             (4, ref('group_zakupka_omborchi')),
+                                             (4, ref('group_zakupka_buxgalter'))]"/>
+            <field name="comment">Kategoriyalar, normativlar, og'ish chegaralari, ish vaqti kalendari va Didox rekvizitlari.</field>
+        </record>
+
+    </data>
+</odoo>

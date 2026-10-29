@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="param_label_width" model="ir.config_parameter">
+        <field name="key">agronova_barcode.label_width</field>
+        <field name="value">50</field>
+    </record>
+
+    <record id="param_label_height" model="ir.config_parameter">
+        <field name="key">agronova_barcode.label_height</field>
+        <field name="value">30</field>
+    </record>
+
+    <record id="param_complex_serials" model="ir.config_parameter">
+        <field name="key">agronova_barcode.complex_serials</field>
+        <field name="value">False</field>
+    </record>
+
+</odoo>

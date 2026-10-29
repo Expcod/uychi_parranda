@@ -1,0 +1,13 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_label_printer_user,label.printer.user,model_agronova_label_printer,stock.group_stock_user,1,0,0,0
+access_label_printer_manager,label.printer.manager,model_agronova_label_printer,stock.group_stock_manager,1,1,1,1
+access_label_print_job_user,label.print.job.user,model_agronova_label_print_job,stock.group_stock_user,1,1,1,0
+access_label_print_job_manager,label.print.job.manager,model_agronova_label_print_job,stock.group_stock_manager,1,1,1,1
+access_label_print_wizard,label.print.wizard,model_agronova_label_print_wizard,stock.group_stock_user,1,1,1,1
+access_stock_lot_box_user,agronova.lot.box.user,model_agronova_lot_box,stock.group_stock_user,1,1,1,0
+access_stock_lot_box_manager,agronova.lot.box.manager,model_agronova_lot_box,stock.group_stock_manager,1,1,1,1
+access_picking_qr_scan,picking.qr.scan,model_agronova_picking_qr_scan,stock.group_stock_user,1,1,1,1
+access_picking_qr_bypass,picking.qr.bypass,model_agronova_picking_qr_bypass,stock.group_stock_manager,1,1,1,1
+access_quant_serial_wizard,quant.serial.wizard,model_agronova_quant_serial_wizard,stock.group_stock_user,1,1,1,1
+access_picking_qr_scan_product,picking.qr.scan.product,model_agronova_picking_qr_scan_product,stock.group_stock_user,1,1,1,1
+access_stock_lot_box_wizard,agronova.lot.box.wizard,model_agronova_lot_box_wizard,stock.group_stock_user,1,1,1,1

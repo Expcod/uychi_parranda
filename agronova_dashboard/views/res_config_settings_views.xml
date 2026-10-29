@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Sozlamalar → Rahbar paneli: brend nomi va normativlar.
+        Bitta kod bazasi turli korxonalarga sotiladi — har biri o'z nomi va
+        o'z texnologik normalarini shu yerdan beradi, kod o'zgarmaydi.
+    -->
+    <record id="res_config_settings_view_form_agronova" model="ir.ui.view">
+        <field name="name">res.config.settings.agronova.dashboard</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Rahbar paneli" string="Rahbar paneli" name="agronova_dashboard"
+                     groups="agronova_dashboard.group_agronova_dashboard_manager">
+                    <block title="Brend" name="agronova_brand">
+                        <setting string="Panel nomi"
+                                 help="Rahbar paneli chap yuqori burchagida ko'rinadi.">
+                            <field name="agronova_brand_name"/>
+                            <field name="agronova_brand_tagline" placeholder="Shior"/>
+                        </setting>
+                    </block>
+                    <block title="Texnologik normativlar" name="agronova_norms">
+                        <setting string="Boquv" help="Fakt shulardan yomon bo'lsa panel qizil ko'rsatadi.">
+                            <div class="row mt-2">
+                                <label for="agronova_norm_fcr" class="col-lg-6 o_light_label"/>
+                                <field name="agronova_norm_fcr"/>
+                            </div>
+                            <div class="row">
+                                <label for="agronova_norm_nobud" class="col-lg-6 o_light_label"/>
+                                <field name="agronova_norm_nobud"/>
+                            </div>
+                            <div class="row">
+                                <label for="agronova_norm_vazn" class="col-lg-6 o_light_label"/>
+                                <field name="agronova_norm_vazn"/>
+                            </div>
+                        </setting>
+                        <setting string="Ona tovuq, inkubatsiya, so'yish">
+                            <div class="row mt-2">
+                                <label for="agronova_norm_tuxum_berish" class="col-lg-6 o_light_label"/>
+                                <field name="agronova_norm_tuxum_berish"/>
+                            </div>
+                            <div class="row">
+                                <label for="agronova_norm_ochilish" class="col-lg-6 o_light_label"/>
+                                <field name="agronova_norm_ochilish"/>
+                            </div>
+                            <div class="row">
+                                <label for="agronova_norm_soyish_chiqim" class="col-lg-6 o_light_label"/>
+                                <field name="agronova_norm_soyish_chiqim"/>
+                            </div>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_agronova_settings" model="ir.actions.act_window">
+        <field name="name">Panel sozlamalari</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="context">{'module': 'agronova_dashboard', 'bin_size': False}</field>
+    </record>
+</odoo>

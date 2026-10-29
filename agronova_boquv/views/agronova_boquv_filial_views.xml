@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_boquv_filial_list" model="ir.ui.view">
+        <field name="name">agronova.boquv.filial.list</field>
+        <field name="model">agronova.boquv.filial</field>
+        <field name="arch" type="xml">
+            <list string="Boquv filiallari">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="joylashuvi" optional="show"/>
+                <field name="boshliq_id" optional="show"/>
+                <field name="bino_soni"/>
+                <field name="aktiv_bino_soni"/>
+                <field name="jami_maydon" sum="Jami m²" optional="show"/>
+                <field name="joriy_son" sum="Jami bosh"/>
+                <field name="warehouse_id" optional="hide"/>
+                <field name="analytic_account_id" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_boquv_filial_form" model="ir.ui.view">
+        <field name="name">agronova.boquv.filial.form</field>
+        <field name="model">agronova.boquv.filial</field>
+        <field name="arch" type="xml">
+            <form string="Boquv filiali">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_binolar" type="object"
+                                class="oe_stat_button" icon="fa-building">
+                            <field name="bino_soni" widget="statinfo"
+                                   string="Binolar"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Arxivlangan"
+                            bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Andijon 1-filial"/></h1>
+                    </div>
+                    <group>
+                        <group string="Asosiy">
+                            <field name="code" placeholder="BQ01"/>
+                            <field name="joylashuvi"/>
+                            <field name="boshliq_id"/>
+                            <field name="active" invisible="1"/>
+                            <field name="company_id"
+                                   groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Hisob va ombor">
+                            <field name="analytic_account_id"
+                                   options="{'no_create': True}"/>
+                            <field name="warehouse_id"
+                                   options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    <group string="Ko'rsatkichlar">
+                        <group>
+                            <field name="bino_soni"/>
+                            <field name="aktiv_bino_soni"/>
+                        </group>
+                        <group>
+                            <field name="jami_maydon"/>
+                            <field name="joriy_son"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Binolar" name="binolar">
+                            <field name="bino_ids" readonly="1">
+                                <list>
+                                    <field name="code"/>
+                                    <field name="name"/>
+                                    <field name="maydoni" sum="Jami m²"/>
+                                    <field name="sigimi"/>
+                                    <field name="joriy_son" sum="Jami bosh"/>
+                                    <field name="band_foiz" widget="percentage"/>
+                                    <field name="holat" widget="badge"
+                                           decoration-success="holat == 'aktiv'"
+                                           decoration-warning="holat == 'dizinfeksiya'"
+                                           decoration-muted="holat == 'no_aktiv'"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Izoh" name="izoh">
+                            <field name="izoh" placeholder="Qo'shimcha ma'lumot…"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_boquv_filial_search" model="ir.ui.view">
+        <field name="name">agronova.boquv.filial.search</field>
+        <field name="model">agronova.boquv.filial</field>
+        <field name="arch" type="xml">
+            <search string="Filiallar">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="boshliq_id"/>
+                <filter name="filter_active" string="Faol"
+                        domain="[('active', '=', True)]"/>
+                <filter name="filter_arxiv" string="Arxivlangan"
+                        domain="[('active', '=', False)]"/>
+                <group>
+                    <filter name="group_company" string="Korxona"
+                            context="{'group_by': 'company_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_boquv_filial" model="ir.actions.act_window">
+        <field name="name">Filiallar</field>
+        <field name="res_model">agronova.boquv.filial</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Birinchi filialni qo'shing</p>
+            <p>
+                Filial — Boquv tuzilmasining ikkinchi qavati:
+                <b>Korxona → Filial → Bino → Partiya</b>.
+                Har filialning o'z ombori va analitik hisobi bo'ladi;
+                rahbariyat filiallarni bir-biri bilan solishtiradi.
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- List View -->
+        <record id="view_agronova_production_analytics_list" model="ir.ui.view">
+            <field name="name">agronova.production.analytics.list</field>
+            <field name="model">agronova.production.analytics</field>
+            <field name="arch" type="xml">
+                <list string="Ishlab Chiqarish Analitikasi" create="0" edit="0" delete="0">
+                    <field name="sana"/>
+                    <field name="sektor"/>
+                    <field name="name"/>
+                    <field name="filial_id"/>
+                    <field name="bino_id"/>
+                    <field name="boshlangich_soni"/>
+                    <field name="yakuniy_soni"/>
+                    <field name="nobud_foiz" widget="percentage"/>
+                    <field name="fcr_fakt"/>
+                    <field name="fcr_ogish"/>
+                    <field name="ortacha_vazn_kg"/>
+                    <field name="epef_indeks"/>
+                    <field name="chiqim_miqdori"/>
+                    <field name="jami_xarajat" widget="monetary"/>
+                    <field name="birlik_tannarx" widget="monetary"/>
+                    <field name="tannarx_ogish_foiz" widget="percentage"/>
+                    <field name="currency_id" column_invisible="True"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Pivot View -->
+        <record id="view_agronova_production_analytics_pivot" model="ir.ui.view">
+            <field name="name">agronova.production.analytics.pivot</field>
+            <field name="model">agronova.production.analytics</field>
+            <field name="arch" type="xml">
+                <pivot string="Ishlab Chiqarish KPI Pivot Tahlili" sample="1">
+                    <field name="sektor" type="row"/>
+                    <field name="filial_id" type="row"/>
+                    <field name="sana" interval="month" type="col"/>
+                    <field name="fcr_fakt" type="measure"/>
+                    <field name="nobud_foiz" type="measure"/>
+                    <field name="birlik_tannarx" type="measure"/>
+                    <field name="chiqim_miqdori" type="measure"/>
+                    <field name="jami_xarajat" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Graph View -->
+        <record id="view_agronova_production_analytics_graph" model="ir.ui.view">
+            <field name="name">agronova.production.analytics.graph</field>
+            <field name="model">agronova.production.analytics</field>
+            <field name="arch" type="xml">
+                <graph string="Ishlab Chiqarish Samaradorlik Grafigi" type="bar" sample="1">
+                    <field name="filial_id"/>
+                    <field name="fcr_fakt" type="measure"/>
+                    <field name="nobud_foiz" type="measure"/>
+                    <field name="birlik_tannarx" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record id="view_agronova_production_analytics_search" model="ir.ui.view">
+            <field name="name">agronova.production.analytics.search</field>
+            <field name="model">agronova.production.analytics</field>
+            <field name="arch" type="xml">
+                <search string="Ishlab Chiqarish Qidiruvi">
+                    <field name="name"/>
+                    <field name="filial_id"/>
+                    <field name="bino_id"/>
+                    <field name="sektor"/>
+                    <separator/>
+                    <filter string="Boquv partiyalari" name="filter_boquv" domain="[('sektor', '=', 'boquv')]"/>
+                    <filter string="Yem zavodi" name="filter_yem" domain="[('sektor', '=', 'yem_zavodi')]"/>
+                    <separator/>
+                    <filter string="FCR normadan oshgan (+og'ish)" name="filter_fcr_alert" domain="[('fcr_ogish', '>', 0)]"/>
+                    <filter string="Nobud normadan oshgan" name="filter_nobud_alert" domain="[('nobud_ogish', '>', 0)]"/>
+                    <separator/>
+                    <group>
+                        <filter string="Sektor bo'yicha" name="group_sektor" context="{'group_by': 'sektor'}"/>
+                        <filter string="Filial bo'yicha" name="group_filial" context="{'group_by': 'filial_id'}"/>
+                        <filter string="Sana bo'yicha" name="group_sana" context="{'group_by': 'sana'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_agronova_production_analytics" model="ir.actions.act_window">
+            <field name="name">🏭 Ishlab Chiqarish va Agro KPI Tahlili</field>
+            <field name="res_model">agronova.production.analytics</field>
+            <field name="view_mode">pivot,graph,list</field>
+            <field name="context">{'search_default_group_sektor': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Ishlab chiqarish va agro-parranda KPI tahlili
+                </p>
+                <p>
+                    FCR, nobudgarchilik foizi, tirik vazn va 1 kg tannarx bo'yicha filiallararo taqqoslama.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

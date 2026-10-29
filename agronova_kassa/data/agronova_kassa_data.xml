@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ============ RAQAMLASH ============
+             Kirim va chiqim orderlari alohida raqamlanadi — rasmiy kassa
+             hujjatlarida shunday (KKO / KCHO). -->
+
+        <record id="seq_kassa_harakat_in" model="ir.sequence">
+            <field name="name">Kassa kirim orderi</field>
+            <field name="code">agronova.kassa.harakat.in</field>
+            <field name="prefix">KKO/%(range_year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_kassa_harakat_out" model="ir.sequence">
+            <field name="name">Kassa chiqim orderi</field>
+            <field name="code">agronova.kassa.harakat.out</field>
+            <field name="prefix">KCHO/%(range_year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_kassa_otkazma" model="ir.sequence">
+            <field name="name">Kassalararo transfer</field>
+            <field name="code">agronova.kassa.otkazma</field>
+            <field name="prefix">KT/%(range_year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_kassa_inkassatsiya" model="ir.sequence">
+            <field name="name">Inkassatsiya</field>
+            <field name="code">agronova.kassa.inkassatsiya</field>
+            <field name="prefix">INK/%(range_year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- ============ SOZLAMA ============ -->
+        <record id="param_orqaga_kun" model="ir.config_parameter">
+            <field name="key">agronova_kassa.orqaga_kun</field>
+            <field name="value">0</field>
+        </record>
+
+        <!-- ============ KIRIM MODDALARI ============
+             Buxgalteriya hisoblari post_init hook orqali O'zbekiston
+             hisoblar rejasi kodi bo'yicha topib qo'yiladi. -->
+
+        <record id="modda_sotuv" model="agronova.kassa.modda">
+            <field name="name">Sotuvdan tushum</field>
+            <field name="direction">in</field>
+            <field name="sequence">1</field>
+            <field name="izoh_majburiy" eval="False"/>
+            <field name="qarz_yopish" eval="True"/>
+            <field name="note">Mijozdan mahsulot uchun olingan naqd; ochiq
+                hisob-fakturalar bilan avtomat yarashtiriladi (4010)</field>
+        </record>
+
+        <record id="modda_bankdan" model="agronova.kassa.modda">
+            <field name="name">Bankdan olindi</field>
+            <field name="direction">in</field>
+            <field name="sequence">5</field>
+            <field name="note">Hisob raqamdan kassaga olingan naqd pul (5110)</field>
+        </record>
+
+        <record id="modda_depozit_qaytdi" model="agronova.kassa.modda">
+            <field name="name">Depozitdan qaytarildi</field>
+            <field name="direction">in</field>
+            <field name="sequence">10</field>
+            <field name="depozit" eval="True"/>
+            <field name="izoh_majburiy" eval="False"/>
+            <field name="note">Brigadir yoki ta'minotchi sarflamagan naqdni
+                kassaga qaytardi (4790)</field>
+        </record>
+
+        <record id="modda_otkazma_kirim" model="agronova.kassa.modda">
+            <field name="name">Boshqa kassadan keldi</field>
+            <field name="direction">in</field>
+            <field name="sequence">15</field>
+            <field name="izoh_majburiy" eval="False"/>
+            <field name="otkazma" eval="True"/>
+            <field name="note">Kassalararo transfer bilan kelgan naqd —
+                provodka transfer hujjatida yoziladi</field>
+        </record>
+
+        <record id="modda_inkassatsiya_qaytdi" model="agronova.kassa.modda">
+            <field name="name">Inkassatsiya qaytdi</field>
+            <field name="direction">in</field>
+            <field name="sequence">16</field>
+            <field name="izoh_majburiy" eval="False"/>
+            <field name="inkassatsiya" eval="True"/>
+            <field name="note">Bank qabul qilmagan inkassatsiya kassaga
+                qaytdi — inkassatsiya hujjati qo'yadi</field>
+        </record>
+
+        <record id="modda_boshqa_kirim" model="agronova.kassa.modda">
+            <field name="name">Boshqa kirim</field>
+            <field name="direction">in</field>
+            <field name="sequence">90</field>
+            <field name="note">Boshqa operatsion daromadlar (9390)</field>
+        </record>
+
+        <!-- ============ CHIQIM MODDALARI ============ -->
+
+        <record id="modda_yetkazuvchi" model="agronova.kassa.modda">
+            <field name="name">Yetkazib beruvchiga to'lov</field>
+            <field name="direction">out</field>
+            <field name="sequence">1</field>
+            <field name="izoh_majburiy" eval="False"/>
+            <field name="yetkazuvchi_tolov" eval="True"/>
+            <field name="note">Xomashyo yoki xizmat uchun naqd to'lov;
+                yetkazib beruvchining hisob-varaqalari bilan avtomat
+                yarashtiriladi (6010)</field>
+        </record>
+
+        <record id="modda_depozit_berildi" model="agronova.kassa.modda">
+            <field name="name">Depozitga berildi</field>
+            <field name="direction">out</field>
+            <field name="sequence">5</field>
+            <field name="depozit" eval="True"/>
+            <field name="izoh_majburiy" eval="False"/>
+            <field name="note">Brigadir, bo'lim boshlig'i yoki ta'minotchiga
+                hisob berish sharti bilan berilgan naqd (4790)</field>
+        </record>
+
+        <record id="modda_oylik" model="agronova.kassa.modda">
+            <field name="name">Ish haqi / avans</field>
+            <field name="direction">out</field>
+            <field name="sequence">10</field>
+            <field name="izoh_majburiy" eval="False"/>
+            <field name="note">Xodimga naqd berilgan ish haqi yoki avans (6710)</field>
+        </record>
+
+        <record id="modda_xojalik" model="agronova.kassa.modda">
+            <field name="name">Xo'jalik xarajati</field>
+            <field name="direction">out</field>
+            <field name="sequence">15</field>
+            <field name="analitik_majburiy" eval="True"/>
+            <field name="note">Kundalik mayda xarajatlar — analitik kesim
+                majburiy, aks holda tannarxga tushmaydi (9420)</field>
+        </record>
+
+        <record id="modda_transport" model="agronova.kassa.modda">
+            <field name="name">Yo'l va transport xarajati</field>
+            <field name="direction">out</field>
+            <field name="sequence">20</field>
+            <field name="analitik_majburiy" eval="True"/>
+            <field name="note">Yo'lkira, yoqilg'i, yuklash-tushirish —
+                reys yoki filial analitikasiga yoziladi (9410)</field>
+        </record>
+
+        <record id="modda_bankka" model="agronova.kassa.modda">
+            <field name="name">Bankka topshirildi (inkassatsiya)</field>
+            <field name="direction">out</field>
+            <field name="sequence">25</field>
+            <field name="izoh_majburiy" eval="False"/>
+            <field name="inkassatsiya" eval="True"/>
+            <field name="topshiriq" eval="True"/>
+            <field name="note">Inkassatsiya hujjati qo'yadi — provodka
+                o'sha hujjatda yoziladi</field>
+        </record>
+
+        <record id="modda_otkazma_chiqim" model="agronova.kassa.modda">
+            <field name="name">Boshqa kassaga jo'natildi</field>
+            <field name="direction">out</field>
+            <field name="sequence">30</field>
+            <field name="izoh_majburiy" eval="False"/>
+            <field name="otkazma" eval="True"/>
+            <field name="topshiriq" eval="True"/>
+            <field name="note">Kassalararo transfer hujjati qo'yadi</field>
+        </record>
+
+        <record id="modda_boshqa_chiqim" model="agronova.kassa.modda">
+            <field name="name">Boshqa chiqim</field>
+            <field name="direction">out</field>
+            <field name="sequence">90</field>
+            <field name="analitik_majburiy" eval="True"/>
+            <field name="note">Boshqa operatsion xarajatlar (9430)</field>
+        </record>
+
+    </data>
+</odoo>

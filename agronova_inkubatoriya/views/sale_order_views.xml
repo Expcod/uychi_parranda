@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_sale_order_form_ink_partiya" model="ir.ui.view">
+        <field name="name">sale.order.form.ink.partiya</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <!-- Boquvga ichki berishda jo'ja qaysi inkubatsiya
+                 partiyasidan chiqayotgani — bo'lim natijasi shu
+                 bo'yicha hisoblanadi. -->
+            <xpath expr="//field[@name='order_line']/list/field[@name='product_uom_qty']"
+                   position="after">
+                <field name="agronova_ink_partiya_id" optional="hide"
+                       options="{'no_create': True}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

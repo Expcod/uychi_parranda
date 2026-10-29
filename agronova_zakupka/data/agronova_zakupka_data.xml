@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- noupdate="1": admin sozlamada o'zgartirgan qiymat modul
+         yangilanganda qaytarib bosilmasin. -->
+    <data noupdate="1">
+
+        <!-- ================================================================
+             TZ 20-bo'lim — buyurtmachidan hali olinmagan qiymatlar.
+             Har biri taxminiy; `Sozlamalar > Xarid` dan o'zgartiriladi.
+             ================================================================ -->
+
+        <!-- TODO: buyurtmachi tasdiqlashi kerak (20.1) — kichik summaga
+             bitta tasdiq chegarasi. -->
+        <record id="param_bitta_tasdiq_chegara" model="ir.config_parameter">
+            <field name="key">agronova_zakupka.bitta_tasdiq_chegara</field>
+            <field name="value">500000</field>
+        </record>
+
+        <!-- Javob/tasdiq muddatlari (soat) — TZ 6-bo'lim jadvali. -->
+        <record id="param_muddat_juda_muhim" model="ir.config_parameter">
+            <field name="key">agronova_zakupka.muddat_juda_muhim</field>
+            <field name="value">1.0</field>
+        </record>
+        <record id="param_muddat_orta" model="ir.config_parameter">
+            <field name="key">agronova_zakupka.muddat_orta</field>
+            <field name="value">1.5</field>
+        </record>
+        <record id="param_muddat_zaxira" model="ir.config_parameter">
+            <field name="key">agronova_zakupka.muddat_zaxira</field>
+            <field name="value">3.0</field>
+        </record>
+
+        <!-- TODO: buyurtmachi tasdiqlashi kerak (20.3) — eskalatsiya oralig'i. -->
+        <record id="param_eskalatsiya_oraliq" model="ir.config_parameter">
+            <field name="key">agronova_zakupka.eskalatsiya_oraliq</field>
+            <field name="value">30</field>
+        </record>
+
+        <!-- TODO: buyurtmachi tasdiqlashi kerak (20.4) — narx eskirishi. -->
+        <record id="param_narx_eskirish_oy" model="ir.config_parameter">
+            <field name="key">agronova_zakupka.narx_eskirish_oy</field>
+            <field name="value">6</field>
+        </record>
+
+        <!-- TODO: buyurtmachi tasdiqlashi kerak (20.5) — og'ish chegarasi. -->
+        <record id="param_ogish_umumiy" model="ir.config_parameter">
+            <field name="key">agronova_zakupka.ogish_umumiy</field>
+            <field name="value">10.0</field>
+        </record>
+
+        <record id="param_narx_tarixi_soni" model="ir.config_parameter">
+            <field name="key">agronova_zakupka.narx_tarixi_soni</field>
+            <field name="value">5</field>
+        </record>
+        <record id="param_birinchi_xarid_taklif" model="ir.config_parameter">
+            <field name="key">agronova_zakupka.birinchi_xarid_taklif</field>
+            <field name="value">3</field>
+        </record>
+        <record id="param_tranzit_kun" model="ir.config_parameter">
+            <field name="key">agronova_zakupka.tranzit_ogohlantirish_kun</field>
+            <field name="value">3</field>
+        </record>
+        <record id="param_didox_kutish_kun" model="ir.config_parameter">
+            <field name="key">agronova_zakupka.didox_kutish_kun</field>
+            <field name="value">3</field>
+        </record>
+        <record id="param_orqaga_sana_oyna" model="ir.config_parameter">
+            <field name="key">agronova_zakupka.orqaga_sana_oyna</field>
+            <field name="value">24</field>
+        </record>
+
+        <!-- ================================================================
+             Ish vaqti kalendari (TZ 21.7 — markazlashtirilgan).
+             TODO: buyurtmachi tasdiqlashi kerak (20.2) — aniq soatlar va
+             dam olish kunlari.
+             ================================================================ -->
+        <record id="kalendar_zakupka" model="resource.calendar">
+            <field name="name">Xarid bo'limi ish vaqti (09:00–18:00)</field>
+            <field name="tz">Asia/Tashkent</field>
+            <field name="hours_per_day">8.0</field>
+            <field name="attendance_ids" eval="[(5, 0, 0)] + [
+                (0, 0, {'name': nom, 'dayofweek': kun,
+                        'hour_from': boshlanish, 'hour_to': tugash,
+                        'day_period': davr})
+                for kun, nom in [('0', 'Dushanba'), ('1', 'Seshanba'),
+                                 ('2', 'Chorshanba'), ('3', 'Payshanba'),
+                                 ('4', 'Juma'), ('5', 'Shanba')]
+                for boshlanish, tugash, davr in [(9.0, 13.0, 'morning'),
+                                                 (14.0, 18.0, 'afternoon')]
+            ]"/>
+        </record>
+
+        <function model="ir.config_parameter" name="set_param"
+                  eval="('agronova_zakupka.kalendar_id',
+                         str(ref('agronova_zakupka.kalendar_zakupka')))"/>
+
+        <!-- ================================================================
+             Xarajat kategoriyalari — dori va oziq-ovqatda kuzatuv boshidan
+             yoqiladi (TZ 21.2: keyin yoqish katta muammo).
+             ================================================================ -->
+        <record id="categ_dori" model="product.category">
+            <field name="name">Dori-darmon</field>
+            <field name="kuzatuv_majburiy">lot_muddat</field>
+            <field name="narx_ogish_foizi">5.0</field>
+        </record>
+
+        <record id="categ_oziq_ovqat" model="product.category">
+            <field name="name">Oziq-ovqat</field>
+            <field name="kuzatuv_majburiy">lot_muddat</field>
+            <field name="narx_ogish_foizi">7.0</field>
+        </record>
+
+        <record id="categ_hom_ashyo" model="product.category">
+            <field name="name">Hom ashyo</field>
+            <field name="kuzatuv_majburiy">yoq</field>
+        </record>
+
+        <record id="categ_vh" model="product.category">
+            <field name="name">Xo'jalik mollari (VH)</field>
+            <field name="kuzatuv_majburiy">yoq</field>
+        </record>
+
+        <record id="categ_uskuna" model="product.category">
+            <field name="name">Uskuna</field>
+            <field name="kuzatuv_majburiy">seriya</field>
+        </record>
+
+    </data>
+</odoo>

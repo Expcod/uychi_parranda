@@ -1,0 +1,106 @@
+.o_boquv_panel {
+    background: var(--bs-tertiary-bg);
+
+    .bq-container {
+        max-width: 1280px;
+    }
+
+    .bq-header {
+        background: #1f4d2e;
+    }
+
+    .bq-depozit {
+        background: rgba(255, 255, 255, 0.14);
+    }
+
+    // Uzun matn flex ichida siqilib ketmasligi uchun
+    .bq-min0 {
+        min-width: 0;
+    }
+
+    .bq-label {
+        display: block;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--bs-secondary-color);
+        margin-bottom: 0.3rem;
+    }
+
+    .bq-kart {
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: border-color 0.15s ease, transform 0.1s ease;
+
+        &:hover {
+            transform: translateY(-2px);
+        }
+
+        &.bq-kart-active {
+            border-color: #1f4d2e;
+        }
+    }
+
+    .bq-son {
+        font-size: 2rem;
+        line-height: 1.15;
+        word-break: break-word;
+    }
+
+    .bq-stat {
+        background: var(--bs-body-bg);
+        border: 1px solid var(--bs-border-color);
+
+        &.bq-stat-ogoh {
+            background: rgba(255, 193, 7, 0.08);
+        }
+    }
+
+    .bq-dropdown.dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1060;
+        max-height: 240px;
+        overflow-y: auto;
+
+        .dropdown-item {
+            white-space: normal;
+            cursor: pointer;
+        }
+    }
+
+    .bq-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 1050;
+        background: rgba(0, 0, 0, 0.45);
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 4vh 1rem;
+        overflow-y: auto;
+    }
+
+    .bq-modal {
+        width: 100%;
+        max-width: 460px;
+
+        &.bq-modal-wide {
+            max-width: 720px;
+        }
+    }
+
+    // Sehda telefon bilan ishlanadi — kartochka va tugmalar yiriklashadi.
+    @media (max-width: 767.98px) {
+        .bq-son {
+            font-size: 1.7rem;
+        }
+
+        .bq-modal,
+        .bq-modal.bq-modal-wide {
+            max-width: 100%;
+        }
+    }
+}

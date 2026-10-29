@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_agronova_kassa_modda_list" model="ir.ui.view">
+        <field name="name">agronova.kassa.modda.list</field>
+        <field name="model">agronova.kassa.modda</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="direction"/>
+                <field name="account_id" options="{'no_create': True}"/>
+                <field name="izoh_majburiy"/>
+                <field name="analitik_majburiy"/>
+                <field name="qarz_yopish" optional="show"/>
+                <field name="yetkazuvchi_tolov" optional="show"/>
+                <field name="depozit" optional="show"/>
+                <field name="topshiriq" optional="hide"/>
+                <field name="otkazma" optional="hide"/>
+                <field name="inkassatsiya" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company"
+                       optional="hide"/>
+                <field name="note" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_agronova_kassa_modda_form" model="ir.ui.view">
+        <field name="name">agronova.kassa.modda.form</field>
+        <field name="model">agronova.kassa.modda</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Sotuvdan tushum"/></h1>
+                    </div>
+                    <group>
+                        <group string="Asosiy">
+                            <field name="direction"/>
+                            <field name="account_id" options="{'no_create': True}"/>
+                            <field name="company_id" options="{'no_create': True}"/>
+                            <field name="sequence"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group string="Talablar">
+                            <field name="izoh_majburiy"/>
+                            <field name="analitik_majburiy"/>
+                        </group>
+                    </group>
+                    <group string="Maxsus xatti-harakat">
+                        <div class="text-muted mb-2" colspan="2">
+                            Bir moddaga faqat BITTASINI qo'ying — aks holda bir
+                            summa ikki mexanizmda ikki marta hisoblanadi.
+                        </div>
+                        <group>
+                            <field name="qarz_yopish"/>
+                            <field name="yetkazuvchi_tolov"/>
+                            <field name="depozit"/>
+                        </group>
+                        <group>
+                            <field name="otkazma"/>
+                            <field name="inkassatsiya"/>
+                            <field name="topshiriq"/>
+                        </group>
+                    </group>
+                    <group string="Tavsif">
+                        <field name="note" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_agronova_kassa_modda" model="ir.actions.act_window">
+        <field name="name">Kirim/chiqim moddalari</field>
+        <field name="res_model">agronova.kassa.modda</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Modda qo'shing</p>
+            <p>Modda pulning maqsadini va provodkaning ikkinchi tomonini
+               belgilaydi.</p>
+        </field>
+    </record>
+
+</odoo>

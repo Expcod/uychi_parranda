@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_soyish_pl_form" model="ir.ui.view">
+        <field name="name">agronova.soyish.pl.form</field>
+        <field name="model">agronova.soyish.pl</field>
+        <field name="arch" type="xml">
+            <form string="So'yish — foyda va zarar">
+                <header>
+                    <button name="action_yangilash" type="object"
+                            string="Yangilash" class="btn-primary"
+                            help="Davrni o'zgartirgandan keyin xarajat tarkibini qayta hisoblaydi."/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>So'yish — foyda va zarar</h1>
+                        <h3 class="text-muted">
+                            <field name="company_id" readonly="1"
+                                   options="{'no_open': True}"/>
+                        </h3>
+                    </div>
+                    <group>
+                        <group string="Davr">
+                            <field name="davr_boshi"/>
+                            <field name="davr_oxiri"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Ishlab chiqarish (ma'lumot uchun)">
+                            <field name="tirik_vazn_kg"/>
+                            <field name="tayyor_kg"/>
+                            <field name="chiqim_foiz"/>
+                            <field name="tannarx_1_kg"/>
+                            <field name="ishlab_chiqarish"/>
+                            <field name="ombor_ozgarishi"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Daromad">
+                            <field name="tashqi_sotuv"/>
+                            <field name="xizmat_summa"/>
+                            <field name="boshqa_daromad"/>
+                            <field name="ichki_sotuv" invisible="not ichki_sotuv"/>
+                            <field name="jami_daromad"
+                                   class="oe_subtotal_footer_separator"/>
+                        </group>
+                        <group string="Xarajat">
+                            <field name="sotilgan_tannarx"/>
+                            <field name="jami_xarajat"
+                                   class="oe_subtotal_footer_separator"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Natija">
+                            <field name="bolim_foyda"/>
+                            <field name="bolim_rentabellik"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-info" role="alert">
+                        <b>Chiqim foizi</b> bu bo'limning asosiy ko'rsatkichi:
+                        tirik vazndan qancha foiz tayyor mahsulot chiqqani.
+                        Norma ~74%, undan sezilarli past bo'lsa sababini
+                        aniqlash kerak — boquv aybimi yoki so'yishmi.
+                        <br/>
+                        <b>Tashqi mijoz xizmati</b> — davvalchilikka kelgan
+                        tovuqni so'yish haqi. Tovuq ham, mahsulot ham
+                        mijozning mulki, bizga faqat xizmat haqi tegadi.
+                        <br/>
+                        <b>Ishlab chiqarish xarajati xarajatlar ichida yo'q</b>
+                        — so'yilgan, lekin sotilmagan go'sht omborda aktiv
+                        bo'lib turibdi.
+                    </div>
+
+                    <notebook>
+                        <page string="Ishlab chiqarish xarajati tarkibi"
+                              name="tarkib">
+                            <field name="qator_ids" readonly="1">
+                                <list create="0" delete="0">
+                                    <field name="nom"/>
+                                    <field name="summa" sum="Jami"/>
+                                    <field name="ulush"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                            <div class="text-muted">
+                                Tirik tovuqning tannarxi bu ro'yxatga
+                                kirmaydi — u sotilgan mahsulot tannarxida.
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_soyish_pl_sahifa" model="ir.actions.server">
+        <field name="name">Foyda-zarar hisoboti</field>
+        <field name="model_id" ref="model_agronova_soyish_pl"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_ochish()</field>
+    </record>
+
+</odoo>

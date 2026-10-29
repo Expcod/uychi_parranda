@@ -1,0 +1,1463 @@
+// Rahbar analitik paneli (brend nomi sozlamalardan keladi).
+//
+// Barcha ranglar `--smd-*` tokenlarida. Bu fayl — yorug' tema; Odoo qorong'i
+// temasida `dashboard.dark.scss` (web.assets_web_dark) faqat tokenlarni
+// almashtiradi, shuning uchun yangi stil yozganda rangni to'g'ridan-to'g'ri
+// emas, token orqali bering.
+//
+// Uslub: tinch fon, yupqa chegarali panellar, kichik bosh harfli sarlavhalar
+// chap tomonida rangli chiziq bilan, katta raqamlar. Bezak — minimal.
+// Bosiladigan har bir element `.o_smd_clickable` oladi — kursor va hover bir xil.
+.o_smd, .o_s3d {
+    --smd-bg: #f3f5f9;
+    --smd-card: #ffffff;
+    --smd-card-2: #f8fafc;
+    --smd-border: #e5e9f0;
+    --smd-border-strong: #cfd6e1;
+    --smd-ink: #0f172a;
+    --smd-ink-2: #1e293b;
+    --smd-muted: #64748b;
+    --smd-faint: #94a3b8;
+    --smd-hover: #f1f5f9;
+    --smd-hover-accent: #eef4ff;
+    --smd-track: #edf1f6;
+    --smd-primary: #2563eb;
+    --smd-primary-ink: #ffffff;
+    --smd-primary-soft: #e8f0fe;
+    --smd-title-bar: #2563eb;
+    --smd-title-glow: none;
+    --smd-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    --smd-shadow-hover: 0 8px 20px rgba(15, 23, 42, 0.08);
+    --smd-value-glow: none;
+    --smd-input-bg: #ffffff;
+    --smd-ok: #16a34a;
+    --smd-bad: #dc2626;
+    --smd-ok-soft: #dcfce7;
+    --smd-bad-soft: #fee2e2;
+    --smd-bad-border: #fecaca;
+    --smd-alert-bad-bg: #fef2f2;
+    --smd-alert-bad-fg: #991b1b;
+    --smd-alert-warn-bg: #fffbeb;
+    --smd-alert-warn-fg: #92400e;
+    --smd-alert-ok-bg: #f0fdf4;
+    --smd-alert-ok-fg: #166534;
+    --smd-alert-info-bg: #eff6ff;
+    --smd-alert-info-fg: #1e40af;
+    --smd-tone-green-bg: #d1fae5;
+    --smd-tone-green-fg: #065f46;
+    --smd-tone-yellow-bg: #fef3c7;
+    --smd-tone-yellow-fg: #92400e;
+    --smd-tone-red-bg: #fee2e2;
+    --smd-tone-red-fg: #991b1b;
+    --smd-tip-bg: #0f172a;
+    --smd-tip-fg: #e2e8f0;
+    --smd-sk-1: #eef2f7;
+    --smd-sk-2: #f8fafc;
+    --smd-side-bg: #0f172a;
+    --smd-side-border: transparent;
+    --smd-backdrop: rgba(15, 23, 42, 0.35);
+    // 3D yorliqlar
+    --s3d-label-bg: rgba(255, 255, 255, 0.95);
+    --s3d-label-border: rgba(15, 23, 42, 0.08);
+    --s3d-label-ink: #0f172a;
+    --s3d-label-muted: #475569;
+    --s3d-sky: linear-gradient(180deg, #4f8fd0 0%, #9cc6ec 45%, #dfe8ea 100%);
+}
+
+.o_smd {
+    position: relative;
+    display: flex;
+    height: 100%;
+    overflow: hidden;
+    background: var(--smd-bg);
+    color: var(--smd-ink);
+    font-size: 14px;
+
+    // ======================= Sidebar =======================
+    .o_smd_sidebar {
+        flex: 0 0 236px;
+        background: var(--smd-side-bg);
+        border-right: 1px solid var(--smd-side-border);
+        color: #e2e8f0;
+        display: flex;
+        flex-direction: column;
+        padding: 16px 12px 12px;
+        overflow-y: auto;
+    }
+    .o_smd_brand {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 6px 8px 14px;
+        color: #fff;
+    }
+    .o_smd_brand_logo {
+        flex: 0 0 auto;
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        font-size: 15px;
+        color: #fff;
+        background: linear-gradient(135deg, #22c55e 0%, #0ea5e9 100%);
+    }
+    .o_smd_brand_text { min-width: 0; }
+    .o_smd_brand_name { font-size: 16px; font-weight: 800; letter-spacing: 0.2px; }
+    .o_smd_brand_tag {
+        font-size: 11.5px;
+        color: #94a3b8;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .o_smd_nav {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    .o_smd_nav_group {
+        margin: 14px 10px 4px;
+        font-size: 10.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #64748b;
+    }
+    .o_smd_nav_item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border: 0;
+        background: transparent;
+        color: #b6c2d2;
+        font-weight: 600;
+        text-align: left;
+        padding: 8px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.15s ease, color 0.15s ease;
+        i { width: 18px; text-align: center; font-size: 15px; opacity: 0.85; }
+        &:hover { background: rgba(255, 255, 255, 0.06); color: #fff; }
+        &.active {
+            background: rgba(56, 189, 248, 0.12);
+            color: #fff;
+            i { opacity: 1; color: #38bdf8; }
+            &::before {
+                content: "";
+                position: absolute;
+                left: -12px;
+                top: 7px;
+                bottom: 7px;
+                width: 3px;
+                border-radius: 0 3px 3px 0;
+                background: #38bdf8;
+                box-shadow: 0 0 10px rgba(56, 189, 248, 0.7);
+            }
+        }
+    }
+    .o_smd_sidebar_foot {
+        margin-top: auto;
+        padding: 14px 10px 4px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: #94a3b8;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    }
+
+    // ======================= Main =======================
+    .o_smd_main {
+        flex: 1 1 auto;
+        overflow-y: auto;
+        padding: 18px 22px 28px;
+        min-width: 0;
+        position: relative;
+    }
+    .o_smd_progress {
+        position: sticky;
+        top: -18px;
+        height: 3px;
+        margin: -18px -22px 15px;
+        overflow: hidden;
+        z-index: 3;
+        background: var(--smd-primary-soft);
+        &::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: 40%;
+            background: linear-gradient(90deg, transparent, var(--smd-primary), transparent);
+            animation: smd-progress 1.1s ease-in-out infinite;
+        }
+    }
+    .o_smd_dim { opacity: 0.55; pointer-events: none; transition: opacity 0.2s ease; }
+
+    // ----- Topbar -----
+    .o_smd_topbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        background: var(--smd-card);
+        border: 1px solid var(--smd-border);
+        border-radius: 12px;
+        padding: 12px 16px;
+        box-shadow: var(--smd-shadow);
+
+        .o_smd_topbar_title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            > i.o_smd_title_icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 18px;
+                background: var(--smd-primary-soft);
+                color: var(--smd-primary);
+                flex: 0 0 auto;
+            }
+        }
+        .o_smd_title { font-size: 18px; font-weight: 800; letter-spacing: 0.2px; }
+        .o_smd_subtitle { font-size: 12px; color: var(--smd-muted); margin-top: 2px; }
+        .o_smd_updated { color: var(--smd-faint); }
+        .o_smd_burger {
+            display: none;
+            border: 1px solid var(--smd-border);
+            background: var(--smd-input-bg);
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            color: var(--smd-ink);
+        }
+        .o_smd_controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+        .o_smd_periods {
+            display: inline-flex;
+            background: var(--smd-hover);
+            border: 1px solid var(--smd-border);
+            border-radius: 9px;
+            padding: 3px;
+        }
+        .o_smd_period_btn {
+            border: 0;
+            background: transparent;
+            color: var(--smd-muted);
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.15s ease, color 0.15s ease;
+            &:hover { color: var(--smd-ink); }
+            &.active {
+                background: var(--smd-primary);
+                color: var(--smd-primary-ink);
+            }
+        }
+        .o_smd_range {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            .o_smd_range_sep { color: var(--smd-faint); }
+        }
+        // Odoo DateTimeInput oddiy <input> qaytaradi — uni kalendar ikonkasi
+        // bilan bitta «maydon» ichiga o'raymiz.
+        .o_smd_date_field {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            border: 1px solid var(--smd-border);
+            border-radius: 8px;
+            padding: 6px 9px;
+            background: var(--smd-input-bg);
+            cursor: pointer;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+            > .fa-calendar {
+                color: var(--smd-faint);
+                font-size: 13px;
+                pointer-events: none;
+            }
+            &:hover { border-color: var(--smd-border-strong); }
+            &.active { border-color: var(--smd-primary); background: var(--smd-primary-soft); }
+            &:focus-within {
+                border-color: var(--smd-primary);
+                box-shadow: 0 0 0 3px var(--smd-primary-soft);
+            }
+        }
+        .o_smd_input {
+            border: 0;
+            padding: 0;
+            font-size: 13px;
+            color: var(--smd-ink);
+            background: transparent;
+            width: 92px;
+            cursor: pointer;
+            &:focus { outline: 0; }
+        }
+        .o_smd_refresh {
+            border: 1px solid var(--smd-border);
+            background: var(--smd-input-bg);
+            color: var(--smd-muted);
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            cursor: pointer;
+            &:hover { background: var(--smd-hover); color: var(--smd-ink); }
+        }
+    }
+    .o_smd_apply {
+        border: 0;
+        background: var(--smd-primary);
+        color: var(--smd-primary-ink);
+        font-weight: 600;
+        padding: 7px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        white-space: nowrap;
+        &:hover { filter: brightness(1.08); }
+    }
+
+    // ----- Holat (xatolik / bo'sh) -----
+    .o_smd_status {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        padding: 90px 0;
+        color: var(--smd-muted);
+        text-align: center;
+    }
+
+    .o_smd_body { padding-top: 16px; }
+
+    // ----- Diqqat qatorlari (avtomatik xulosalar) -----
+    .o_smd_alerts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+    .o_smd_alert {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        padding: 8px 13px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 13px;
+        border: 1px solid transparent;
+        border-left-width: 3px;
+        transition: transform 0.15s ease, filter 0.15s ease;
+        > i:first-child { font-size: 14px; }
+    }
+    .o_smd_alert_bad { background: var(--smd-alert-bad-bg); color: var(--smd-alert-bad-fg); border-left-color: var(--smd-bad); }
+    .o_smd_alert_warn { background: var(--smd-alert-warn-bg); color: var(--smd-alert-warn-fg); border-left-color: #f59e0b; }
+    .o_smd_alert_ok { background: var(--smd-alert-ok-bg); color: var(--smd-alert-ok-fg); border-left-color: var(--smd-ok); }
+    .o_smd_alert_info { background: var(--smd-alert-info-bg); color: var(--smd-alert-info-fg); border-left-color: var(--smd-primary); }
+    .o_smd_alert.o_smd_clickable:hover { filter: brightness(1.04); transform: translateY(-1px); }
+
+    // ----- KPI kartochkalari -----
+    .o_smd_kpis {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+        gap: 14px;
+    }
+    .o_smd_kpi {
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        background: var(--smd-card);
+        border: 1px solid var(--smd-border);
+        border-radius: 12px;
+        padding: 14px 16px 12px;
+        box-shadow: var(--smd-shadow);
+        transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+        // Yuqori chetdagi ingichka rang chizig'i — kartochka qaysi turga oidligi.
+        &::before {
+            content: "";
+            position: absolute;
+            left: 16px;
+            right: 16px;
+            top: 0;
+            height: 2px;
+            border-radius: 0 0 2px 2px;
+            background: var(--smd-accent, var(--smd-primary));
+            opacity: 0.55;
+        }
+        .o_smd_kpi_row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            z-index: 1;
+        }
+        .o_smd_kpi_icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex: 0 0 auto;
+        }
+        .o_smd_kpi_meta { min-width: 0; flex: 1 1 auto; }
+        .o_smd_kpi_label {
+            font-size: 11.5px;
+            color: var(--smd-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+        .o_smd_kpi_value {
+            font-size: 21px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-top: 2px;
+            font-variant-numeric: tabular-nums;
+            text-shadow: var(--smd-value-glow);
+            word-break: normal;
+            overflow-wrap: normal;
+        }
+        .o_smd_kpi_open {
+            position: absolute;
+            top: -2px;
+            right: -4px;
+            font-size: 11px;
+            color: var(--smd-faint);
+            opacity: 0;
+            transition: opacity 0.15s ease;
+        }
+        &:hover .o_smd_kpi_open { opacity: 1; }
+        .o_smd_kpi_foot {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 18px;
+            position: relative;
+            z-index: 1;
+        }
+        .o_smd_kpi_hint { font-size: 11.5px; color: var(--smd-faint); }
+        &.o_smd_bad .o_smd_kpi_value { color: var(--smd-bad); }
+        &.o_smd_ok .o_smd_kpi_value { color: var(--smd-ok); }
+        &.o_smd_bad { border-color: var(--smd-bad-border); }
+    }
+    .o_smd_kpi.o_smd_clickable:hover {
+        transform: translateY(-2px);
+        border-color: var(--smd-border-strong);
+        box-shadow: var(--smd-shadow-hover);
+    }
+    .o_smd_delta {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        padding: 1px 7px;
+        border-radius: 20px;
+        font-size: 11.5px;
+        font-weight: 700;
+    }
+    .o_smd_delta_good { background: var(--smd-ok-soft); color: var(--smd-ok); }
+    .o_smd_delta_bad { background: var(--smd-bad-soft); color: var(--smd-bad); }
+    .o_smd_spark {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 32px;
+        opacity: 0.55;
+        pointer-events: none;
+    }
+    .o_smd_spark_line {
+        fill: none;
+        stroke: var(--smd-accent, var(--smd-primary));
+        stroke-width: 1.6;
+        vector-effect: non-scaling-stroke;
+    }
+    .o_smd_spark_area { fill: var(--smd-accent, var(--smd-primary)); opacity: 0.12; }
+
+    // Skelet (birinchi yuklanish)
+    .o_smd_skeleton {
+        flex-direction: row;
+        align-items: center;
+        &::before { display: none; }
+        .o_smd_kpi_icon, .o_smd_sk_line {
+            background: linear-gradient(90deg, var(--smd-sk-1) 25%, var(--smd-sk-2) 50%, var(--smd-sk-1) 75%);
+            background-size: 200% 100%;
+            animation: smd-shimmer 1.2s linear infinite;
+        }
+        .o_smd_kpi_meta { flex: 1 1 auto; }
+        .o_smd_sk_line { height: 10px; border-radius: 6px; width: 60%; }
+        .o_smd_sk_big { height: 18px; width: 85%; margin-top: 8px; }
+    }
+
+    // Bosiladigan elementlar uchun umumiy ko'rinish
+    .o_smd_clickable { cursor: pointer; }
+    .o_smd_chev { margin-left: auto; color: var(--smd-faint); padding-left: 6px; }
+
+    // ----- Panellar -----
+    .o_smd_panels {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+        gap: 14px;
+        margin-top: 16px;
+    }
+    .o_smd_panel {
+        background: var(--smd-card);
+        border: 1px solid var(--smd-border);
+        border-radius: 12px;
+        box-shadow: var(--smd-shadow);
+        overflow: hidden;
+        min-width: 0;
+    }
+    .o_smd_panel_full { grid-column: 1 / -1; }
+    .o_smd_badge {
+        font-size: 10px;
+        font-weight: 800;
+        padding: 1px 7px;
+        border-radius: 20px;
+        color: var(--smd-primary);
+        background: var(--smd-primary-soft);
+        border: 1px solid var(--smd-primary);
+        letter-spacing: 0.4px;
+    }
+    // Sarlavha: bosh harflar, chapda rangli chiziq — namunadagi «boshqaruv markazi» uslubi.
+    .o_smd_panel_head {
+        position: relative;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 9px;
+        padding: 12px 16px 12px 20px;
+        font-size: 12.5px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        border-bottom: 1px solid var(--smd-border);
+        &::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 11px;
+            bottom: 11px;
+            width: 3px;
+            border-radius: 0 3px 3px 0;
+            background: var(--smd-title-bar);
+            box-shadow: var(--smd-title-glow);
+        }
+        > i { color: var(--smd-title-bar); font-size: 13px; }
+        > span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+    .o_smd_pager {
+        margin-left: auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        flex-shrink: 0;
+        text-transform: none;
+        letter-spacing: 0;
+    }
+    .o_smd_pager_label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--smd-faint);
+        margin-right: 4px;
+        white-space: nowrap;
+    }
+    .o_smd_pager_btn {
+        border: 1px solid var(--smd-border);
+        background: var(--smd-input-bg);
+        color: var(--smd-muted);
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+        padding: 0;
+        line-height: 1;
+        cursor: pointer;
+        transition: background-color 0.15s ease, color 0.15s ease;
+        i { font-size: 11px; }
+        &:hover {
+            background: var(--smd-primary);
+            border-color: var(--smd-primary);
+            color: var(--smd-primary-ink);
+        }
+    }
+    .o_smd_panel_body { padding: 10px 12px 14px; }
+    .o_smd_empty_row {
+        padding: 26px;
+        text-align: center;
+        color: var(--smd-faint);
+    }
+    .o_smd_empty_icon { font-size: 26px; opacity: 0.4; margin-bottom: 6px; }
+
+    // ----- Reyting qatorlari -----
+    .o_smd_rank_row {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 9px 8px;
+        border-radius: 8px;
+        &:hover { background: var(--smd-hover); }
+        &.o_smd_clickable:hover { background: var(--smd-hover-accent); }
+        .o_smd_chev { align-self: center; }
+    }
+    .o_smd_rank_no {
+        flex: 0 0 auto;
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        background: var(--smd-track);
+        color: var(--smd-muted);
+        font-weight: 700;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 2px;
+    }
+    .o_smd_rank_main { flex: 1 1 auto; min-width: 0; }
+    .o_smd_rank_top {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+    }
+    .o_smd_rank_name {
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .o_smd_rank_val { font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .o_smd_rank_sub { font-size: 12px; color: var(--smd-faint); margin-top: 1px; }
+    .o_smd_bar {
+        margin-top: 6px;
+        height: 6px;
+        background: var(--smd-track);
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    .o_smd_bar_fill {
+        height: 100%;
+        border-radius: 6px;
+        min-width: 2px;
+        transition: width 0.45s ease;
+    }
+
+    // ----- Donut -----
+    .o_smd_split {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        flex-wrap: wrap;
+        padding: 16px;
+    }
+    .o_smd_donut {
+        flex: 0 0 auto;
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+    .o_smd_donut_hole {
+        width: 104px;
+        height: 104px;
+        border-radius: 50%;
+        background: var(--smd-card);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .o_smd_donut_total {
+        font-size: 15px;
+        font-weight: 800;
+        line-height: 1.15;
+        white-space: nowrap;
+        color: var(--smd-ink);
+        text-shadow: var(--smd-value-glow);
+    }
+    .o_smd_donut_cap { font-size: 11px; color: var(--smd-faint); margin-top: 1px; }
+    .o_smd_legend { flex: 1 1 auto; min-width: 160px; }
+    .o_smd_legend_row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 6px;
+        font-size: 13px;
+        border-radius: 6px;
+        &.o_smd_clickable:hover { background: var(--smd-hover); }
+    }
+    .o_smd_legend_dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 3px;
+        flex: 0 0 auto;
+        display: inline-block;
+    }
+    .o_smd_legend_label {
+        flex: 1 1 auto;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .o_smd_legend_val { font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .o_smd_legend_pct { color: var(--smd-faint); width: 48px; text-align: right; }
+
+    // ----- Jadval -----
+    .o_smd_table_scroll { overflow-x: auto; }
+    .o_smd_table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+    .o_smd_table thead th {
+        text-align: left;
+        font-size: 10.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        color: var(--smd-faint);
+        font-weight: 700;
+        padding: 8px 10px;
+        border-bottom: 1px solid var(--smd-border);
+        white-space: nowrap;
+    }
+    .o_smd_table tbody td {
+        padding: 8px 10px;
+        border-bottom: 1px solid var(--smd-border);
+        color: var(--smd-ink-2);
+    }
+    .o_smd_table tbody tr:last-child td { border-bottom: 0; }
+    .o_smd_table tbody tr:hover td { background: var(--smd-hover); }
+    .o_smd_table tbody tr.o_smd_clickable:hover td { background: var(--smd-hover-accent); }
+    .o_smd_table .o_smd_t_no {
+        width: 46px;
+        color: var(--smd-faint);
+        font-weight: 700;
+    }
+    .o_smd_table .o_smd_t_num {
+        text-align: right;
+        font-weight: 700;
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+    }
+    .o_smd_table .o_smd_empty_cell {
+        text-align: center;
+        color: var(--smd-faint);
+        padding: 22px 14px;
+    }
+    .o_smd_table .o_smd_tone_danger { color: var(--smd-bad); font-weight: 600; }
+    .o_smd_table .o_smd_tone_ok { color: var(--smd-ok); }
+    .o_smd_table .o_smd_tone_strong { font-weight: 700; color: var(--smd-ink); }
+    .o_smd_table .o_smd_tone_green { background: var(--smd-tone-green-bg); color: var(--smd-tone-green-fg); font-weight: 600; }
+    .o_smd_table .o_smd_tone_yellow { background: var(--smd-tone-yellow-bg); color: var(--smd-tone-yellow-fg); font-weight: 600; }
+    .o_smd_table .o_smd_tone_red { background: var(--smd-tone-red-bg); color: var(--smd-tone-red-fg); font-weight: 600; }
+    .o_smd_table tfoot.o_smd_t_total td {
+        border-top: 2px solid var(--smd-border-strong);
+        background: var(--smd-card-2);
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    // ----- Trend (ustunli grafik) -----
+    .o_smd_trend { padding: 6px 8px 6px; }
+    .o_smd_trend_summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        font-size: 12.5px;
+        color: var(--smd-muted);
+        padding: 0 4px 6px;
+        b { color: var(--smd-ink); }
+    }
+    .o_smd_trend_sum { display: inline-flex; align-items: center; gap: 6px; }
+    .o_smd_trend_chart {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-around;
+        gap: 6px;
+        height: 190px;
+        padding: 8px 4px 0;
+        // Yengil gorizontal yo'riqnoma chiziqlari.
+        background-image: linear-gradient(var(--smd-border) 1px, transparent 1px);
+        background-size: 100% 25%;
+        background-position: 0 -1px;
+    }
+    .o_smd_trend_group {
+        flex: 1 1 0;
+        min-width: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        position: relative;
+        border-radius: 6px;
+        &:hover { background: var(--smd-hover); }
+        &:hover .o_smd_trend_tip { display: block; }
+    }
+    .o_smd_trend_tip {
+        display: none;
+        position: absolute;
+        bottom: calc(100% - 24px);
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 5;
+        background: var(--smd-tip-bg);
+        color: var(--smd-tip-fg);
+        font-size: 11.5px;
+        white-space: nowrap;
+        padding: 7px 10px;
+        border-radius: 8px;
+        border: 1px solid var(--smd-border);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        pointer-events: none;
+    }
+    .o_smd_trend_tip_head { font-weight: 800; color: #fff; margin-bottom: 2px; }
+    .o_smd_trend_bars {
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        gap: 4px;
+        width: 100%;
+        height: 100%;
+    }
+    .o_smd_trend_bar {
+        flex: 1 1 auto;
+        min-width: 4px;
+        max-width: 18px;
+        border-radius: 4px 4px 0 0;
+        min-height: 3px;
+        transition: height 0.6s ease;
+    }
+    .o_smd_trend_in { background: linear-gradient(180deg, #4ade80, #16a34a); }
+    .o_smd_trend_out { background: linear-gradient(180deg, #f87171, #dc2626); }
+    .o_smd_trend_label {
+        margin-top: 7px;
+        font-size: 11px;
+        color: var(--smd-muted);
+        white-space: nowrap;
+    }
+    .o_smd_trend_legend {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-left: auto;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: none;
+        letter-spacing: 0;
+        color: var(--smd-muted);
+    }
+    .o_smd_trend_leg { display: inline-flex; align-items: center; gap: 6px; }
+
+    // ----- Normativ o'lchagichi (fakt vs norma) -----
+    .o_smd_gauges {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 12px;
+        padding: 16px;
+    }
+    .o_smd_gauge {
+        background: var(--smd-card-2);
+        border: 1px solid var(--smd-border);
+        border-left: 3px solid var(--gc, var(--smd-primary));
+        border-radius: 10px;
+        padding: 12px 14px;
+    }
+    .o_smd_gauge_top {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 8px;
+    }
+    .o_smd_gauge_name { font-weight: 600; color: var(--smd-ink-2); }
+    .o_smd_gauge_fact { font-size: 18px; font-weight: 800; color: var(--gc, var(--smd-primary)); }
+    .o_smd_gauge_track {
+        position: relative;
+        margin-top: 10px;
+        height: 6px;
+        background: var(--smd-track);
+        border-radius: 5px;
+    }
+    .o_smd_gauge_fill {
+        height: 100%;
+        border-radius: 5px;
+        background: var(--gc, var(--smd-primary));
+        transition: width 0.5s ease;
+    }
+    // Normativ chizig'i — fakt undan qay tomonda turgani darrov ko'rinadi.
+    .o_smd_gauge_norm {
+        position: absolute;
+        top: -4px;
+        bottom: -4px;
+        width: 2px;
+        background: var(--smd-ink);
+        opacity: 0.55;
+    }
+    .o_smd_gauge_verdict { font-weight: 700; color: var(--gc, var(--smd-primary)); }
+    .o_smd_gauge_foot {
+        display: flex;
+        gap: 8px;
+        justify-content: space-between;
+        margin-top: 7px;
+        font-size: 11.5px;
+        color: var(--smd-faint);
+        b { color: var(--smd-muted); }
+    }
+
+    // ======================= Ferma binolari =======================
+    .o_smd_farm {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: stretch;
+        gap: 12px;
+        padding: 16px;
+    }
+    .o_smd_coop {
+        flex: 1 1 190px;
+        min-width: 180px;
+        max-width: 280px;
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+        padding: 16px 14px 14px;
+        border-radius: 12px;
+        color: #e2e8f0;
+        background: linear-gradient(160deg, #13203a 0%, #0b1324 100%);
+        border: 1px solid rgba(56, 189, 248, 0.16);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        &:hover { transform: translateY(-3px); box-shadow: 0 12px 26px rgba(2, 8, 23, 0.35); }
+    }
+    .o_smd_coop_scene {
+        position: relative;
+        height: 58px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    .o_smd_coop_bird {
+        font-size: 26px;
+        line-height: 1;
+        animation: smd-peck 1.8s ease-in-out infinite;
+    }
+    .o_smd_coop_bird:nth-child(2) { animation-delay: 0.35s; }
+    .o_smd_coop_bird:nth-child(3) { animation-delay: 0.7s; }
+    // Yem tarnovi: siljiydigan lenta — bino faol ekanining belgisi.
+    .o_smd_coop_feed {
+        position: absolute;
+        left: 14%;
+        right: 14%;
+        bottom: 2px;
+        height: 8px;
+        border-radius: 4px;
+        background: repeating-linear-gradient(90deg, #b45309 0 8px, #78350f 8px 16px);
+        background-size: 16px 100%;
+        animation: smd-belt 0.9s linear infinite;
+        opacity: 0.9;
+    }
+    .o_smd_coop_name {
+        margin-top: 8px;
+        font-size: 15px;
+        font-weight: 800;
+        letter-spacing: 0.4px;
+        color: #fff;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .o_smd_coop_sub { font-size: 11px; color: #64748b; margin-top: 1px; }
+    .o_smd_coop_status {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        margin-top: 5px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #94a3b8;
+    }
+    .o_smd_coop_progress {
+        height: 4px;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.1);
+        margin: 9px 6px 0;
+        overflow: hidden;
+        > div {
+            height: 100%;
+            background: linear-gradient(90deg, #22c55e, #38bdf8);
+            border-radius: 3px;
+        }
+    }
+    .o_smd_coop.alert .o_smd_coop_progress > div { background: linear-gradient(90deg, #f97316, #ef4444); }
+    .o_smd_dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: #64748b;
+    }
+    .o_smd_coop.working .o_smd_coop_status { color: #86efac; }
+    .o_smd_coop.working .o_smd_dot {
+        background: #22c55e;
+        animation: smd-pulse 1.4s infinite;
+    }
+    // Normativdan og'ish bo'lsa bino qizil ramkaga o'tadi.
+    .o_smd_coop.alert { border-color: #b91c1c; }
+    .o_smd_coop.alert .o_smd_coop_status { color: #fca5a5; }
+    .o_smd_coop.alert .o_smd_dot { background: #ef4444; animation: none; }
+    .o_smd_coop_stats {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 10px;
+        font-size: 11px;
+        color: #94a3b8;
+        b { display: block; font-size: 15px; color: #fff; margin-top: 2px; }
+    }
+
+    // ======================= 3D panel =======================
+    .o_smd_3d_legend {
+        margin-left: auto;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: none;
+        letter-spacing: 0;
+        color: var(--smd-muted);
+        > span { display: inline-flex; align-items: center; gap: 5px; }
+    }
+    .o_smd_3d_hint {
+        padding: 8px 16px 10px;
+        font-size: 12px;
+        color: var(--smd-muted);
+        border-top: 1px solid var(--smd-border);
+    }
+
+    // ======================= Tafsilot oynasi =======================
+    .o_smd_drawer_backdrop {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: var(--smd-backdrop);
+        backdrop-filter: blur(1.5px);
+        z-index: 20;
+        animation: smd-fade 0.18s ease;
+    }
+    .o_smd_drawer {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 94%;
+        max-width: 880px;
+        z-index: 21;
+        display: flex;
+        flex-direction: column;
+        background: var(--smd-bg);
+        border-left: 1px solid var(--smd-border);
+        box-shadow: -18px 0 40px rgba(2, 8, 23, 0.3);
+        animation: smd-slide 0.22s ease;
+    }
+    .o_smd_drawer_head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 18px;
+        background: var(--smd-card);
+        border-bottom: 1px solid var(--smd-border);
+        .o_smd_kpi_icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            flex: 0 0 auto;
+        }
+    }
+    .o_smd_drawer_titles { flex: 1 1 auto; min-width: 0; }
+    .o_smd_drawer_title {
+        font-size: 17px;
+        font-weight: 800;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .o_smd_drawer_sub { font-size: 12.5px; color: var(--smd-muted); }
+    .o_smd_drawer_btn {
+        flex: 0 0 auto;
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        border: 1px solid var(--smd-border);
+        background: var(--smd-input-bg);
+        color: var(--smd-muted);
+        &:hover { background: var(--smd-hover); color: var(--smd-ink); }
+    }
+    .o_smd_drawer_crumbs {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 18px;
+        font-size: 12px;
+        color: var(--smd-muted);
+        background: var(--smd-card-2);
+        border-bottom: 1px solid var(--smd-border);
+        i { color: var(--smd-faint); }
+        span:last-of-type { color: var(--smd-ink); font-weight: 700; }
+    }
+    .o_smd_drawer_body {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        padding: 16px 18px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        position: relative;
+        // Bloklar siqilmasin — sig'masa tana scroll bo'ladi (aks holda jadval kesiladi).
+        > * { flex-shrink: 0; }
+        .o_smd_progress { position: absolute; top: 0; left: 0; right: 0; margin: 0; }
+    }
+    .o_smd_stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
+    }
+    .o_smd_stat {
+        background: var(--smd-card);
+        border: 1px solid var(--smd-border);
+        border-radius: 10px;
+        padding: 10px 12px;
+        border-left: 3px solid var(--smd-border-strong);
+    }
+    .o_smd_stat_label {
+        font-size: 11px;
+        color: var(--smd-muted);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+    .o_smd_stat_value {
+        font-size: 16px;
+        font-weight: 800;
+        margin-top: 2px;
+        word-break: break-word;
+        font-variant-numeric: tabular-nums;
+    }
+    .o_smd_stat_hint { font-size: 11px; color: var(--smd-faint); margin-top: 1px; }
+    .o_smd_stat_ok { border-left-color: var(--smd-ok); .o_smd_stat_value { color: var(--smd-ok); } }
+    .o_smd_stat_bad { border-left-color: var(--smd-bad); .o_smd_stat_value { color: var(--smd-bad); } }
+    .o_smd_stat_strong { border-left-color: var(--smd-primary); }
+    .o_smd_drawer_charts {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 14px;
+        .o_smd_trend_chart { height: 150px; }
+        .o_smd_donut { width: 120px; height: 120px; }
+        .o_smd_donut_hole { width: 88px; height: 88px; }
+    }
+    .o_smd_truncated {
+        padding: 8px 14px;
+        font-size: 12px;
+        color: var(--smd-alert-warn-fg);
+        background: var(--smd-alert-warn-bg);
+        border-top: 1px solid var(--smd-border);
+    }
+    .o_smd_drawer_foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 18px;
+        background: var(--smd-card);
+        border-top: 1px solid var(--smd-border);
+    }
+    .o_smd_drawer_tip { font-size: 12px; color: var(--smd-muted); }
+
+    // ======================= Rang variantlari =======================
+    // Ikonka foni — aksent rangining shaffof varianti: ikkala temada ham ishlaydi.
+    @each $name, $ink in
+        ("green" #16a34a),
+        ("blue" #2563eb),
+        ("purple" #7c3aed),
+        ("orange" #ea580c),
+        ("red" #dc2626),
+        ("teal" #0d9488),
+        ("indigo" #4f46e5),
+        ("gray" #64748b) {
+        .o_smd_#{$name} { --smd-accent: #{$ink}; }
+        .o_smd_#{$name} .o_smd_kpi_icon {
+            background: rgba($ink, 0.12);
+            color: $ink;
+        }
+    }
+
+    // ======================= Moslashuvchanlik =======================
+    @media (max-width: 992px) {
+        .o_smd_sidebar {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 30;
+            transform: translateX(-100%);
+            transition: transform 0.2s ease;
+            box-shadow: 12px 0 30px rgba(2, 8, 23, 0.35);
+        }
+        &.o_smd_nav_open .o_smd_sidebar { transform: none; }
+        .o_smd_topbar .o_smd_burger { display: inline-flex; align-items: center; justify-content: center; }
+        .o_smd_topbar .o_smd_topbar_title > i.o_smd_title_icon { display: none; }
+        .o_smd_main { padding: 14px 14px 24px; }
+        .o_smd_progress { margin: -14px -14px 11px; top: -14px; }
+        .o_smd_panels { grid-template-columns: 1fr; }
+        .o_smd_drawer { width: 100%; }
+        .o_smd_drawer_tip { display: none; }
+    }
+    @media (max-width: 576px) {
+        .o_smd_kpis { grid-template-columns: 1fr 1fr; gap: 10px; }
+        .o_smd_kpi { padding: 12px; }
+        .o_smd_kpi .o_smd_kpi_icon { width: 32px; height: 32px; font-size: 14px; }
+        .o_smd_kpi .o_smd_kpi_value { font-size: 16px; }
+        .o_smd_topbar .o_smd_range { width: 100%; }
+    }
+}
+
+// ======================= 3D sahna =======================
+.o_s3d {
+    position: relative;
+    height: 440px;
+    overflow: hidden;
+    background: var(--s3d-sky);
+    user-select: none;
+    @media (max-width: 576px) { height: 340px; }
+}
+.o_s3d_host {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    canvas { display: block; cursor: grab; outline: none; }
+    canvas:active { cursor: grabbing; }
+}
+.o_s3d_labels {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+.o_s3d_label {
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin-top: -8px;
+    padding: 4px 10px 5px 22px;
+    border-radius: 8px;
+    background: var(--s3d-label-bg);
+    border: 1px solid var(--s3d-label-border);
+    box-shadow: 0 6px 16px rgba(2, 8, 23, 0.2);
+    text-align: left;
+    white-space: nowrap;
+    will-change: transform;
+    transition: box-shadow 0.15s ease, background-color 0.15s ease;
+    --s3d-dot: #3b82f6;
+    &::before {
+        content: "";
+        position: absolute;
+        left: 9px;
+        top: 9px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--s3d-dot);
+        box-shadow: 0 0 6px var(--s3d-dot);
+    }
+    &::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: -6px;
+        margin-left: -6px;
+        border: 6px solid transparent;
+        border-bottom: 0;
+        border-top-color: var(--s3d-label-bg);
+    }
+    &.o_s3d_ok { --s3d-dot: #22c55e; }
+    &.o_s3d_bad {
+        --s3d-dot: #ef4444;
+        &::before { animation: o_s3d_blink 1s ease-in-out infinite; }
+    }
+    &.o_s3d_idle { --s3d-dot: #94a3b8; opacity: 0.85; }
+    &.o_s3d_active {
+        z-index: 3;
+        background: #0f172a;
+        border-color: #38bdf8;
+        box-shadow: 0 10px 24px rgba(2, 8, 23, 0.4), 0 0 12px rgba(56, 189, 248, 0.35);
+        &::after { border-top-color: #0f172a; }
+        .o_s3d_label_title { color: #fff; }
+        .o_s3d_label_value { color: #cbd5e1; }
+    }
+    &.o_s3d_group {
+        padding: 4px 10px;
+        background: rgba(15, 23, 42, 0.85);
+        border: 0;
+        font-weight: 700;
+        &::before, &::after { display: none; }
+    }
+}
+@keyframes o_s3d_blink {
+    50% { opacity: 0.35; }
+}
+.o_s3d_label_title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--s3d-label-ink);
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.o_s3d_group .o_s3d_label_title { color: #fff; }
+.o_s3d_label_value {
+    font-size: 11px;
+    color: var(--s3d-label-muted);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+.o_s3d_loading {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #fff;
+    font-weight: 600;
+}
+.o_s3d_tip {
+    position: absolute;
+    z-index: 4;
+    min-width: 170px;
+    max-width: 260px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #0b1324;
+    color: #e2e8f0;
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    box-shadow: 0 12px 28px rgba(2, 8, 23, 0.4);
+    pointer-events: none;
+    border-left: 3px solid #3b82f6;
+    &.o_s3d_ok { border-left-color: #22c55e; }
+    &.o_s3d_bad { border-left-color: #ef4444; }
+    &.o_s3d_idle { border-left-color: #94a3b8; }
+}
+.o_s3d_tip_title { font-weight: 800; color: #fff; }
+.o_s3d_tip_value { font-size: 17px; font-weight: 800; margin-top: 2px; }
+.o_s3d_tip_metric { font-size: 11.5px; color: #94a3b8; }
+.o_s3d_tip_cta { margin-top: 6px; font-size: 11px; color: #38bdf8; font-weight: 700; }
+.o_s3d_tools {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    button {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 1px solid var(--smd-border);
+        background: var(--smd-card);
+        color: var(--smd-muted);
+        box-shadow: 0 4px 10px rgba(2, 8, 23, 0.12);
+        &:hover { color: var(--smd-ink); }
+        &.active { color: #fff; background: var(--smd-primary); border-color: var(--smd-primary); }
+    }
+}
+.o_s3d_fallback {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow-y: auto;
+    padding: 14px;
+    background: var(--smd-bg);
+}
+.o_s3d_fallback_note { font-size: 12px; color: var(--smd-muted); margin-bottom: 10px; }
+.o_s3d_fallback_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+}
+.o_s3d_fallback_item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--smd-card);
+    color: var(--smd-ink);
+    border: 1px solid var(--smd-border);
+    border-left: 3px solid #3b82f6;
+    cursor: pointer;
+    small { color: var(--smd-muted); }
+    &.o_s3d_ok { border-left-color: #22c55e; }
+    &.o_s3d_bad { border-left-color: #ef4444; }
+    &.o_s3d_idle { border-left-color: #94a3b8; }
+}
+
+@keyframes smd-belt { to { background-position: -16px 0; } }
+@keyframes smd-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); }
+    70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+@keyframes smd-peck {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    45% { transform: translateY(5px) rotate(-12deg); }
+    60% { transform: translateY(5px) rotate(-12deg); }
+}
+@keyframes smd-progress { 0% { transform: translateX(-100%); } 100% { transform: translateX(260%); } }
+@keyframes smd-shimmer { to { background-position: -200% 0; } }
+@keyframes smd-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes smd-slide { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }

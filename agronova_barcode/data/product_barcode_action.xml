@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Mahsulot ro'yxatidan belgilangan mahsulotlarga ichki EAN-13 kod
+         berish. Alohida menyu emas — omborchi mahsulotlarni belgilab
+         "Amallar" menyusidan chaqiradi. -->
+    <record id="action_product_generate_ean13" model="ir.actions.server">
+        <field name="name">EAN-13 barcode yaratish</field>
+        <field name="model_id" ref="product.model_product_template"/>
+        <field name="binding_model_id" ref="product.model_product_template"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="group_ids" eval="[(4, ref('stock.group_stock_manager'))]"/>
+        <field name="state">code</field>
+        <field name="code">action = records.action_generate_ean13()</field>
+    </record>
+
+</odoo>

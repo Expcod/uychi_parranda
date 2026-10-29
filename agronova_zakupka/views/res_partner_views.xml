@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_form_zakupka" model="ir.ui.view">
+        <field name="name">res.partner.form.zakupka</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_zakupka_bloklash" type="object"
+                            string="Bloklash" class="btn-secondary"
+                            invisible="zakupka_holati != 'faol'"
+                            groups="agronova_zakupka.group_zakupka_bolim_boshligi"
+                            help="Kontragent o'chirilmaydi, faqat bloklanadi."/>
+                    <button name="action_zakupka_faollashtirish" type="object"
+                            string="Faollashtirish" class="btn-primary"
+                            invisible="zakupka_holati != 'bloklangan'"
+                            groups="agronova_zakupka.group_zakupka_bolim_boshligi"/>
+                    <field name="zakupka_holati" widget="statusbar"
+                           statusbar_visible="faol,bloklangan"/>
+                </header>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Xarid rekvizitlari" name="zakupka">
+                    <group>
+                        <group string="Yuridik ma'lumot">
+                            <field name="shaxs_turi"/>
+                            <field name="stir"
+                                   required="shaxs_turi in ('yuridik', 'yatt')"/>
+                            <field name="qqs_tolovchi"/>
+                            <field name="qqs_royxat_raqami"
+                                   invisible="not qqs_tolovchi"/>
+                            <field name="xarajat_turi"/>
+                        </group>
+                        <group string="Bank va aloqa">
+                            <field name="bank_hisob_raqami"/>
+                            <field name="bank_mfo"
+                                   required="bank_hisob_raqami != False"/>
+                            <field name="telegram_username"/>
+                        </group>
+                    </group>
+                    <group string="Bloklash" invisible="zakupka_holati == 'faol'">
+                        <field name="bloklash_sababi" nolabel="1"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_partner_list_zakupka" model="ir.ui.view">
+        <field name="name">res.partner.list.zakupka</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <field name="complete_name" position="after">
+                <field name="stir" optional="show"/>
+                <field name="shaxs_turi" optional="hide"/>
+                <field name="qqs_tolovchi" optional="hide"/>
+                <field name="zakupka_holati" optional="show"
+                       decoration-danger="zakupka_holati == 'bloklangan'"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="action_zakupka_kontragent" model="ir.actions.act_window">
+        <field name="name">Kontragentlar</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="domain">[('supplier_rank', '&gt;', 0)]</field>
+        <field name="context">{'default_supplier_rank': 1, 'res_partner_search_mode': 'supplier'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Kontragent qo'shing</p>
+            <p>Kirim hujjatida faqat shu bazadagi kontragent ishlatiladi.
+               Kontragent o'chirilmaydi — kerak bo'lmasa bloklanadi.</p>
+        </field>
+    </record>
+
+</odoo>

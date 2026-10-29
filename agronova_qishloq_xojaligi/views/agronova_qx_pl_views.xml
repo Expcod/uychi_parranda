@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_qx_pl_form" model="ir.ui.view">
+        <field name="name">agronova.qx.pl.form</field>
+        <field name="model">agronova.qx.pl</field>
+        <field name="arch" type="xml">
+            <form string="Qishloq xo'jaligi — foyda va zarar">
+                <header>
+                    <button name="action_yangilash" type="object"
+                            string="Yangilash" class="btn-primary"
+                            help="Davrni o'zgartirgandan keyin xarajat tarkibini qayta hisoblaydi."/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Qishloq xo'jaligi — foyda va zarar</h1>
+                        <h3 class="text-muted">
+                            <field name="company_id" readonly="1"
+                                   options="{'no_open': True}"/>
+                        </h3>
+                    </div>
+                    <group>
+                        <group string="Davr">
+                            <field name="davr_boshi"/>
+                            <field name="davr_oxiri"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Hosil (ma'lumot uchun)">
+                            <field name="olingan_hosil_kg"/>
+                            <field name="maydon_ga"/>
+                            <field name="hosildorlik"/>
+                            <field name="tannarx_1_kg"/>
+                            <field name="ishlab_chiqarish"/>
+                            <field name="ombor_ozgarishi"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Daromad">
+                            <field name="ichki_sotuv"/>
+                            <field name="tashqi_sotuv"/>
+                            <field name="boshqa_daromad"/>
+                            <field name="jami_daromad"
+                                   class="oe_subtotal_footer_separator"/>
+                        </group>
+                        <group string="Xarajat">
+                            <field name="sotilgan_tannarx"/>
+                            <field name="jami_xarajat"
+                                   class="oe_subtotal_footer_separator"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Natija">
+                            <field name="bolim_foyda"/>
+                            <field name="bolim_rentabellik"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-info" role="alert">
+                        <b>Ichki sotuv</b> — Yem zavodiga berilgan don.
+                        Bu oddiy ko'chirish emas: bo'limning o'z natijasi
+                        ko'rinishi uchun kelishilgan narxda daromad
+                        hisoblanadi.
+                        <br/>
+                        <b>Hosildorlik</b> bu bo'limning asosiy ko'rsatkichi —
+                        bir gektardan qancha mahsulot olingani. Maydon hosil
+                        olingan partiyalar bo'yicha sanaladi.
+                        <br/>
+                        <b>Ishlab chiqarish xarajati xarajatlar ichida yo'q</b>
+                        — yig'ilgan, lekin berilmagan hosil omborda aktiv
+                        bo'lib turibdi.
+                    </div>
+
+                    <notebook>
+                        <page string="Ishlab chiqarish xarajati tarkibi"
+                              name="tarkib">
+                            <field name="qator_ids" readonly="1">
+                                <list create="0" delete="0">
+                                    <field name="nom"/>
+                                    <field name="summa" sum="Jami"/>
+                                    <field name="ulush"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                            <div class="text-muted">
+                                Yer maydonining doimiy xarajati (yer solig'i,
+                                sug'orish tarmog'i) ham shu yerda —
+                                u partiyaga emas, yerga yoziladi.
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_qx_pl_sahifa" model="ir.actions.server">
+        <field name="name">Foyda-zarar hisoboti</field>
+        <field name="model_id" ref="model_agronova_qx_pl"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_ochish()</field>
+    </record>
+
+</odoo>

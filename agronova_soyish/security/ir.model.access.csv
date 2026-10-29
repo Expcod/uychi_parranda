@@ -1,0 +1,19 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_qabul_operator,qabul operator,model_agronova_soyish_qabul,agronova_soyish.group_soyish_operator,1,1,1,0
+access_qabul_boshliq,qabul boshliq,model_agronova_soyish_qabul,agronova_soyish.group_soyish_boshliq,1,1,1,0
+access_qabul_hisobchi,qabul hisobchi,model_agronova_soyish_qabul,agronova_soyish.group_soyish_hisobchi,1,1,1,1
+access_partiya_operator,partiya operator,model_agronova_soyish_partiya,agronova_soyish.group_soyish_operator,1,1,1,0
+access_partiya_boshliq,partiya boshliq,model_agronova_soyish_partiya,agronova_soyish.group_soyish_boshliq,1,1,1,0
+access_partiya_hisobchi,partiya hisobchi,model_agronova_soyish_partiya,agronova_soyish.group_soyish_hisobchi,1,1,1,1
+access_jarayon_operator,jarayon operator,model_agronova_soyish_jarayon,agronova_soyish.group_soyish_operator,1,1,1,0
+access_jarayon_boshliq,jarayon boshliq,model_agronova_soyish_jarayon,agronova_soyish.group_soyish_boshliq,1,1,1,0
+access_jarayon_hisobchi,jarayon hisobchi,model_agronova_soyish_jarayon,agronova_soyish.group_soyish_hisobchi,1,1,1,1
+access_natija_operator,natija operator,model_agronova_soyish_natija,agronova_soyish.group_soyish_operator,1,1,1,0
+access_natija_boshliq,natija boshliq,model_agronova_soyish_natija,agronova_soyish.group_soyish_boshliq,1,1,1,0
+access_natija_hisobchi,natija hisobchi,model_agronova_soyish_natija,agronova_soyish.group_soyish_hisobchi,1,1,1,1
+access_xizmat_boshliq,xizmat boshliq,model_agronova_soyish_xizmat,agronova_soyish.group_soyish_boshliq,1,1,1,0
+access_xizmat_hisobchi,xizmat hisobchi,model_agronova_soyish_xizmat,agronova_soyish.group_soyish_hisobchi,1,1,1,1
+access_xarajat_boshliq,xarajat boshliq,model_agronova_soyish_xarajat,agronova_soyish.group_soyish_boshliq,1,1,1,0
+access_xarajat_hisobchi,xarajat hisobchi,model_agronova_soyish_xarajat,agronova_soyish.group_soyish_hisobchi,1,1,1,1
+access_soyish_pl_boshliq,soyish pl boshliq,model_agronova_soyish_pl,agronova_soyish.group_soyish_boshliq,1,1,1,1
+access_soyish_pl_qator_boshliq,soyish pl_qator boshliq,model_agronova_soyish_pl_qator,agronova_soyish.group_soyish_boshliq,1,1,1,1

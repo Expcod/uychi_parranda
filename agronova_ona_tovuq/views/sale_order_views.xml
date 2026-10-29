@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_sale_order_form_ot_marja" model="ir.ui.view">
+        <field name="name">sale.order.form.ot.marja</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']/list/field[@name='price_subtotal']"
+                   position="after">
+                <field name="agronova_tannarx" optional="hide" readonly="1"/>
+                <field name="agronova_marja" optional="hide" readonly="1"/>
+            </xpath>
+            <!-- Boshqa bo'limimizga (Inkubatoriya, So'yish) ichki
+                 sotuvda tuxum qaysi partiyadan chiqayotgani —
+                 boshqaruv hisobi shu bo'yicha yoziladi. Tashqi
+                 mijozga sotuvda bo'sh qoldiriladi. -->
+            <xpath expr="//field[@name='order_line']/list/field[@name='product_uom_qty']"
+                   position="after">
+                <field name="agronova_ot_partiya_id" optional="hide"
+                       options="{'no_create': True}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

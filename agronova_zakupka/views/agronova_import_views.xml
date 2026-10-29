@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_import_list" model="ir.ui.view">
+        <field name="name">agronova.import.list</field>
+        <field name="model">agronova.import</field>
+        <field name="arch" type="xml">
+            <list string="Import partiyalari"
+                  decoration-danger="kechikish_kuni &gt; 0 and holat != 'yopildi'">
+                <field name="name"/>
+                <field name="import_turi"/>
+                <field name="kontragent_id"/>
+                <field name="shartnoma_raqami"/>
+                <field name="yetkazib_berish_sharti"/>
+                <field name="valyuta_id"/>
+                <field name="shartnoma_summasi"/>
+                <field name="kutilayotgan_sana"/>
+                <field name="haqiqiy_kelish_sanasi" optional="show"/>
+                <field name="kechikish_kuni" optional="show"/>
+                <field name="gtd_raqami" optional="show"/>
+                <field name="holat" widget="badge"
+                       decoration-success="holat == 'yopildi'"
+                       decoration-warning="holat in ('yolda', 'bojxonada')"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_import_form" model="ir.ui.view">
+        <field name="name">agronova.import.form</field>
+        <field name="model">agronova.import</field>
+        <field name="arch" type="xml">
+            <form string="Import partiyasi">
+                <header>
+                    <button name="action_yolda" type="object" string="Yo'lga chiqdi"
+                            invisible="holat != 'draft'" class="btn-primary"/>
+                    <button name="action_bojxonada" type="object" string="Bojxonada"
+                            invisible="holat != 'yolda'" class="btn-primary"/>
+                    <button name="action_keldi" type="object" string="Keldi"
+                            invisible="holat != 'bojxonada'" class="btn-primary"/>
+                    <button name="action_kirim_yaratish" type="object"
+                            string="Kirim hujjati yaratish" class="btn-primary"
+                            invisible="holat not in ('bojxonada', 'keldi')"/>
+                    <button name="action_yopish" type="object" string="Yopish"
+                            invisible="holat != 'keldi'"/>
+                    <field name="holat" widget="statusbar"
+                           statusbar_visible="draft,yolda,bojxonada,keldi,yopildi"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_kirimlarni_korish" type="object"
+                                class="oe_stat_button" icon="fa-truck">
+                            <field name="kirim_soni" widget="statinfo" string="Kirimlar"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Shartnoma">
+                            <field name="import_turi"/>
+                            <field name="kontragent_id"/>
+                            <field name="zakupchik_id" widget="many2one_avatar_user"/>
+                            <field name="shartnoma_raqami"/>
+                            <field name="shartnoma_sanasi"/>
+                            <field name="yetkazib_berish_sharti"/>
+                        </group>
+                        <group string="Valyuta va summa">
+                            <field name="valyuta_id"/>
+                            <field name="shartnoma_kursi"/>
+                            <field name="shartnoma_summasi"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Muddatlar">
+                            <field name="kutilayotgan_sana"/>
+                            <field name="haqiqiy_kelish_sanasi"/>
+                            <field name="kechikish_kuni"/>
+                            <field name="balansga_olish_sanasi"/>
+                        </group>
+                        <group string="Bojxona">
+                            <field name="gtd_raqami"
+                                   required="holat in ('keldi', 'yopildi')"/>
+                            <field name="gtd_sanasi"/>
+                            <field name="bojxona_bojji"/>
+                            <field name="bojxona_yigimi"/>
+                            <field name="bojxona_qqsi"/>
+                            <field name="aksiz"/>
+                        </group>
+                    </group>
+                    <group string="Qo'shimcha xarajatlar (tannarxga qo'shiladi)">
+                        <group>
+                            <field name="transport_xalqaro"/>
+                            <field name="transport_ichki"/>
+                        </group>
+                        <group>
+                            <field name="sugurta"/>
+                            <field name="broker_xizmati"/>
+                            <field name="qoshimcha_jami"/>
+                        </group>
+                    </group>
+                    <div class="text-muted" invisible="import_turi != 'C2_uskuna'">
+                        C2 — uskuna importi omborga tushmaydi: kirim hujjati
+                        tasdiqlanganda har bir qator uchun asosiy vosita
+                        kartochkasi ochiladi va amortizatsiya jadvali
+                        Odoo Assets moduli tomonidan tuziladi.
+                    </div>
+                    <div class="text-muted">
+                        Tovar qachon balansga tushishi yetkazib berish shartiga
+                        bog'liq — «Balansga olish sanasi» ni buxgalter har
+                        shartnoma bo'yicha o'zi belgilaydi, tizim qattiq
+                        qoida qo'ymaydi.
+                    </div>
+                    <field name="izoh" placeholder="Izoh..."/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_import_search" model="ir.ui.view">
+        <field name="name">agronova.import.search</field>
+        <field name="model">agronova.import</field>
+        <field name="arch" type="xml">
+            <search string="Import partiyalari">
+                <field name="name"/>
+                <field name="kontragent_id"/>
+                <field name="shartnoma_raqami"/>
+                <field name="gtd_raqami"/>
+                <filter name="yolda" string="Yo'ldagi partiyalar"
+                        domain="[('holat', 'in', ('yolda', 'bojxonada'))]"/>
+                <filter name="kechikkan" string="Kechikkan"
+                        domain="[('kechikish_kuni', '&gt;', 0), ('holat', '!=', 'yopildi')]"/>
+                <filter name="c1" string="C1 — tovar" domain="[('import_turi', '=', 'C1_tovar')]"/>
+                <filter name="c2" string="C2 — uskuna" domain="[('import_turi', '=', 'C2_uskuna')]"/>
+                <group>
+                    <filter name="g_holat" string="Holati" context="{'group_by': 'holat'}"/>
+                    <filter name="g_tur" string="Import turi" context="{'group_by': 'import_turi'}"/>
+                    <filter name="g_kontragent" string="Kontragent" context="{'group_by': 'kontragent_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_zakupka_import" model="ir.actions.act_window">
+        <field name="name">Import partiyalari</field>
+        <field name="res_model">agronova.import</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_import_search"/>
+    </record>
+
+</odoo>

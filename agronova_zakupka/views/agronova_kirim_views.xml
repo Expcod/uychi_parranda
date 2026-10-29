@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_kirim_list" model="ir.ui.view">
+        <field name="name">agronova.kirim.list</field>
+        <field name="model">agronova.kirim</field>
+        <field name="arch" type="xml">
+            <list string="Xarid kirimlari"
+                  decoration-warning="holat == 'tasdiqlangan'"
+                  decoration-muted="holat == 'bekor'">
+                <field name="name"/>
+                <field name="sotib_olingan_sana"/>
+                <field name="xarid_turi"/>
+                <field name="kontragent_id"/>
+                <field name="zakupchik_id" widget="many2one_avatar_user"/>
+                <field name="maqsad_ombor_id" optional="hide"/>
+                <field name="summa" sum="Tovar summasi"/>
+                <field name="qqs_summasi" optional="hide" sum="QQS"/>
+                <field name="jami_summa" sum="Jami"/>
+                <field name="tranzit_kunlari" optional="show" string="Tranzitda (kun)"/>
+                <field name="faktura_holati" optional="show" widget="badge"
+                       decoration-success="faktura_holati == 'moslashtirildi'"
+                       decoration-warning="faktura_holati == 'kutilmoqda'"
+                       decoration-danger="faktura_holati == 'nomos'"/>
+                <field name="ball_ortacha" optional="hide"/>
+                <field name="kechikib_kiritilgan" optional="hide"/>
+                <field name="holat" widget="badge"
+                       decoration-success="holat == 'qabul_qilindi'"
+                       decoration-warning="holat == 'tasdiqlangan'"/>
+                <field name="currency_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_kirim_form" model="ir.ui.view">
+        <field name="name">agronova.kirim.form</field>
+        <field name="model">agronova.kirim</field>
+        <field name="arch" type="xml">
+            <form string="Xarid kirim hujjati">
+                <header>
+                    <button name="action_tasdiqlash" type="object"
+                            string="Tasdiqlash" class="btn-primary"
+                            invisible="holat != 'draft'"
+                            help="Tovar zakupchik tranzitiga tushadi va qarz o'sha zahoti yoziladi."/>
+                    <button name="action_qabul_wizard" type="object"
+                            string="Omborga qabul qilish" class="btn-primary"
+                            invisible="holat != 'tasdiqlangan'"
+                            groups="agronova_zakupka.group_zakupka_omborchi"/>
+                    <button name="action_qaytarish" type="object"
+                            string="Qaytarish"
+                            invisible="holat not in ('tasdiqlangan', 'qabul_qilindi')"/>
+                    <button name="action_bekor" type="object" string="Bekor qilish"
+                            invisible="holat != 'draft'"/>
+                    <field name="holat" widget="statusbar"
+                           statusbar_visible="draft,tasdiqlangan,qabul_qilindi"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Kechikib kiritilgan"
+                            bg_color="text-bg-warning"
+                            invisible="not kechikib_kiritilgan"/>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Xarid">
+                            <field name="xarid_turi"/>
+                            <field name="tasdiqlangan_ruxsat_id"/>
+                            <field name="zayavka_id" readonly="1"/>
+                            <field name="zakupchik_id" widget="many2one_avatar_user"/>
+                            <field name="oz_nomidan"
+                                   invisible="xarid_turi != 'A_naqd'"/>
+                            <field name="kontragent_id"
+                                   required="not oz_nomidan"/>
+                            <field name="import_id" readonly="1"
+                                   invisible="not import_id"/>
+                        </group>
+                        <group string="Sanalar va ombor">
+                            <field name="sotib_olingan_sana"/>
+                            <field name="kiritilgan_sana"/>
+                            <field name="kechikib_kiritilgan"/>
+                            <field name="maqsad_ombor_id"/>
+                            <field name="tranzit_id" readonly="1"
+                                   invisible="not tranzit_id"/>
+                            <field name="tranzit_sanasi" readonly="1"
+                                   invisible="not tranzit_sanasi"/>
+                            <field name="tranzit_kunlari"
+                                   invisible="holat != 'tasdiqlangan'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Tovarlar" name="qatorlar">
+                            <field name="qator_ids">
+                                <list editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="zayavka_qatori_id" optional="hide"/>
+                                    <field name="miqdor"/>
+                                    <field name="olchov_birligi_id"/>
+                                    <field name="narx"/>
+                                    <field name="summa" sum="Jami"/>
+                                    <field name="kuzatuv_shart" column_invisible="True"/>
+                                    <field name="lot_nomi"
+                                           required="kuzatuv_shart"/>
+                                    <field name="yaroqlilik_sanasi" optional="show"/>
+                                    <field name="qabul_miqdor" readonly="1" optional="show"/>
+                                    <field name="lot_id" readonly="1" optional="hide"/>
+                                    <field name="asset_id" readonly="1" optional="hide"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer oe_right">
+                                <field name="summa"/>
+                                <field name="qqs_bormi"/>
+                                <field name="qqs_foizi" invisible="not qqs_bormi"/>
+                                <field name="qqs_summasi" invisible="not qqs_bormi"/>
+                                <field name="jami_summa" class="oe_subtotal_footer_separator"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+                        </page>
+                        <page string="To'lov va xarajat" name="tolov">
+                            <group>
+                                <group string="Naqd to'lov"
+                                       invisible="xarid_turi != 'A_naqd'">
+                                    <field name="depozit_id"
+                                           required="xarid_turi == 'A_naqd'"/>
+                                    <field name="tolangan_summa"/>
+                                    <field name="depozit_harakat_id" readonly="1"/>
+                                </group>
+                                <group string="Tannarxga qo'shiladigan xarajat">
+                                    <field name="transport_xarajati"/>
+                                    <field name="qoshimcha_xarajat"/>
+                                    <field name="landed_cost_id" readonly="1"/>
+                                </group>
+                            </group>
+                            <div class="text-muted">
+                                Transport va qo'shimcha xarajat alohida xarajat
+                                sifatida yozilmaydi — Landed Cost orqali
+                                tovarlar orasida avtomat taqsimlanib tannarxga
+                                qo'shiladi (IAS 2).
+                            </div>
+                        </page>
+                        <page string="Moliya va faktura" name="moliya">
+                            <group>
+                                <group string="Hujjatlar">
+                                    <field name="faktura_id" readonly="1"/>
+                                    <field name="faktura_holati"/>
+                                    <field name="faktura_kutish_kuni"/>
+                                    <field name="didox_log_id" readonly="1"/>
+                                </group>
+                                <group string="Tovar harakati">
+                                    <field name="picking_kirim_id" readonly="1"/>
+                                    <field name="picking_qabul_id" readonly="1"/>
+                                </group>
+                            </group>
+                            <div class="text-muted">
+                                Tovar qabuli (`stock.picking`) va faktura
+                                (`account.move`) ikki alohida hujjat — Didox
+                                fakturasi 1-2 kun kech kelsa ham oqim
+                                to'xtamaydi.
+                            </div>
+                        </page>
+                        <page string="Narx nazorati" name="narx">
+                            <group>
+                                <field name="ruxsat_narxi"/>
+                                <field name="ogish_foizi"/>
+                                <field name="ogish_chegara"/>
+                            </group>
+                            <div class="text-muted">
+                                Haqiqiy narx chegaradan oshsa hujjat
+                                saqlanmaydi — qayta ruxsat so'raladi.
+                            </div>
+                        </page>
+                        <page string="Omborchi bahosi" name="ball"
+                              invisible="holat != 'qabul_qilindi'">
+                            <group>
+                                <group>
+                                    <field name="omborchi_id" widget="many2one_avatar_user"/>
+                                    <field name="qabul_sanasi"/>
+                                    <field name="ball_sababi"/>
+                                </group>
+                                <group>
+                                    <field name="ball_toliqlik"/>
+                                    <field name="ball_muddat"/>
+                                    <field name="ball_sifat"/>
+                                    <field name="ball_ortacha"/>
+                                </group>
+                            </group>
+                            <field name="ball_izohi"/>
+                        </page>
+                        <page string="Ilova va izoh" name="ilova">
+                            <group>
+                                <field name="ilova" filename="ilova_filename"/>
+                                <field name="ilova_filename" invisible="1"/>
+                            </group>
+                            <field name="izoh"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_kirim_search" model="ir.ui.view">
+        <field name="name">agronova.kirim.search</field>
+        <field name="model">agronova.kirim</field>
+        <field name="arch" type="xml">
+            <search string="Xarid kirimlari">
+                <field name="name"/>
+                <field name="kontragent_id"/>
+                <field name="zakupchik_id"/>
+                <field name="tasdiqlangan_ruxsat_id"/>
+                <filter name="tranzitda" string="Tranzitda"
+                        domain="[('holat', '=', 'tasdiqlangan')]"/>
+                <filter name="faktura_kutmoqda" string="Faktura kutilmoqda"
+                        domain="[('faktura_holati', '=', 'kutilmoqda')]"/>
+                <filter name="faktura_nomos" string="Faktura nomuvofiq"
+                        domain="[('faktura_holati', '=', 'nomos')]"/>
+                <filter name="kechikib" string="Kechikib kiritilgan"
+                        domain="[('kechikib_kiritilgan', '=', True)]"/>
+                <separator/>
+                <filter name="naqd" string="A — naqd" domain="[('xarid_turi', '=', 'A_naqd')]"/>
+                <filter name="mahalliy" string="B — mahalliy" domain="[('xarid_turi', '=', 'B_mahalliy')]"/>
+                <filter name="import" string="C — import"
+                        domain="[('xarid_turi', 'in', ('C1_import_tovar', 'C2_import_uskuna'))]"/>
+                <group>
+                    <filter name="g_holat" string="Holati" context="{'group_by': 'holat'}"/>
+                    <filter name="g_kontragent" string="Kontragent" context="{'group_by': 'kontragent_id'}"/>
+                    <filter name="g_zakupchik" string="Zakupchik" context="{'group_by': 'zakupchik_id'}"/>
+                    <filter name="g_tur" string="Xarid turi" context="{'group_by': 'xarid_turi'}"/>
+                    <filter name="g_sana" string="Sotib olingan sana" context="{'group_by': 'sotib_olingan_sana'}"/>
+                    <filter name="g_kiritilgan" string="Kiritilgan sana" context="{'group_by': 'kiritilgan_sana'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_zakupka_kirim" model="ir.actions.act_window">
+        <field name="name">Xarid kirimlari</field>
+        <field name="res_model">agronova.kirim</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_kirim_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Kirim hujjatini yarating</p>
+            <p>Kirim hujjati tasdiqlanganda tovar zakupchik tranzitiga tushadi
+               va qarz o'sha zahoti yoziladi. Omborchi qabul qilgach tovar
+               asosiy omborga o'tadi.</p>
+        </field>
+    </record>
+
+</odoo>

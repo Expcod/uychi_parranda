@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Menyular HR guruhlariga cheklangan. Ilgari groups= yo'q edi va
+        Hikvision menyusi barcha xodimlarga ko'rinardi.
+    -->
+    <menuitem id="menu_hikvision_root" name="Hikvision"
+              web_icon="hr_attendance,static/description/icon.png"
+              groups="hr.group_hr_user" sequence="10"/>
+
+    <!-- Loglar: kundalik ish shu yerda - birinchi turadi -->
+    <menuitem id="menu_hikvision_log" name="Logs"
+              parent="menu_hikvision_root" action="action_hikvision_log"
+              groups="hr.group_hr_user" sequence="10"/>
+
+    <!-- Qurilmalar: ulanish ma'lumotlari bor - faqat menejerlar -->
+    <menuitem id="menu_hikvision_device" name="Devices"
+              parent="menu_hikvision_root" action="action_hikvision_device"
+              groups="hr.group_hr_manager" sequence="20"/>
+</odoo>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- Boquv bo'limining rollari (yakuniy TZ, «Rollar (M05)» bo'limi).
+             Umumiy huquqlar (tahrirlash muddati, storno) `agronova_base` dagi
+             rollardan `implied_ids` orqali meros olinadi. -->
+
+        <!-- O'z kategoriyamiz: `base.module_category_manufacturing` Odoo 19 da
+             mavjud emas, shuning uchun tashqi xmlid ga tayanmaymiz. -->
+        <record id="module_category_boquv" model="ir.module.category">
+            <field name="name">AgroNova — Boquv</field>
+            <field name="sequence">50</field>
+        </record>
+
+        <record id="res_groups_privilege_boquv" model="res.groups.privilege">
+            <field name="name">AgroNova — Boquv</field>
+            <field name="category_id" ref="module_category_boquv"/>
+            <field name="sequence">50</field>
+        </record>
+
+        <!-- Ferma ishchisi: faqat o'z binosi, faqat kunlik jurnal va obxod. -->
+        <record id="group_boquv_ishchi" model="res.groups">
+            <field name="name">Boquv — ferma ishchisi</field>
+            <field name="privilege_id" ref="res_groups_privilege_boquv"/>
+            <field name="sequence">10</field>
+            <field name="comment">Faqat o'ziga biriktirilgan binoni ko'radi. Kunlik jurnal va obxod kiritadi.</field>
+        </record>
+
+        <!-- Veterinar: dori va vaksina sarfi, barcha binolar bo'yicha. -->
+        <record id="group_boquv_veterinar" model="res.groups">
+            <field name="name">Boquv — veterinar</field>
+            <field name="privilege_id" ref="res_groups_privilege_boquv"/>
+            <field name="sequence">20</field>
+            <field name="implied_ids" eval="[(4, ref('group_boquv_ishchi'))]"/>
+            <field name="comment">Dori va vaksina sarfini kiritadi, nobud sabablarini tasdiqlaydi.</field>
+        </record>
+
+        <!-- Brigadir: o'z filiali, xarajat hujjati, jo'natma, depozit. -->
+        <record id="group_boquv_brigadir" model="res.groups">
+            <field name="name">Boquv — brigadir</field>
+            <field name="privilege_id" ref="res_groups_privilege_boquv"/>
+            <field name="sequence">30</field>
+            <field name="implied_ids" eval="[(4, ref('group_boquv_veterinar'))]"/>
+            <field name="comment">O'z filialini ko'radi. Xarajat hujjati, so'yimga jo'natma, depozit.</field>
+        </record>
+
+        <!-- Boquv boshlig'i: partiya ochadi va yopadi, barcha filiallar. -->
+        <record id="group_boquv_boshliq" model="res.groups">
+            <field name="name">Boquv — bo'lim boshlig'i</field>
+            <field name="privilege_id" ref="res_groups_privilege_boquv"/>
+            <field name="sequence">40</field>
+            <field name="implied_ids" eval="[(4, ref('group_boquv_brigadir')),
+                                             (4, ref('agronova_base.group_agronova_bolim_boshliq'))]"/>
+            <field name="comment">Partiya ochadi va yopadi, bino holatini o'zgartiradi, normativ kiritadi.</field>
+        </record>
+
+        <!-- Boquv hisobchisi: ichki fakturani tasdiqlaydi. -->
+        <record id="group_boquv_hisobchi" model="res.groups">
+            <field name="name">Boquv — hisobchi</field>
+            <field name="privilege_id" ref="res_groups_privilege_boquv"/>
+            <field name="sequence">50</field>
+            <field name="implied_ids" eval="[(4, ref('group_boquv_boshliq')),
+                                             (4, ref('agronova_base.group_agronova_hisobchi'))]"/>
+            <field name="comment">Ichki sotuv fakturasini tasdiqlaydi, xarajatlarni o'tkazadi.</field>
+        </record>
+
+    </data>
+</odoo>

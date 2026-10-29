@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_ot_ish_haqi_list" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.ish_haqi.list</field>
+        <field name="model">agronova.ona_tovuq.ish_haqi</field>
+        <field name="arch" type="xml">
+            <list string="Ish haqi taqsimoti" decoration-muted="holat == 'storno'">
+                <field name="name"/>
+                <field name="davr_boshi"/>
+                <field name="davr_oxiri"/>
+                <field name="xodim_soni"/>
+                <field name="jami_summa" sum="Jami"/>
+                <field name="holat" widget="badge"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ot_ish_haqi_form" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.ish_haqi.form</field>
+        <field name="model">agronova.ona_tovuq.ish_haqi</field>
+        <field name="arch" type="xml">
+            <form string="Ish haqi taqsimoti">
+                <header>
+                    <button name="action_yigish" type="object" string="Yig'ish"
+                            class="btn-secondary" invisible="holat != 'draft'"
+                            help="Xodimlarni yig'ib, ish haqini sexlarga bo'ladi."/>
+                    <button name="action_tasdiqlash" type="object" string="Tasdiqlash"
+                            class="btn-primary" invisible="holat != 'draft'"
+                            confirm="Ulushlar partiyalarning tannarxiga kiradi. Davom etamizmi?"/>
+                    <button name="action_storno" type="object" string="Storno"
+                            invisible="holat != 'posted'"
+                            confirm="Teskari analitik qatorlar yoziladi. Davom etamizmi?"/>
+                    <button name="action_qoralamaga" type="object" string="Qoralamaga"
+                            invisible="holat != 'storno'"/>
+                    <field name="holat" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Davr">
+                            <field name="davr_boshi"/>
+                            <field name="davr_oxiri"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Qamrov">
+                            <field name="department_ids" widget="many2many_tags"/>
+                            <field name="xodim_soni"/>
+                            <field name="jami_summa"/>
+                        </group>
+                    </group>
+                    <div class="text-muted mb-2">
+                        Sexga biriktirilgan xodimning ish haqi to'g'ridan-to'g'ri o'sha
+                        sexga, biriktirilmaganiniki m² bo'yicha barcha sexlarga tushadi.
+                        Oy o'rtasida sex o'zgargan bo'lsa, ish haqi kunlar bo'yicha
+                        bo'linadi.
+                    </div>
+                    <notebook>
+                        <page string="Taqsimot" name="qatorlar">
+                            <field name="qator_ids" readonly="holat != 'draft'">
+                                <list editable="bottom" default_group_by="employee_id">
+                                    <field name="employee_id"/>
+                                    <field name="sex_id"/>
+                                    <field name="partiya_id" readonly="1" optional="show"/>
+                                    <field name="usul"/>
+                                    <field name="kunlar"/>
+                                    <field name="jami_kun" optional="hide"/>
+                                    <field name="oylik_summa" optional="show"/>
+                                    <field name="ulush" sum="Jami"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Analitik qatorlar" name="analitik"
+                              invisible="holat == 'draft'">
+                            <field name="analytic_line_ids" readonly="1">
+                                <list>
+                                    <field name="date"/>
+                                    <field name="name"/>
+                                    <field name="amount"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Izoh" name="izoh">
+                            <field name="izoh" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ot_ish_haqi" model="ir.actions.act_window">
+        <field name="name">Ish haqi taqsimoti</field>
+        <field name="res_model">agronova.ona_tovuq.ish_haqi</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Oylik taqsimot hujjatini yarating</p>
+            <p>Davrni tanlang va «Yig'ish» tugmasini bosing — ish haqi sexlar
+               va partiyalar bo'yicha bo'linadi, tannarxga kiradi.</p>
+        </field>
+    </record>
+
+</odoo>

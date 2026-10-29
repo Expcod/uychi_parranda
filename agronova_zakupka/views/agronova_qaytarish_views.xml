@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_qaytarish_list" model="ir.ui.view">
+        <field name="name">agronova.qaytarish.list</field>
+        <field name="model">agronova.qaytarish</field>
+        <field name="arch" type="xml">
+            <list string="Qaytarishlar">
+                <field name="name"/>
+                <field name="sana"/>
+                <field name="kirim_id"/>
+                <field name="kontragent_id"/>
+                <field name="sabab"/>
+                <field name="summa" sum="Jami"/>
+                <field name="holat" widget="badge"
+                       decoration-success="holat == 'tasdiqlangan'"/>
+                <field name="currency_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_qaytarish_form" model="ir.ui.view">
+        <field name="name">agronova.qaytarish.form</field>
+        <field name="model">agronova.qaytarish</field>
+        <field name="arch" type="xml">
+            <form string="Tovarni qaytarish">
+                <header>
+                    <button name="action_qatorlarni_toldirish" type="object"
+                            string="Kirim qatorlarini olish"
+                            invisible="holat != 'draft'"/>
+                    <button name="action_tasdiqlash" type="object"
+                            string="Tasdiqlash" class="btn-primary"
+                            invisible="holat != 'draft'"/>
+                    <field name="holat" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="kirim_id"/>
+                            <field name="kontragent_id" readonly="1"/>
+                            <field name="sana"/>
+                            <field name="sabab"/>
+                        </group>
+                        <group>
+                            <field name="picking_id" readonly="1"/>
+                            <field name="kredit_nota_id" readonly="1"/>
+                            <field name="summa"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Qaytariladigan tovarlar" name="qatorlar">
+                            <field name="qator_ids">
+                                <list editable="bottom">
+                                    <field name="kirim_qatori_id"/>
+                                    <field name="product_id"/>
+                                    <field name="miqdor"/>
+                                    <field name="narx"/>
+                                    <field name="summa" sum="Jami"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Izoh" name="izoh">
+                            <field name="izoh" nolabel="1"/>
+                        </page>
+                    </notebook>
+                    <div class="text-muted">
+                        Qaytarish kirim hujjatini tahrirlamaydi: tovarni
+                        teskari harakat, qarzni esa kredit-nota bilan qaytarib
+                        yozadi.
+                    </div>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_zakupka_qaytarish" model="ir.actions.act_window">
+        <field name="name">Qaytarishlar</field>
+        <field name="res_model">agronova.qaytarish</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

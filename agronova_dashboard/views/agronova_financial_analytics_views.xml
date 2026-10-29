@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- List View -->
+        <record id="view_agronova_financial_analytics_list" model="ir.ui.view">
+            <field name="name">agronova.financial.analytics.list</field>
+            <field name="model">agronova.financial.analytics</field>
+            <field name="arch" type="xml">
+                <list string="Moliyaviy va P&amp;L Tahlili" create="0" edit="0" delete="0">
+                    <field name="sana"/>
+                    <field name="oy"/>
+                    <field name="sektor"/>
+                    <field name="xarajat_turi"/>
+                    <field name="daromad_summa" widget="monetary" sum="Jami Daromad"/>
+                    <field name="xarajat_summa" widget="monetary" sum="Jami Xarajat"/>
+                    <field name="operatsion_foyda" widget="monetary" sum="Jami Sof Foyda"/>
+                    <field name="currency_id" column_invisible="True"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Pivot View -->
+        <record id="view_agronova_financial_analytics_pivot" model="ir.ui.view">
+            <field name="name">agronova.financial.analytics.pivot</field>
+            <field name="model">agronova.financial.analytics</field>
+            <field name="arch" type="xml">
+                <pivot string="Moliyaviy P&amp;L Pivot Tahlili" sample="1">
+                    <field name="sektor" type="row"/>
+                    <field name="xarajat_turi" type="row"/>
+                    <field name="oy" type="col"/>
+                    <field name="daromad_summa" type="measure"/>
+                    <field name="xarajat_summa" type="measure"/>
+                    <field name="operatsion_foyda" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Graph View -->
+        <record id="view_agronova_financial_analytics_graph" model="ir.ui.view">
+            <field name="name">agronova.financial.analytics.graph</field>
+            <field name="model">agronova.financial.analytics</field>
+            <field name="arch" type="xml">
+                <graph string="Daromad va Xarajatlar Balansi" type="bar" sample="1">
+                    <field name="sektor"/>
+                    <field name="daromad_summa" type="measure"/>
+                    <field name="xarajat_summa" type="measure"/>
+                    <field name="operatsion_foyda" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record id="view_agronova_financial_analytics_search" model="ir.ui.view">
+            <field name="name">agronova.financial.analytics.search</field>
+            <field name="model">agronova.financial.analytics</field>
+            <field name="arch" type="xml">
+                <search string="Moliyaviy Qidiruv">
+                    <field name="sektor"/>
+                    <field name="xarajat_turi"/>
+                    <field name="oy"/>
+                    <separator/>
+                    <filter string="Faqat Daromadlar" name="filter_daromad" domain="[('daromad_summa', '>', 0)]"/>
+                    <filter string="Faqat Xarajatlar" name="filter_xarajat" domain="[('xarajat_summa', '>', 0)]"/>
+                    <separator/>
+                    <group>
+                        <filter string="Sektor / Filial bo'yicha" name="group_sektor" context="{'group_by': 'sektor'}"/>
+                        <filter string="Xarajat moddasi bo'yicha" name="group_modda" context="{'group_by': 'xarajat_turi'}"/>
+                        <filter string="Oy bo'yicha" name="group_oy" context="{'group_by': 'oy'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_agronova_financial_analytics" model="ir.actions.act_window">
+            <field name="name">💰 Moliyaviy va P&amp;L Tahlili</field>
+            <field name="res_model">agronova.financial.analytics</field>
+            <field name="view_mode">pivot,graph,list</field>
+            <field name="context">{'search_default_group_sektor': 1}</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_boquv_brigadir_panel" model="ir.actions.client">
+        <field name="name">Brigadir paneli</field>
+        <field name="tag">agronova_boquv.brigadir_panel</field>
+    </record>
+
+    <!-- Panel «Operatsiyalar» ning eng boshida turadi: brigadir kuni shu
+         ekrandan boshlanadi, qolgan menyular esa tekshirish va tuzatish
+         uchun kerak. -->
+    <menuitem id="menu_boquv_brigadir_panel"
+              name="Brigadir paneli"
+              parent="menu_boquv_operatsiya"
+              action="action_boquv_brigadir_panel"
+              sequence="1"
+              groups="group_boquv_ishchi"/>
+
+</odoo>

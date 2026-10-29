@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_pos_sotuvchi_kpi"
+              name="Sotuvchi KPI"
+              parent="point_of_sale.menu_point_rep"
+              action="action_pos_sotuvchi_kpi"
+              sequence="25"/>
+
+</odoo>

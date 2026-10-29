@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_users_form_zakupka" model="ir.ui.view">
+        <field name="name">res.users.form.zakupka</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Xarid bo'limi" name="zakupka"
+                      groups="agronova_zakupka.group_zakupka_bolim_boshligi">
+                    <group>
+                        <group string="Rol va manbalar">
+                            <field name="zakupka_roli"/>
+                            <field name="zakupka_tranzit_id" readonly="1"/>
+                            <field name="zakupka_depozit_id"/>
+                            <button name="action_zakupka_tranzit_yaratish"
+                                    type="object" string="Tranzit ombori ochish"
+                                    class="btn-link" icon="fa-cube"
+                                    invisible="zakupka_tranzit_id != False"/>
+                        </group>
+                        <group string="Tasdiqlash zanjiri">
+                            <field name="zakupka_orinbosar_id"
+                                   domain="[('share', '=', False), ('id', '!=', id)]"/>
+                            <field name="zakupka_rahbar_id"
+                                   domain="[('share', '=', False), ('id', '!=', id)]"/>
+                        </group>
+                    </group>
+                    <div class="text-muted">
+                        O'rinbosar — birinchi muddat o'tganda so'rovni ko'radi.
+                        Yuqori rahbar — ikkinchi muddat o'tganda va so'rovchi
+                        o'zi tasdiqlovchi bo'lib qolganda so'rov unga
+                        ko'tariladi (o'z-o'zini tasdiqlash taqiqi).
+                    </div>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

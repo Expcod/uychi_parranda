@@ -1,0 +1,21 @@
+[agent]
+; Odoo server manzili
+url = https://filtruz.novaodoo.uz
+db = filtruz_prod
+
+; Odoo foydalanuvchisi (ombor huquqi yetarli)
+username = print_agent@filtruz.uz
+password = ALMASHTIRING
+
+; Printer kaliti — Odoo'da: Ombor > Sozlamalar > Stiker printerlari > Agent
+token = ALMASHTIRING
+
+; Navbatni necha soniyada tekshirish
+poll_seconds = 3
+
+; Windows'dagi printer nomi.
+; Bo'sh qoldirsangiz Odoo'dagi sozlamadagi nom ishlatiladi.
+printer = Xprinter XP-365B
+
+; Sinov rejimi: 1 bo'lsa printerga yuborilmaydi, faqat logga yoziladi
+dry_run = 0

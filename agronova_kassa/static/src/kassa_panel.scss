@@ -1,0 +1,113 @@
+.o_agronova_kassa {
+    background: var(--bs-tertiary-bg);
+
+    .sk-container {
+        max-width: 1280px;
+    }
+
+    .sk-header {
+        background: #1c3557;
+    }
+
+    .sk-date {
+        width: 160px;
+    }
+
+    // Uzun matn flex ichida siqilib ketmasligi uchun
+    .sk-min0 {
+        min-width: 0;
+    }
+
+    .sk-label {
+        display: block;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--bs-secondary-color);
+        margin-bottom: 0.3rem;
+    }
+
+    .sk-kassa {
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: border-color 0.15s ease, transform 0.1s ease;
+
+        &:hover {
+            transform: translateY(-2px);
+        }
+
+        &.sk-kassa-active {
+            border-color: var(--bs-primary);
+        }
+    }
+
+    .sk-balance {
+        font-size: 2rem;
+        line-height: 1.15;
+        word-break: break-word;
+    }
+
+    .sk-stat {
+        background: var(--bs-body-bg);
+        border: 1px solid var(--bs-border-color);
+
+        &.sk-stat-in {
+            background: rgba(25, 135, 84, 0.08);
+        }
+
+        &.sk-stat-out {
+            background: rgba(220, 53, 69, 0.08);
+        }
+
+        &.sk-stat-total {
+            background: rgba(13, 110, 253, 0.08);
+        }
+    }
+
+    // Transfer modalidagi «kimdan → kimga» yo'li
+    .sk-yol {
+        background: rgba(13, 110, 253, 0.08);
+        border: 1px solid var(--bs-border-color);
+    }
+
+    .sk-dropdown.dropdown-menu {
+        top: 100%;
+        left: 0;
+        max-height: 280px;
+        overflow-y: auto;
+
+        .dropdown-item {
+            white-space: normal;
+            cursor: pointer;
+        }
+    }
+
+    .sk-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 1050;
+        background: rgba(0, 0, 0, 0.45);
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 4vh 1rem;
+        overflow-y: auto;
+    }
+
+    .sk-modal {
+        width: 100%;
+        max-width: 460px;
+    }
+
+    // Planshet / telefon
+    @media (max-width: 767.98px) {
+        .sk-balance {
+            font-size: 1.6rem;
+        }
+
+        .sk-date {
+            width: 145px;
+        }
+    }
+}

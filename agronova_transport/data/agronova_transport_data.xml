@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Reys raqami: REYS-2026-0001 -->
+    <record id="seq_agronova_trip" model="ir.sequence">
+        <field name="name">Reys raqami</field>
+        <field name="code">agronova.trip</field>
+        <field name="prefix">REYS-%(year)s-</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <!-- Har reysga alohida analitik hisob (TZ dagi «lot / partiya») shu rejada ochiladi -->
+    <record id="analytic_plan_trip" model="account.analytic.plan">
+        <field name="name">Reys (transport)</field>
+        <field name="description">Har bir reys/yuk lotiga alohida analitik hisob. Daromad va xarajat shu yerda yig'iladi.</field>
+        <field name="default_applicability">optional</field>
+    </record>
+</odoo>

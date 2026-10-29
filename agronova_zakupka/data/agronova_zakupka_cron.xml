@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Muddat nazorati va eskalatsiya (TZ 15-bo'lim, 2-nchi «yangi kod»
+             joyi). Har 15 daqiqada: muddati o'tgan zayavka va ruxsatlarni
+             topadi, o'rinbosarga va yuqori rahbarga ko'taradi. -->
+        <record id="cron_zayavka_muddati" model="ir.cron">
+            <field name="name">Xarid: zayavka javob muddati nazorati</field>
+            <field name="model_id" ref="model_agronova_zayavka"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_muddat_nazorati()</field>
+            <field name="interval_number">15</field>
+            <field name="interval_type">minutes</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="cron_ruxsat_muddati" model="ir.cron">
+            <field name="name">Xarid: ruxsat tasdiq muddati nazorati</field>
+            <field name="model_id" ref="model_agronova_ruxsat"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_tasdiq_nazorati()</field>
+            <field name="interval_number">15</field>
+            <field name="interval_type">minutes</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <!-- Tranzitda uzoq qolgan tovar (TZ 7-bo'lim hisoboti). -->
+        <record id="cron_tranzit_nazorati" model="ir.cron">
+            <field name="name">Xarid: tranzitda qolgan tovar nazorati</field>
+            <field name="model_id" ref="model_agronova_kirim"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_tranzit_nazorati()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <!-- Didox: tortib olish va solishtirish (TZ 9-bo'lim). -->
+        <record id="cron_didox_tortish" model="ir.cron">
+            <field name="name">Xarid: Didox fakturalarini tortib olish</field>
+            <field name="model_id" ref="model_agronova_didox_log"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_didox_tortish()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="cron_didox_solishtirish" model="ir.cron">
+            <field name="name">Xarid: Didox solishtirish va faktura ogohlantirishi</field>
+            <field name="model_id" ref="model_agronova_didox_log"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_didox_solishtirish()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <!-- Norma narx eskirishi (TZ 6-bo'lim). -->
+        <record id="cron_narx_eskirish" model="ir.cron">
+            <field name="name">Xarid: eskirgan norma narxlar</field>
+            <field name="model_id" ref="model_agronova_narx_normasi"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_narx_eskirish()</field>
+            <field name="interval_number">7</field>
+            <field name="interval_type">days</field>
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

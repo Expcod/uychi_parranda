@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_users_form_app_launcher" model="ir.ui.view">
+        <field name="name">res.users.form.inherit.app.launcher</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Ilovalar" name="app_access_grid">
+                    <!-- `w-100`: maydon o'rami sig'im bo'yicha siqilmasin —
+                         aks holda grid bitta ustunga tushib qoladi. -->
+                    <field name="app_access_grid_placeholder" widget="app_access_grid"
+                           nolabel="1" class="w-100"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,26 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ekin_agronom,ekin agronom,model_agronova_qx_ekin,agronova_qishloq_xojaligi.group_qx_agronom,1,0,0,0
+access_ekin_boshliq,ekin boshliq,model_agronova_qx_ekin,agronova_qishloq_xojaligi.group_qx_boshliq,1,1,1,0
+access_ekin_hisobchi,ekin hisobchi,model_agronova_qx_ekin,agronova_qishloq_xojaligi.group_qx_hisobchi,1,1,1,1
+access_yer_agronom,yer agronom,model_agronova_qx_yer,agronova_qishloq_xojaligi.group_qx_agronom,1,0,0,0
+access_yer_boshliq,yer boshliq,model_agronova_qx_yer,agronova_qishloq_xojaligi.group_qx_boshliq,1,1,1,0
+access_yer_hisobchi,yer hisobchi,model_agronova_qx_yer,agronova_qishloq_xojaligi.group_qx_hisobchi,1,1,1,1
+access_partiya_agronom,partiya agronom,model_agronova_qx_partiya,agronova_qishloq_xojaligi.group_qx_agronom,1,1,1,0
+access_partiya_boshliq,partiya boshliq,model_agronova_qx_partiya,agronova_qishloq_xojaligi.group_qx_boshliq,1,1,1,0
+access_partiya_hisobchi,partiya hisobchi,model_agronova_qx_partiya,agronova_qishloq_xojaligi.group_qx_hisobchi,1,1,1,1
+access_ish_agronom,ish agronom,model_agronova_qx_ish,agronova_qishloq_xojaligi.group_qx_agronom,1,1,1,0
+access_ish_boshliq,ish boshliq,model_agronova_qx_ish,agronova_qishloq_xojaligi.group_qx_boshliq,1,1,1,0
+access_ish_hisobchi,ish hisobchi,model_agronova_qx_ish,agronova_qishloq_xojaligi.group_qx_hisobchi,1,1,1,1
+access_ish_sarf_agronom,ish_sarf agronom,model_agronova_qx_ish_sarf,agronova_qishloq_xojaligi.group_qx_agronom,1,1,1,0
+access_ish_sarf_boshliq,ish_sarf boshliq,model_agronova_qx_ish_sarf,agronova_qishloq_xojaligi.group_qx_boshliq,1,1,1,0
+access_ish_sarf_hisobchi,ish_sarf hisobchi,model_agronova_qx_ish_sarf,agronova_qishloq_xojaligi.group_qx_hisobchi,1,1,1,1
+access_hosil_agronom,hosil agronom,model_agronova_qx_hosil,agronova_qishloq_xojaligi.group_qx_agronom,1,1,1,0
+access_hosil_boshliq,hosil boshliq,model_agronova_qx_hosil,agronova_qishloq_xojaligi.group_qx_boshliq,1,1,1,0
+access_hosil_hisobchi,hosil hisobchi,model_agronova_qx_hosil,agronova_qishloq_xojaligi.group_qx_hisobchi,1,1,1,1
+access_xarajat_boshliq,xarajat boshliq,model_agronova_qx_xarajat,agronova_qishloq_xojaligi.group_qx_boshliq,1,1,1,0
+access_xarajat_hisobchi,xarajat hisobchi,model_agronova_qx_xarajat,agronova_qishloq_xojaligi.group_qx_hisobchi,1,1,1,1
+access_ichki_berish_agronom,ichki_berish agronom,model_agronova_qx_ichki_berish,agronova_qishloq_xojaligi.group_qx_agronom,1,1,1,0
+access_ichki_berish_boshliq,ichki_berish boshliq,model_agronova_qx_ichki_berish,agronova_qishloq_xojaligi.group_qx_boshliq,1,1,1,0
+access_ichki_berish_hisobchi,ichki_berish hisobchi,model_agronova_qx_ichki_berish,agronova_qishloq_xojaligi.group_qx_hisobchi,1,1,1,1
+access_qx_pl_boshliq,qx pl boshliq,model_agronova_qx_pl,agronova_qishloq_xojaligi.group_qx_boshliq,1,1,1,1
+access_qx_pl_qator_boshliq,qx pl_qator boshliq,model_agronova_qx_pl_qator,agronova_qishloq_xojaligi.group_qx_boshliq,1,1,1,1

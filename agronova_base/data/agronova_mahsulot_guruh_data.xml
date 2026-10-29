@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Guruhlar kodi bilan yaratiladi, kategoriyalari esa bazada
+             mavjudlariga qarab biriktiriladi (35_mahsulot_guruh.py).
+             `noupdate="1"` — buyurtmachi kategoriyani o'zgartirsa, modul
+             yangilanishida qaytarilmasin. -->
+
+        <record id="mahsulot_guruh_tuxum" model="agronova.mahsulot.guruh">
+            <field name="name">Tuxum</field>
+            <field name="kod">tuxum</field>
+            <field name="izoh">Inkubatoriya tuxum qabuli, Ona tovuq tuxum jurnali</field>
+        </record>
+
+        <record id="mahsulot_guruh_joja" model="agronova.mahsulot.guruh">
+            <field name="name">Jo'ja va tirik parranda</field>
+            <field name="kod">joja</field>
+            <field name="izoh">Jo'ja ochilishi, Boquvga berish, So'yishga qabul</field>
+        </record>
+
+        <record id="mahsulot_guruh_gosht" model="agronova.mahsulot.guruh">
+            <field name="name">Go'sht mahsulotlari</field>
+            <field name="kod">gosht</field>
+            <field name="izoh">So'yish sortirovkasi</field>
+        </record>
+
+        <record id="mahsulot_guruh_yem" model="agronova.mahsulot.guruh">
+            <field name="name">Yem va xomashyo</field>
+            <field name="kod">yem</field>
+            <field name="izoh">Yem zavodi, sexlarga yem sarfi</field>
+        </record>
+
+        <record id="mahsulot_guruh_dori" model="agronova.mahsulot.guruh">
+            <field name="name">Dori va vitamin</field>
+            <field name="kod">dori</field>
+            <field name="izoh">Veterinariya, vaksina jurnallari</field>
+        </record>
+
+        <record id="mahsulot_guruh_dezinfeksiya" model="agronova.mahsulot.guruh">
+            <field name="name">Dezinfeksiya vositalari</field>
+            <field name="kod">dezinfeksiya</field>
+            <field name="izoh">Boquv dezinfeksiya hujjatlari</field>
+        </record>
+
+        <record id="mahsulot_guruh_hosil" model="agronova.mahsulot.guruh">
+            <field name="name">Qishloq xo'jaligi hosili</field>
+            <field name="kod">hosil</field>
+            <field name="izoh">Hosil kirimi, Yem zavodiga ichki berish</field>
+        </record>
+
+    </data>
+</odoo>

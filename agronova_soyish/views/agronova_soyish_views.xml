@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ==================================================== QABUL VA TORTISH -->
+    <record id="view_soyish_qabul_list" model="ir.ui.view">
+        <field name="name">agronova.soyish.qabul.list</field>
+        <field name="model">agronova.soyish.qabul</field>
+        <field name="arch" type="xml">
+            <list string="Qabul va tortish" decoration-muted="holat == 'draft'">
+                <field name="sana"/>
+                <field name="name"/>
+                <field name="manba"/>
+                <field name="partner_id"/>
+                <field name="tovuq_soni" sum="Dona"/>
+                <field name="brutto_kg" optional="show"/>
+                <field name="tara_kg" optional="hide"/>
+                <field name="netto_kg" sum="Netto kg"/>
+                <field name="ortacha_vazn_kg"/>
+                <field name="partiya_id" optional="show"/>
+                <field name="holat" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_soyish_qabul_form" model="ir.ui.view">
+        <field name="name">agronova.soyish.qabul.form</field>
+        <field name="model">agronova.soyish.qabul</field>
+        <field name="arch" type="xml">
+            <form string="Qabul va tortish">
+                <header>
+                    <button name="action_qabul" type="object" string="Qabul qilish"
+                            class="btn-primary" invisible="holat != 'draft'"
+                            confirm="Qabul yakunlanadi va so'yish partiyasi ochiladi. Tortish ma'lumoti keyin o'zgartirilmaydi. Davom etamizmi?"/>
+                    <field name="holat" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_partiya" type="object"
+                                class="oe_stat_button" icon="fa-cubes"
+                                invisible="not partiya_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Partiya</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Kelib chiqishi">
+                            <field name="sana"/>
+                            <field name="manba" widget="radio"/>
+                            <field name="partner_id"
+                                   required="manba == 'tashqi'"/>
+                            <field name="product_id" options="{'no_create': True}"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Transport">
+                            <field name="transport"/>
+                            <field name="haydovchi"/>
+                        </group>
+                    </group>
+                    <group string="Tortish">
+                        <group>
+                            <field name="tovuq_soni"/>
+                            <field name="brutto_kg"/>
+                            <field name="tara_kg"/>
+                        </group>
+                        <group>
+                            <field name="netto_kg"/>
+                            <field name="ortacha_vazn_kg"/>
+                        </group>
+                    </group>
+                    <div class="text-muted">
+                        Netto = brutto − tara. O'rtacha vazn = netto ÷ tovuq soni.
+                        Chiqim foizi keyinchalik shu netto vazndan hisoblanadi,
+                        shuning uchun tortish aniq bo'lishi muhim.
+                    </div>
+                    <group string="Izoh">
+                        <field name="izoh" nolabel="1"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_soyish_qabul" model="ir.actions.act_window">
+        <field name="name">Qabul va tortish</field>
+        <field name="res_model">agronova.soyish.qabul</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Birinchi qabul hujjatini yarating</p>
+            <p>Tovuq kelganda tortiladi va shu hujjat yaratiladi. Qabul
+               qilinganda so'yish partiyasi avtomat ochiladi.</p>
+        </field>
+    </record>
+
+    <!-- ============================================================ PARTIYA -->
+    <record id="view_soyish_partiya_list" model="ir.ui.view">
+        <field name="name">agronova.soyish.partiya.list</field>
+        <field name="model">agronova.soyish.partiya</field>
+        <field name="arch" type="xml">
+            <list string="So'yish partiyalari"
+                  decoration-muted="holat == 'closed'">
+                <field name="sana"/>
+                <field name="name"/>
+                <field name="manba"/>
+                <field name="partner_id" optional="show"/>
+                <field name="tirik_son" sum="Kelgan dona"/>
+                <field name="tirik_vazn_kg" sum="Tirik kg"/>
+                <field name="soyilgan_son" sum="So'yilgan"/>
+                <field name="tushka_vazn_kg" sum="Tayyor kg"/>
+                <field name="chiqim_foiz"/>
+                <field name="tannarx_1_kg" optional="show"/>
+                <field name="xizmat_summa" optional="show" sum="Xizmat"/>
+                <field name="holat" widget="badge"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_soyish_partiya_form" model="ir.ui.view">
+        <field name="name">agronova.soyish.partiya.form</field>
+        <field name="model">agronova.soyish.partiya</field>
+        <field name="arch" type="xml">
+            <form string="So'yish partiyasi">
+                <header>
+                    <button name="action_yakunlash" type="object"
+                            string="Yakunlash" class="btn-primary"
+                            invisible="holat != 'active'"/>
+                    <button name="action_qayta_ochish" type="object"
+                            string="Qayta ochish" invisible="holat != 'closed'"/>
+                    <field name="holat" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Kelib chiqishi">
+                            <field name="sana"/>
+                            <field name="manba"/>
+                            <field name="partner_id"/>
+                            <field name="qabul_id"/>
+                            <field name="product_id"/>
+                            <field name="analytic_account_id" readonly="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Kirish va natija">
+                            <field name="tirik_son"/>
+                            <field name="tirik_vazn_kg"/>
+                            <field name="soyilgan_son"/>
+                            <field name="nobud_son"/>
+                            <field name="tushka_vazn_kg"/>
+                            <field name="ortacha_tushka_kg"/>
+                            <field name="chiqim_foiz"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Moliya" invisible="manba != 'ichki'">
+                            <field name="jami_xarajat"/>
+                            <field name="jami_daromad"/>
+                            <field name="foyda"/>
+                            <field name="tannarx_1_kg"/>
+                        </group>
+                        <group string="Xizmat haqi" invisible="manba != 'tashqi'">
+                            <field name="xizmat_narx"/>
+                            <field name="xizmat_summa"/>
+                            <field name="jami_xarajat"/>
+                            <field name="foyda"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="So'yish jarayonlari" name="jarayon">
+                            <field name="jarayon_ids" readonly="1">
+                                <list>
+                                    <field name="sana"/>
+                                    <field name="soyilgan_son" sum="Dona"/>
+                                    <field name="nobud_son" sum="Nobud"/>
+                                    <field name="tushka_vazn_kg" sum="kg"/>
+                                    <field name="chiqim_foiz"/>
+                                    <field name="holat" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Izoh" name="izoh">
+                            <field name="izoh" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_soyish_partiya_search" model="ir.ui.view">
+        <field name="name">agronova.soyish.partiya.search</field>
+        <field name="model">agronova.soyish.partiya</field>
+        <field name="arch" type="xml">
+            <search string="So'yish partiyalari">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <filter name="ichki" string="Ichki boquvdan"
+                        domain="[('manba', '=', 'ichki')]"/>
+                <filter name="tashqi" string="Tashqi mijozdan"
+                        domain="[('manba', '=', 'tashqi')]"/>
+                <separator/>
+                <filter name="jarayonda" string="Jarayonda"
+                        domain="[('holat', '=', 'active')]"/>
+                <group>
+                    <filter name="g_manba" string="Kelib chiqishi"
+                            context="{'group_by': 'manba'}"/>
+                    <filter name="g_partner" string="Mijoz"
+                            context="{'group_by': 'partner_id'}"/>
+                    <filter name="g_sana" string="Sana"
+                            context="{'group_by': 'sana'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_soyish_partiya" model="ir.actions.act_window">
+        <field name="name">So'yish partiyalari</field>
+        <field name="res_model">agronova.soyish.partiya</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_soyish_partiya_search"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_agronova_trip_user,agronova.trip fleet user,model_agronova_trip,fleet.fleet_group_user,1,1,1,0
+access_agronova_trip_manager,agronova.trip fleet manager,model_agronova_trip,fleet.fleet_group_manager,1,1,1,1
+access_agronova_trip_employee,agronova.trip employee read,model_agronova_trip,base.group_user,1,0,0,0
+access_agronova_trip_attach_picking,agronova.trip.attach.picking,model_agronova_trip_attach_picking,fleet.fleet_group_user,1,1,1,1

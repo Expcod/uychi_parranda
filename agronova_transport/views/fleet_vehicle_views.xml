@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_fleet_vehicle_form_driver_employee" model="ir.ui.view">
+        <field name="name">fleet.vehicle.form.driver.employee</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Haydovchi xodimlar ro'yxatidan tanlanadi; standart kontakt
+                 maydoni avtomat to'ladi va faqat ma'lumot uchun ko'rinadi. -->
+            <field name="driver_id" position="before">
+                <field name="agronova_driver_employee_id" widget="many2one_avatar"/>
+            </field>
+            <field name="driver_id" position="attributes">
+                <attribute name="readonly">1</attribute>
+                <attribute name="string">Driver (kontakt)</attribute>
+                <attribute name="groups">base.group_no_one</attribute>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_fleet_vehicle_list_driver_employee" model="ir.ui.view">
+        <field name="name">fleet.vehicle.list.driver.employee</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="driver_id" position="before">
+                <field name="agronova_driver_employee_id" optional="show"/>
+            </field>
+            <field name="driver_id" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </field>
+        </field>
+    </record>
+
+</odoo>

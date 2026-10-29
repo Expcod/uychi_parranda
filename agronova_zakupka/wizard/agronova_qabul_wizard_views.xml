@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_qabul_wizard_form" model="ir.ui.view">
+        <field name="name">agronova.qabul.wizard.form</field>
+        <field name="model">agronova.qabul.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Tovarni qabul qilish va baholash">
+                <group>
+                    <group>
+                        <field name="kirim_id" readonly="1"/>
+                        <field name="zakupchik_id" readonly="1"/>
+                        <field name="maqsad_ombor_id" readonly="1"/>
+                    </group>
+                </group>
+                <field name="qator_ids">
+                    <list editable="bottom" create="false" delete="false">
+                        <field name="product_id" readonly="1"/>
+                        <field name="soralgan_miqdor" readonly="1"/>
+                        <field name="qabul_miqdor"/>
+                        <field name="kuzatuv_shart" column_invisible="True"/>
+                        <field name="lot_nomi" required="kuzatuv_shart"/>
+                        <field name="yaroqlilik_sanasi"/>
+                    </list>
+                </field>
+                <group string="Uch o'lchovli baho (TZ 7-bo'lim)">
+                    <group>
+                        <field name="ball_toliqlik"/>
+                        <field name="ball_muddat"/>
+                        <field name="ball_sifat"/>
+                    </group>
+                    <group>
+                        <field name="ball_sababi"/>
+                        <field name="ball_izohi"
+                               placeholder="To'liq bo'lmagan ballda majburiy..."/>
+                    </group>
+                </group>
+                <div class="text-muted">
+                    Baho bitta raqam emas: to'liqlik (miqdor), muddat
+                    (vaqtida keldimi) va sifat alohida qo'yiladi. «Obyektiv
+                    sabab» tanlansa ball zakupchik KPI'siga tushmaydi,
+                    «nizoli» tanlansa bo'lim rahbari hal qiladi.
+                </div>
+                <footer>
+                    <button name="action_qabul_qilish" type="object"
+                            string="Qabul qilish" class="btn-primary"/>
+                    <button string="Bekor qilish" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_qx_root" name="Qishloq xo'jaligi" web_icon="agronova_qishloq_xojaligi,static/description/icon.png"
+              sequence="47" groups="agronova_qishloq_xojaligi.group_qx_agronom"/>
+
+    <menuitem id="menu_qx_kunlik" name="Dalada" parent="menu_qx_root" sequence="10"/>
+    <menuitem id="menu_qx_ish" name="Bajarilgan ishlar"
+              parent="menu_qx_kunlik" action="action_qx_ish" sequence="10"/>
+    <menuitem id="menu_qx_hosil" name="Olingan hosil"
+              parent="menu_qx_kunlik" action="action_qx_hosil" sequence="20"/>
+
+    <menuitem id="menu_qx_obyekt" name="Yer va ekin" parent="menu_qx_root" sequence="20"/>
+    <menuitem id="menu_qx_yer" name="Yer maydonlari"
+              parent="menu_qx_obyekt" action="action_qx_yer" sequence="10"/>
+    <menuitem id="menu_qx_partiya" name="Ekin partiyalari"
+              parent="menu_qx_obyekt" action="action_qx_partiya" sequence="20"/>
+
+    <menuitem id="menu_qx_moliya" name="Moliya" parent="menu_qx_root" sequence="30"
+              groups="agronova_qishloq_xojaligi.group_qx_boshliq"/>
+    <menuitem id="menu_qx_xarajat" name="Xarajatlar"
+              parent="menu_qx_moliya" action="action_qx_xarajat" sequence="10"/>
+    <!-- «Ichki berish» menyusi olib tashlandi: Yem zavodiga hosil
+         berish endi standart Sotuv (sale.order) orqali qilinadi —
+         mijoz qilib Yem zavodi tanlanadi, qatorda ekin partiyasi
+         ko'rsatiladi. Eski yozuvlar arxiv sifatida qoladi. -->
+
+    <menuitem id="menu_qx_config" name="Sozlamalar" parent="menu_qx_root" sequence="90"
+              groups="agronova_qishloq_xojaligi.group_qx_boshliq"/>
+    <menuitem id="menu_qx_ekin" name="Ekin turlari"
+              parent="menu_qx_config" action="action_qx_ekin" sequence="10"/>
+
+    <!-- Xarajat kategoriyasi umumiy ma'lumotnoma (`agronova_base`) — har
+         bo'lim o'z sozlamasidan ham ochadi, alohida ro'yxat yasalmaydi.
+         TZ bo'yicha yangi kategoriyani faqat administrator qo'shadi. -->
+    <menuitem id="menu_qx_xarajat_kategoriya" name="Xarajat kategoriyalari"
+              parent="menu_qx_config"
+              action="agronova_base.action_agronova_xarajat_kategoriya"
+              sequence="80"/>
+
+    <!-- Naqd xarajat depozitdan chiqadi, shuning uchun depozit
+         ro'yxati har bo'lim sozlamasidan ham ochiladi. Yangi depozitni
+         bosh buxgalter yoki administrator qo'shadi. -->
+    <menuitem id="menu_qx_depozit" name="Depozitlar"
+              parent="menu_qx_config"
+              action="agronova_savdo_moliya.action_agronova_depozit"
+              sequence="85"/>
+
+
+    <!-- TZ 14-band bo'yicha hisobotlar. Barchasi hujjatlarning
+         o'zidan guruhlanib ochiladi, foyda-zarar esa alohida sahifa. -->
+    <menuitem id="menu_qx_hisobot" name="Hisobotlar" parent="menu_qx_root"
+              sequence="40" groups="agronova_qishloq_xojaligi.group_qx_boshliq"/>
+    <menuitem id="menu_qx_pl" name="Foyda-zarar"
+              parent="menu_qx_hisobot" action="action_qx_pl_sahifa"
+              sequence="10"/>
+    <menuitem id="menu_qx_hisobot_yer" name="Yer maydonlari hisoboti"
+              parent="menu_qx_hisobot" action="action_qx_hisobot_yer"
+              sequence="20"/>
+    <menuitem id="menu_qx_hisobot_partiya" name="Partiyalar hisoboti"
+              parent="menu_qx_hisobot" action="action_qx_hisobot_partiya"
+              sequence="30"/>
+    <menuitem id="menu_qx_hisobot_hosil" name="Olingan hosil hisoboti"
+              parent="menu_qx_hisobot" action="action_qx_hisobot_hosil"
+              sequence="40"/>
+    <menuitem id="menu_qx_hisobot_material" name="Sarflangan materiallar"
+              parent="menu_qx_hisobot" action="action_qx_hisobot_material"
+              sequence="50"/>
+    <menuitem id="menu_qx_hisobot_sotuv" name="Ichki berish hisoboti"
+              parent="menu_qx_hisobot" action="action_qx_hisobot_sotuv"
+              sequence="60"/>
+    <menuitem id="menu_qx_hisobot_tannarx" name="Tannarx hisoboti"
+              parent="menu_qx_hisobot" action="action_qx_hisobot_tannarx"
+              sequence="70" groups="agronova_qishloq_xojaligi.group_qx_hisobchi"/>
+</odoo>

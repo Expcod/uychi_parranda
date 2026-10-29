@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Form View (B Ilovasi shakli) -->
+        <record id="view_agronova_feed_cost_report_form" model="ir.ui.view">
+            <field name="name">agronova.feed.cost.report.form</field>
+            <field name="model">agronova.feed.cost.report</field>
+            <field name="arch" type="xml">
+                <form string="B Ilovasi: Yem Tannarxi va Ijara Taqsimoti Hisoboti">
+                    <sheet>
+                        <field name="currency_id" invisible="1"/>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Masalan: 2026-Avgust Yem Tannarxi"/>
+                            </h1>
+                            <h3>
+                                <field name="davr"/>
+                            </h3>
+                        </div>
+
+                        <!-- 1. IJARA TAQSIMOTI JADVALI (B ILOVASI) -->
+                        <group string="1. Zavod ijarasi va taqsimlash parametrlari">
+                            <group>
+                                <field name="ijara_usd"/>
+                                <field name="valyuta_kursi"/>
+                                <field name="ijara_som" widget="monetary"/>
+                            </group>
+                            <group>
+                                <field name="ish_kunlari"/>
+                                <field name="bir_kunlik_ijara_som" widget="monetary"/>
+                                <field name="oylik_ishlab_chiqarish_tonna"/>
+                                <field name="bir_kg_ijara_som"/>
+                            </group>
+                        </group>
+
+                        <!-- 2. 1 KG YEM TO'LIQ TANNARXI -->
+                        <div class="o_horizontal_separator">2. 1 kg Yemning To'liq Tannarx Tarkibi (B Ilovasi)</div>
+                        <div class="mb-3">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr class="table-primary">
+                                        <th style="width: 5%;">№</th>
+                                        <th style="width: 45%;">Tarkibiy qism</th>
+                                        <th style="width: 25%;">Manbasi</th>
+                                        <th style="width: 25%;">Qiymati (so'm/kg)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td><strong>Xomashyo qiymati</strong></td>
+                                        <td>Retsept (BOM) bo'yicha, FIFO tannarxda</td>
+                                        <td><field name="xomashyo_qiymat_kg" widget="monetary"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td><strong>Qayta ishlash xarajati</strong></td>
+                                        <td>Ish markazlarining soatlik xarajati</td>
+                                        <td><field name="qayta_ishlash_xarajat_kg" widget="monetary"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td><strong>Ijara ulushi</strong></td>
+                                        <td>Yuqoridagi oylik ijara hisobi bo'yicha</td>
+                                        <td><field name="ijara_ulushi_kg" widget="monetary"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td><strong>Elektr va gaz</strong></td>
+                                        <td>Hisoblagich ko'rsatkichi bo'yicha</td>
+                                        <td><field name="elektr_gaz_kg" widget="monetary"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>5</td>
+                                        <td><strong>Ish haqi</strong></td>
+                                        <td>Zavod xodimlari oyligi taqsimoti</td>
+                                        <td><field name="ish_haqi_kg" widget="monetary"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td>6</td>
+                                        <td><strong>Amortizatsiya</strong></td>
+                                        <td>Uskunalar oylik amortizatsiyasi</td>
+                                        <td><field name="amortizatsiya_kg" widget="monetary"/></td>
+                                    </tr>
+                                    <tr class="table-success font-weight-bold">
+                                        <td></td>
+                                        <td colspan="2"><strong>JAMI 1 KG YEM TANNARXI</strong></td>
+                                        <td><strong><field name="bir_kg_toliq_tannarx" widget="monetary"/></strong></td>
+                                    </tr>
+                                    <tr class="table-info font-weight-bold">
+                                        <td></td>
+                                        <td colspan="2"><strong>JAMI 1 TONNA YEM TANNARXI</strong></td>
+                                        <td><strong><field name="bir_tonna_toliq_tannarx" widget="monetary"/></strong></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- REJA-FAKT TAQQOSLAMA -->
+                        <group string="3. Reja-Fakt Taqqoslama va Og'ish">
+                            <group>
+                                <field name="reja_1_kg_tannarx" widget="monetary"/>
+                            </group>
+                            <group>
+                                <field name="ogish_som" widget="monetary"/>
+                                <field name="ogish_foiz" widget="percentage"/>
+                            </group>
+                        </group>
+
+                        <div class="alert alert-info" role="alert">
+                            <strong>MHXS / Boshqaruv qoidasi:</strong> Oy oxirida reja bo'yicha qo'shilgan ustama xarajat bilan haqiqiy xarajat solishtiriladi va farq tannarxga to'g'irlash yozuvi orqali kiritiladi.
+                        </div>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- List View -->
+        <record id="view_agronova_feed_cost_report_list" model="ir.ui.view">
+            <field name="name">agronova.feed.cost.report.list</field>
+            <field name="model">agronova.feed.cost.report</field>
+            <field name="arch" type="xml">
+                <list string="B Ilovasi: Yem Tannarxi">
+                    <field name="name"/>
+                    <field name="davr"/>
+                    <field name="ijara_usd"/>
+                    <field name="ish_kunlari"/>
+                    <field name="oylik_ishlab_chiqarish_tonna"/>
+                    <field name="bir_kg_ijara_som"/>
+                    <field name="bir_kg_toliq_tannarx" widget="monetary"/>
+                    <field name="bir_tonna_toliq_tannarx" widget="monetary"/>
+                    <field name="reja_1_kg_tannarx" widget="monetary"/>
+                    <field name="ogish_foiz" widget="percentage"/>
+                    <field name="currency_id" column_invisible="True"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_agronova_feed_cost_report" model="ir.actions.act_window">
+            <field name="name">🌾 B Ilovasi: Yem Tannarxi va Ijara Taqsimoti</field>
+            <field name="res_model">agronova.feed.cost.report</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

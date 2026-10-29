@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_agronova_kassa_kanban" model="ir.ui.view">
+        <field name="name">agronova.kassa.kanban</field>
+        <field name="model">agronova.kassa</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_dashboard" create="0">
+                <field name="currency_id"/>
+                <field name="transit_balance"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="o_kanban_card_header">
+                            <div class="o_kanban_card_header_title">
+                                <div class="o_primary fs-5">
+                                    <strong><field name="name"/></strong>
+                                </div>
+                                <div class="o_secondary text-muted">
+                                    <field name="turi"/> · <field name="currency_id"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container o_kanban_card_content mt-2">
+                            <div class="row">
+                                <div class="col-12 text-center py-2">
+                                    <div class="text-muted small text-uppercase">Kassadagi pul</div>
+                                    <div class="fw-bold" style="font-size: 1.9rem;">
+                                        <field name="balance" widget="monetary"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" t-if="record.transit_balance.raw_value">
+                                <div class="col-12 text-center pb-2">
+                                    <span class="text-muted small">Yo'lda: </span>
+                                    <span class="fw-bold text-warning">
+                                        <field name="transit_balance" widget="monetary"/>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="row border-top pt-2">
+                                <div class="col-6">
+                                    <span class="text-muted small">Bugun kirim</span>
+                                    <div class="fw-bold text-success">
+                                        <field name="kirim_today" widget="monetary"/>
+                                    </div>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <span class="text-muted small">Bugun chiqim</span>
+                                    <div class="fw-bold text-danger">
+                                        <field name="chiqim_today" widget="monetary"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="o_kanban_card_manage_pane dropdown-menu" role="menu">
+                            <a role="menuitem" type="object" name="action_open_harakat"
+                               class="dropdown-item">Harakatlar</a>
+                            <a role="menuitem" type="object" name="action_open_kun"
+                               class="dropdown-item">Kassa kitobi</a>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_agronova_kassa_list" model="ir.ui.view">
+        <field name="name">agronova.kassa.list</field>
+        <field name="model">agronova.kassa</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="turi"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="mas_ul_id" optional="show"/>
+                <field name="currency_id" optional="hide"/>
+                <field name="journal_id" optional="show"/>
+                <field name="account_id" optional="hide"/>
+                <field name="kirim_today" widget="monetary"/>
+                <field name="chiqim_today" widget="monetary"/>
+                <field name="transit_balance" widget="monetary" optional="show"/>
+                <field name="balance" widget="monetary" decoration-bf="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_agronova_kassa_form" model="ir.ui.view">
+        <field name="name">agronova.kassa.form</field>
+        <field name="model">agronova.kassa</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object" name="action_open_harakat"
+                                class="oe_stat_button" icon="fa-exchange">
+                            <field name="harakat_count" widget="statinfo" string="Harakatlar"/>
+                        </button>
+                        <button type="object" name="action_open_kun"
+                                class="oe_stat_button" icon="fa-book"
+                                string="Kassa kitobi"/>
+                    </div>
+                    <widget name="web_ribbon" title="Arxiv" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Markaziy kassa"/></h1>
+                    </div>
+                    <div class="alert alert-info" role="alert">
+                        Kassadagi pul:
+                        <strong class="fs-4">
+                            <field name="balance" widget="monetary" nolabel="1"/>
+                        </strong>
+                        <span invisible="not transit_balance">
+                            · yo'lda:
+                            <strong><field name="transit_balance" widget="monetary" nolabel="1"/></strong>
+                        </span>
+                    </div>
+                    <group>
+                        <group string="Asosiy">
+                            <field name="turi"/>
+                            <field name="code"/>
+                            <field name="company_id" options="{'no_create': True}"/>
+                            <field name="currency_id" options="{'no_create': True}"/>
+                            <field name="mas_ul_id" options="{'no_create': True}"/>
+                            <field name="user_ids" widget="many2many_tags"
+                                   options="{'no_create': True}"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group string="Boshlang'ich qoldiq va qoidalar">
+                            <field name="opening_balance" widget="monetary"/>
+                            <field name="opening_date"/>
+                            <field name="allow_negative"/>
+                            <field name="kun_yopish_majburiy"/>
+                        </group>
+                    </group>
+                    <group string="Buxgalteriya">
+                        <group>
+                            <field name="journal_id" options="{'no_create': True}"/>
+                            <field name="account_id" options="{'no_create': True}"
+                                   required="buxgalteriya"/>
+                            <field name="transit_account_id" options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="buxgalteriya"/>
+                        </group>
+                    </group>
+                    <group string="Izoh">
+                        <field name="note" nolabel="1"
+                               placeholder="Kassa haqida qo'shimcha ma'lumot..."/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_agronova_kassa_search" model="ir.ui.view">
+        <field name="name">agronova.kassa.search</field>
+        <field name="model">agronova.kassa</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="company_id"/>
+                <field name="mas_ul_id"/>
+                <filter name="markaziy" string="Markaziy"
+                        domain="[('turi', '=', 'markaziy')]"/>
+                <filter name="filial" string="Filial kassalari"
+                        domain="[('turi', '=', 'filial')]"/>
+                <filter name="valyuta" string="Valyuta kassalari"
+                        domain="[('turi', '=', 'valyuta')]"/>
+                <separator/>
+                <filter name="arxiv" string="Arxiv" domain="[('active', '=', False)]"/>
+                <group>
+                    <filter name="g_turi" string="Turi" context="{'group_by': 'turi'}"/>
+                    <filter name="g_company" string="Korxona"
+                            context="{'group_by': 'company_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_agronova_kassa" model="ir.actions.act_window">
+        <field name="name">Kassalar</field>
+        <field name="res_model">agronova.kassa</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Birinchi kassani yarating</p>
+            <p>Kassa — naqd pul turadigan joy. Har filialning o'z kassasi,
+               o'z qoldig'i va o'z kassa kitobi bo'ladi.</p>
+        </field>
+    </record>
+
+</odoo>

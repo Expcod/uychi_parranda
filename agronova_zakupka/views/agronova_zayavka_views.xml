@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_zayavka_list" model="ir.ui.view">
+        <field name="name">agronova.zayavka.list</field>
+        <field name="model">agronova.zayavka</field>
+        <field name="arch" type="xml">
+            <list string="Zayavkalar"
+                  decoration-danger="kechikdimi"
+                  decoration-muted="holat in ('yopildi', 'rad_etildi')">
+                <field name="name"/>
+                <field name="sana"/>
+                <field name="warehouse_id"/>
+                <field name="omborchi_id" widget="many2one_avatar_user"/>
+                <field name="zakupchik_id" widget="many2one_avatar_user"/>
+                <field name="muhimlik_darajasi"/>
+                <field name="maksimal_muddat"/>
+                <field name="javob_muddati" optional="show"/>
+                <field name="kechikish_soati" optional="show"
+                       string="Kechikish (soat)"/>
+                <field name="bajarilish_foizi" widget="progressbar"/>
+                <field name="holat" widget="badge"
+                       decoration-success="holat == 'yopildi'"
+                       decoration-warning="holat == 'zakupchikka_yuborildi'"
+                       decoration-danger="holat == 'rad_etildi'"/>
+                <field name="kechikdimi" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_zayavka_form" model="ir.ui.view">
+        <field name="name">agronova.zayavka.form</field>
+        <field name="model">agronova.zayavka</field>
+        <field name="arch" type="xml">
+            <form string="Zayavka">
+                <header>
+                    <button name="action_yuborish" type="object" string="Zakupchikka yuborish"
+                            class="btn-primary" invisible="holat != 'draft'"/>
+                    <button name="action_qabul_qilish" type="object" string="Qabul qilaman"
+                            class="btn-primary"
+                            invisible="holat != 'zakupchikka_yuborildi'"
+                            groups="agronova_zakupka.group_zakupka_zakupchik"/>
+                    <button name="action_rad_etish" type="object" string="Rad etish"
+                            invisible="holat != 'zakupchikka_yuborildi'"
+                            groups="agronova_zakupka.group_zakupka_zakupchik"/>
+                    <button name="action_ruxsat_yaratish" type="object"
+                            string="Ruxsat so'rash" class="btn-primary"
+                            invisible="holat != 'qabul_qilindi'"/>
+                    <button name="action_yopish" type="object" string="Yopish"
+                            invisible="holat not in ('qabul_qilindi', 'qisman_bajarildi')"/>
+                    <button name="action_qoralamaga" type="object" string="Qoralamaga"
+                            invisible="holat != 'rad_etildi'"/>
+                    <field name="holat" widget="statusbar"
+                           statusbar_visible="draft,zakupchikka_yuborildi,qabul_qilindi,yopildi"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_ruxsatlarni_korish" type="object"
+                                class="oe_stat_button" icon="fa-check-square-o">
+                            <field name="ruxsat_soni" widget="statinfo" string="Ruxsatlar"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Kechikdi" bg_color="text-bg-danger"
+                            invisible="not kechikdimi"/>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="So'rov">
+                            <field name="warehouse_id"/>
+                            <field name="omborchi_id" widget="many2one_avatar_user"/>
+                            <field name="sana"/>
+                            <field name="maksimal_muddat"/>
+                            <field name="muhimlik_darajasi"/>
+                        </group>
+                        <group string="Javob va muddat">
+                            <field name="zakupchik_id" widget="many2one_avatar_user" readonly="1"/>
+                            <field name="yuborilgan_vaqti"/>
+                            <field name="javob_muddati"/>
+                            <field name="javob_vaqti"/>
+                            <field name="kechikish_soati"/>
+                            <field name="kiritilgan_sana"/>
+                            <field name="bajarilish_foizi" widget="progressbar"/>
+                        </group>
+                    </group>
+                    <group string="Rad etish" invisible="holat != 'rad_etildi'">
+                        <field name="rad_sababi"/>
+                        <field name="rad_izohi"/>
+                    </group>
+                    <notebook>
+                        <page string="Tovarlar" name="qatorlar">
+                            <field name="qator_ids">
+                                <list editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="miqdor"/>
+                                    <field name="olchov_birligi_id"/>
+                                    <field name="bajarilgan_miqdor" readonly="1"/>
+                                    <field name="qoldiq_miqdor" readonly="1"/>
+                                    <field name="izoh"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Izoh" name="izoh">
+                            <field name="izoh" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_zayavka_search" model="ir.ui.view">
+        <field name="name">agronova.zayavka.search</field>
+        <field name="model">agronova.zayavka</field>
+        <field name="arch" type="xml">
+            <search string="Zayavkalar">
+                <field name="name"/>
+                <field name="warehouse_id"/>
+                <field name="zakupchik_id"/>
+                <field name="omborchi_id"/>
+                <filter name="ochiq" string="Ochiq zayavkalar"
+                        domain="[('holat', 'in', ('zakupchikka_yuborildi', 'qabul_qilindi', 'qisman_bajarildi'))]"/>
+                <filter name="javobsiz" string="Javob kutilmoqda"
+                        domain="[('holat', '=', 'zakupchikka_yuborildi')]"/>
+                <filter name="kechikkan" string="Kechikkan"
+                        domain="[('kechikdimi', '=', True)]"/>
+                <separator/>
+                <filter name="juda_muhim" string="Juda muhim"
+                        domain="[('muhimlik_darajasi', '=', '1_juda_muhim')]"/>
+                <group>
+                    <filter name="g_holat" string="Holati" context="{'group_by': 'holat'}"/>
+                    <filter name="g_zakupchik" string="Zakupchik" context="{'group_by': 'zakupchik_id'}"/>
+                    <filter name="g_ombor" string="Ombor" context="{'group_by': 'warehouse_id'}"/>
+                    <filter name="g_muhimlik" string="Muhimlik" context="{'group_by': 'muhimlik_darajasi'}"/>
+                    <filter name="g_sana" string="Sana" context="{'group_by': 'sana'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_zakupka_zayavka" model="ir.actions.act_window">
+        <field name="name">Zayavkalar</field>
+        <field name="res_model">agronova.zayavka</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_zayavka_search"/>
+        <field name="context">{'search_default_ochiq': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Birinchi zayavkani yarating</p>
+            <p>Omborchi kerakli tovarni zayavka orqali so'raydi. Zakupchik uni
+               muhimlik darajasiga mos muddat ichida qabul qiladi yoki sabab
+               bilan rad etadi.</p>
+        </field>
+    </record>
+
+</odoo>

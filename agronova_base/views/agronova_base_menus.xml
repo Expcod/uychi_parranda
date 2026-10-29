@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Sozlamalar > Texnik ostidagi umumiy ma'lumotnomalar.
+         Bo'lim modullari o'z menyusidan ham shu action'ga havola qo'yadi. -->
+    <menuitem id="menu_agronova_config_root"
+              name="AgroNova sozlamalari"
+              parent="base.menu_administration"
+              sequence="90"
+              groups="base.group_system"/>
+
+    <menuitem id="menu_agronova_xarajat_kategoriya"
+              name="Xarajat kategoriyalari"
+              parent="menu_agronova_config_root"
+              action="action_agronova_xarajat_kategoriya"
+              sequence="10"/>
+
+    <menuitem id="menu_agronova_mahsulot_guruh"
+              name="Mahsulot guruhlari"
+              parent="menu_agronova_config_root"
+              action="action_agronova_mahsulot_guruh"
+              sequence="20"/>
+</odoo>

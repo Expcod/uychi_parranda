@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_ot_pl_form" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.pl.form</field>
+        <field name="model">agronova.ona_tovuq.pl</field>
+        <field name="arch" type="xml">
+            <form string="Bo'lim foyda-zarari">
+                <header>
+                    <button name="action_yangilash" type="object"
+                            string="Yangilash" class="btn-primary"
+                            help="Davrni o'zgartirgandan keyin xarajat tarkibini qayta hisoblaydi."/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Ona tovuq — foyda va zarar</h1>
+                        <h3 class="text-muted">
+                            <field name="company_id" readonly="1"
+                                   options="{'no_open': True}"/>
+                        </h3>
+                    </div>
+                    <group>
+                        <group string="Davr">
+                            <field name="davr_boshi"/>
+                            <field name="davr_oxiri"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Ishlab chiqarish (ma'lumot uchun)">
+                            <field name="jami_tuxum"/>
+                            <field name="tannarx_1_dona"/>
+                            <field name="ishlab_chiqarish"/>
+                            <field name="ombor_ozgarishi"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Daromad">
+                            <field name="ichki_sotuv"/>
+                            <field name="tashqi_sotuv"/>
+                            <field name="boshqa_daromad"/>
+                            <field name="jami_daromad"
+                                   class="oe_subtotal_footer_separator"/>
+                        </group>
+                        <group string="Xarajat">
+                            <field name="sotilgan_tannarx"/>
+                            <field name="jami_xarajat"
+                                   class="oe_subtotal_footer_separator"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Bo'lim natijasi (boshqaruv qatlami)">
+                            <field name="bolim_foyda"/>
+                            <field name="bolim_rentabellik"/>
+                        </group>
+                        <group string="Korxona natijasi (konsolidatsiya)">
+                            <field name="elminatsiya"/>
+                            <field name="konsolidatsiya_foyda"/>
+                            <field name="konsolidatsiya_rentabellik"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-info" role="alert">
+                        <b>Ikki qator nima uchun har xil.</b> Bo'lim natijasida
+                        Inkubatsiyaga berilgan tuxum tasdiqlangan ichki narxda
+                        daromad hisoblanadi — Ona tovuq mustaqil biznes
+                        sifatida shunday ko'rinadi. Korxona uchun esa tuxum
+                        hali sotilmagan, shuning uchun realizatsiya qilinmagan
+                        marja elminatsiya qilinadi.
+                        <br/>
+                        Elminatsiya raqami «Ichki marja elminatsiyasi»
+                        hujjatlaridan olinadi — davr uchun hujjat
+                        tasdiqlanmagan bo'lsa, bu satr nol turadi.
+                        <br/>
+                        <b>Ishlab chiqarish xarajati xarajatlar ichida yo'q</b>
+                        — chunki ishlab chiqarilgan, lekin sotilmagan tuxum
+                        omborda aktiv bo'lib turibdi. Xarajat sifatida faqat
+                        sotilgan mahsulotning tannarxi tan olinadi, qolgani
+                        «ombordagi tuxum qiymatiga qo'shildi» satrida.
+                    </div>
+
+                    <notebook>
+                        <page string="Ishlab chiqarish xarajati tarkibi" name="tarkib">
+                            <field name="qator_ids" readonly="1">
+                                <list create="0" delete="0">
+                                    <field name="nom"/>
+                                    <field name="summa" sum="Jami"/>
+                                    <field name="ulush"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                            <div class="text-muted">
+                                Bu yerda davrda qilingan ishlab chiqarish
+                                xarajati turlarga bo'lingan. Sotilgan
+                                mahsulotning tannarxi bu ro'yxatga kirmaydi —
+                                u shu xarajatlarning omborga o'tib, keyin
+                                sotilgan qismi.
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Menyudan kirishda hisobot tayyor holda, to'liq sahifada ochilishi
+         kerak. Oddiy `act_window` bo'sh forma ochardi va korxonani qo'lda
+         tanlashni talab qilardi, ustiga modal oynada chiqardi. Server
+         amali yozuvni oldindan yaratib, o'shanga sahifa ochadi. -->
+    <!-- Eskisi `act_window` edi; bitta xmlid ostida model turini
+         o'zgartirib bo'lmaydi, shuning uchun o'chirib, yangi id beriladi. -->
+    <delete model="ir.actions.act_window" id="action_ot_pl"/>
+
+    <record id="action_ot_pl_sahifa" model="ir.actions.server">
+        <field name="name">Foyda-zarar hisoboti</field>
+        <field name="model_id" ref="model_agronova_ona_tovuq_pl"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_ochish()</field>
+    </record>
+
+</odoo>

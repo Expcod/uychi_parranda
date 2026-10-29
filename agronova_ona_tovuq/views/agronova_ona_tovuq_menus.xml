@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_ot_root" name="Ona Tovuq" web_icon="agronova_ona_tovuq,static/description/icon.png"
+              sequence="24" groups="agronova_ona_tovuq.group_ot_operator"/>
+
+    <menuitem id="menu_ot_kunlik" name="Kunlik ish" parent="menu_ot_root" sequence="10"/>
+    <menuitem id="menu_ot_jurnal_tuxum" name="Kunlik jurnal (ona tovuq)"
+              parent="menu_ot_kunlik" action="action_ot_jurnal_tuxum" sequence="10"/>
+    <menuitem id="menu_ot_jurnal_ostirish" name="Kunlik jurnal (jo'ja o'stirish)"
+              parent="menu_ot_kunlik" action="action_ot_jurnal_ostirish" sequence="20"/>
+    <menuitem id="menu_ot_tuxum_kirim" name="Tuxum kirimi"
+              parent="menu_ot_kunlik" action="action_ot_tuxum_kirim" sequence="30"/>
+
+    <menuitem id="menu_ot_partiya" name="Partiyalar" parent="menu_ot_root" sequence="20"
+              groups="agronova_ona_tovuq.group_ot_boshliq"/>
+    <menuitem id="menu_ot_partiya_tuxum" name="Ona tovuq partiyalari"
+              parent="menu_ot_partiya" action="action_ot_partiya_tuxum" sequence="10"/>
+    <menuitem id="menu_ot_partiya_ostirish" name="Jo'ja o'stirish partiyalari"
+              parent="menu_ot_partiya" action="action_ot_partiya_ostirish" sequence="20"/>
+
+    <menuitem id="menu_ot_moliya" name="Moliya" parent="menu_ot_root" sequence="30"
+              groups="agronova_ona_tovuq.group_ot_boshliq"/>
+    <menuitem id="menu_ot_xarajat" name="Xarajatlar"
+              parent="menu_ot_moliya" action="action_ot_xarajat" sequence="10"/>
+    <!-- «Ichki sotuv» menyusi olib tashlandi: bo'limlar orasidagi
+         o'tkazma endi standart Sotuv (sale.order) orqali qilinadi —
+         mijoz qilib qabul qiluvchi korxona tanlanadi, qatorda esa
+         partiya ko'rsatiladi. Eski hujjatlar o'chirilmadi (elminatsiya
+         va qabul hujjatlari ularga bog'langan) — ular Hisobotlardagi
+         «Ichki sotuv (arxiv)» dan ko'riladi. -->
+    <menuitem id="menu_ot_narx" name="Ichki narxlar"
+              parent="menu_ot_moliya" action="action_ot_narx" sequence="30"
+              groups="agronova_ona_tovuq.group_ot_hisobchi"/>
+    <menuitem id="menu_ot_ish_haqi" name="Ish haqi taqsimoti"
+              parent="menu_ot_moliya" action="action_ot_ish_haqi" sequence="40"
+              groups="agronova_ona_tovuq.group_ot_hisobchi"/>
+    <menuitem id="menu_ot_elminatsiya" name="Ichki marja elminatsiyasi"
+              parent="menu_ot_moliya" action="action_ot_elminatsiya" sequence="50"
+              groups="agronova_ona_tovuq.group_ot_boshliq"/>
+
+    <!-- TZ 17-band bo'yicha hisobotlar. Barchasi hujjatlarning
+         o'zidan guruhlanib ochiladi, foyda-zarar esa alohida sahifa. -->
+    <menuitem id="menu_ot_hisobot" name="Hisobotlar" parent="menu_ot_root" sequence="40"
+              groups="agronova_ona_tovuq.group_ot_boshliq"/>
+    <menuitem id="menu_ot_pl" name="Foyda-zarar"
+              parent="menu_ot_hisobot" action="action_ot_pl_sahifa"
+              sequence="10"/>
+    <menuitem id="menu_ot_hisobot_kunlik" name="Kunlik hisobot"
+              parent="menu_ot_hisobot" action="action_ot_hisobot_kunlik"
+              sequence="20"/>
+    <menuitem id="menu_ot_hisobot_sex" name="Sexlar hisoboti"
+              parent="menu_ot_hisobot" action="action_ot_hisobot_sex"
+              sequence="30"/>
+    <menuitem id="menu_ot_hisobot_partiya" name="Partiyalar hisoboti"
+              parent="menu_ot_hisobot" action="action_ot_hisobot_partiya"
+              sequence="40"/>
+    <menuitem id="menu_ot_hisobot_ombor" name="Tuxum ombori hisoboti"
+              parent="menu_ot_hisobot" action="action_ot_hisobot_ombor"
+              sequence="50"/>
+    <menuitem id="menu_ot_hisobot_sotuv" name="Ichki sotuv (arxiv)"
+              parent="menu_ot_hisobot" action="action_ot_hisobot_sotuv"
+              sequence="60"/>
+    <menuitem id="menu_ot_hisobot_tannarx" name="Tannarx hisoboti"
+              parent="menu_ot_hisobot" action="action_ot_hisobot_tannarx"
+              sequence="70" groups="agronova_ona_tovuq.group_ot_hisobchi"/>
+
+    <menuitem id="menu_ot_config" name="Sozlamalar" parent="menu_ot_root" sequence="90"
+              groups="agronova_ona_tovuq.group_ot_boshliq"/>
+    <menuitem id="menu_ot_sex" name="Sexlar"
+              parent="menu_ot_config" action="action_ot_sex" sequence="10"/>
+    <menuitem id="menu_ot_zot" name="Zotlar"
+              parent="menu_ot_config" action="action_ot_zot" sequence="20"/>
+    <menuitem id="menu_ot_normativ" name="Normativlar"
+              parent="menu_ot_config" action="action_ot_normativ" sequence="30"/>
+
+    <!-- Xarajat kategoriyasi umumiy ma'lumotnoma (`agronova_base`) — har
+         bo'lim o'z sozlamasidan ham ochadi, alohida ro'yxat yasalmaydi.
+         TZ bo'yicha yangi kategoriyani faqat administrator qo'shadi. -->
+    <menuitem id="menu_ot_xarajat_kategoriya" name="Xarajat kategoriyalari"
+              parent="menu_ot_config"
+              action="agronova_base.action_agronova_xarajat_kategoriya"
+              sequence="80"/>
+
+    <!-- Naqd xarajat depozitdan chiqadi, shuning uchun depozit
+         ro'yxati har bo'lim sozlamasidan ham ochiladi. Yangi depozitni
+         bosh buxgalter yoki administrator qo'shadi. -->
+    <menuitem id="menu_ot_depozit" name="Depozitlar"
+              parent="menu_ot_config"
+              action="agronova_savdo_moliya.action_agronova_depozit"
+              sequence="85"/>
+</odoo>

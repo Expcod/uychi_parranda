@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Asosiy Root Menu -->
+        <menuitem id="menu_agronova_dashboard_root"
+                  name="Analitika"
+                  web_icon="agronova_dashboard,static/description/icon.png"
+                  sequence="10"
+                  groups="group_agronova_dashboard_user"/>
+
+        <!-- 1. DASHBOARDLAR -->
+        <menuitem id="menu_agronova_dashboards_group"
+                  name="Dashboardlar"
+                  parent="menu_agronova_dashboard_root"
+                  sequence="10"/>
+
+        <menuitem id="menu_agronova_exec_dashboard_item"
+                  name="👑 Rahbar paneli"
+                  parent="menu_agronova_dashboards_group"
+                  action="action_agronova_executive_dashboard_panel"
+                  sequence="10"
+                  groups="group_agronova_dashboard_manager"/>
+
+        <menuitem id="menu_agronova_prod_dashboard_item"
+                  name="🏭 Ishlab Chiqarish va Agro KPI"
+                  parent="menu_agronova_dashboards_group"
+                  action="action_agronova_production_analytics"
+                  sequence="20"/>
+
+        <menuitem id="menu_agronova_fin_dashboard_item"
+                  name="💰 Moliyaviy va P&amp;L Tahlili"
+                  parent="menu_agronova_dashboards_group"
+                  action="action_agronova_financial_analytics"
+                  sequence="30"
+                  groups="group_agronova_dashboard_manager"/>
+
+        <!-- 2. ANALITIK HISOBOTLAR -->
+        <menuitem id="menu_agronova_reports_group"
+                  name="Analitik Hisobotlar"
+                  parent="menu_agronova_dashboard_root"
+                  sequence="20"/>
+
+        <menuitem id="menu_agronova_batch_cost_report_item"
+                  name="📋 A Ilovasi: Partiya Tannarxi"
+                  parent="menu_agronova_reports_group"
+                  action="action_agronova_batch_cost_report"
+                  sequence="10"/>
+
+        <menuitem id="menu_agronova_feed_cost_report_item"
+                  name="🌾 B Ilovasi: Yem Tannarxi va Ijara"
+                  parent="menu_agronova_reports_group"
+                  action="action_agronova_feed_cost_report"
+                  sequence="20"/>
+
+        <menuitem id="menu_agronova_slaughter_cost_report_item"
+                  name="🍗 C Ilovasi: So'yish NRV Taqsimoti"
+                  parent="menu_agronova_reports_group"
+                  action="action_agronova_slaughter_cost_report"
+                  sequence="30"/>
+
+        <menuitem id="menu_agronova_debt_aging_report_item"
+                  name="📊 Mijozlar Qarzdorligi (Aging)"
+                  parent="menu_agronova_reports_group"
+                  action="action_agronova_debt_aging_report"
+                  sequence="40"/>
+
+        <menuitem id="menu_agronova_branch_pl_report_item"
+                  name="📈 Filiallar P&amp;L konsolidatsiyasi"
+                  parent="menu_agronova_reports_group"
+                  action="action_agronova_branch_pl_report"
+                  sequence="50"
+                  groups="group_agronova_dashboard_manager"/>
+
+        <!-- 3. SOZLAMALAR: brend (oq yorliq) va normativlar -->
+        <menuitem id="menu_agronova_settings"
+                  name="⚙️ Panel sozlamalari"
+                  parent="menu_agronova_dashboard_root"
+                  action="action_agronova_settings"
+                  sequence="90"
+                  groups="group_agronova_dashboard_manager"/>
+
+    </data>
+</odoo>

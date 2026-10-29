@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- TZ 10-band: beshta hisobot. Alohida model yasalmaydi — hisobot
+         hujjatlarning o'zidan, oldindan guruhlangan ko'rinishda ochiladi.
+         Shunda raqam bitta manbadan keladi va hisobot bilan hujjat
+         hech qachon bir-biriga zid chiqmaydi. -->
+
+    <record id="action_ink_hisobot_tuxum" model="ir.actions.act_window">
+        <field name="name">Tuxum hisoboti</field>
+        <field name="res_model">agronova.ink.qabul</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('holat', '=', 'done')]</field>
+        <field name="context">{'expand': True, 'group_by': ['ot_company_id', 'partiya_id']}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Ma'lumot yo'q</p>
+            <p>Qancha tuxum qabul qilindi, qaysi filialdan kelgan va qaysi
+               inkubatsiya partiyasiga qo'yilgan.</p>
+        </field>
+    </record>
+
+    <record id="action_ink_hisobot_inkubatsiya" model="ir.actions.act_window">
+        <field name="name">Inkubatsiya hisoboti</field>
+        <field name="res_model">agronova.ink.partiya</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'expand': True, 'group_by': ['inkubator_id']}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Ma'lumot yo'q</p>
+            <p>Partiyalar, ochilish foizi, nobudgarchilik va brak —
+               inkubatorlar kesimida taqqoslash uchun.</p>
+        </field>
+    </record>
+
+    <record id="action_ink_hisobot_joja" model="ir.actions.act_window">
+        <field name="name">Jo'ja hisoboti</field>
+        <field name="res_model">agronova.ink.ochilish</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('holat', '=', 'done')]</field>
+        <field name="context">{'expand': True, 'group_by': ['sana:month']}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Ma'lumot yo'q</p>
+            <p>Jami ochilgan jo'jalar, nobud va brak — oylar kesimida.
+               Ombordagi va berilgan jo'ja partiya kartochkasida.</p>
+        </field>
+    </record>
+
+    <record id="action_ink_hisobot_tannarx" model="ir.actions.act_window">
+        <field name="name">Tannarx hisoboti</field>
+        <field name="res_model">account.analytic.line</field>
+        <field name="view_mode">list,pivot</field>
+        <!-- Bo'sh analitik reja ustunlari chiqmasin: umumiy ro'yxat
+             `agronova_base` da, bitta «Obyekt» ustuni bilan. -->
+        <field name="view_id" ref="agronova_base.view_agronova_analitik_tannarx_list"/>
+        <field name="search_view_id"
+               ref="agronova_base.view_agronova_analitik_tannarx_search"/>
+        <field name="domain">[('agronova_tannarx_bazasi', '=', True),
+                              ('amount', '&lt;', 0)]</field>
+        <field name="context">{'expand': True, 'group_by': ['agronova_kategoriya_id']}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Ma'lumot yo'q</p>
+            <p>Tuxum qiymati, inkubatsiya xarajatlari va jami tannarx —
+               partiyalar kesimida. 1 dona jo'ja tannarxi partiya
+               kartochkasida.</p>
+        </field>
+    </record>
+
+    <record id="action_ink_hisobot_sotuv" model="ir.actions.act_window">
+        <field name="name">Sotuv hisoboti</field>
+        <field name="res_model">agronova.ink.ichki_sotuv</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('holat', '=', 'done')]</field>
+        <field name="context">{'expand': True, 'group_by': ['qabul_company_id']}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Ma'lumot yo'q</p>
+            <p>Ichki sotuv: sotilgan jo'ja soni, summa, tannarx va marja.
+               Tashqi sotuv standart Sotuv hisobotlarida.</p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_ih_root" name="Ish haqi" sequence="26"
+              web_icon="agronova_ish_haqi,static/description/icon.png"
+              groups="agronova_ish_haqi.group_ih_korish"/>
+
+    <menuitem id="menu_ih_hisoblash" name="Hisoblash" parent="menu_ih_root"
+              sequence="10"/>
+    <menuitem id="menu_ih_employee" name="Xodimlar"
+              parent="menu_ih_hisoblash" action="action_ih_employee"
+              sequence="5"/>
+    <menuitem id="menu_ih_davr" name="Oylik ish haqi"
+              parent="menu_ih_hisoblash" action="action_ih_davr" sequence="10"/>
+    <menuitem id="menu_ih_harakat" name="Xodimlar bilan hisob-kitob"
+              parent="menu_ih_hisoblash" action="action_ih_harakat" sequence="20"/>
+
+    <menuitem id="menu_ih_config" name="Sozlamalar" parent="menu_ih_root"
+              sequence="90" groups="agronova_ish_haqi.group_ih_hisobchi"/>
+    <menuitem id="menu_ih_tarif" name="Tariflar"
+              parent="menu_ih_config" action="action_ih_tarif" sequence="10"/>
+</odoo>

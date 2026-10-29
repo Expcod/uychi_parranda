@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_zakupka_root" name="Xarid"
+              sequence="26"
+              groups="agronova_zakupka.group_zakupka_zakupchik,agronova_zakupka.group_zakupka_omborchi,agronova_zakupka.group_zakupka_sifat_nazorat,agronova_zakupka.group_zakupka_buxgalter"/>
+
+    <!-- ==================== Kundalik ish ==================== -->
+    <menuitem id="menu_zakupka_operatsiya" name="Operatsiyalar"
+              parent="menu_zakupka_root" sequence="10"/>
+
+    <menuitem id="menu_zakupka_zayavka" name="Zayavkalar"
+              parent="menu_zakupka_operatsiya" action="action_zakupka_zayavka"
+              sequence="10"/>
+    <menuitem id="menu_zakupka_ruxsat" name="Ruxsat so'rovlari"
+              parent="menu_zakupka_operatsiya" action="action_zakupka_ruxsat"
+              sequence="20"/>
+    <menuitem id="menu_zakupka_kirim" name="Xarid kirimlari"
+              parent="menu_zakupka_operatsiya" action="action_zakupka_kirim"
+              sequence="30"/>
+    <menuitem id="menu_zakupka_qaytarish" name="Qaytarishlar"
+              parent="menu_zakupka_operatsiya" action="action_zakupka_qaytarish"
+              sequence="40"/>
+    <menuitem id="menu_zakupka_import" name="Import partiyalari"
+              parent="menu_zakupka_operatsiya" action="action_zakupka_import"
+              sequence="50"/>
+    <menuitem id="menu_zakupka_nomenklatura" name="Nomenklatura so'rovlari"
+              parent="menu_zakupka_operatsiya" action="action_zakupka_nomenklatura"
+              sequence="60"/>
+
+    <!-- ==================== Moliya ==================== -->
+    <menuitem id="menu_zakupka_moliya" name="Moliya"
+              parent="menu_zakupka_root" sequence="20"
+              groups="agronova_zakupka.group_zakupka_buxgalter,agronova_zakupka.group_zakupka_bolim_boshligi"/>
+    <menuitem id="menu_zakupka_didox" name="Didox fakturalari"
+              parent="menu_zakupka_moliya" action="action_zakupka_didox"
+              sequence="10"/>
+    <menuitem id="menu_zakupka_depozit" name="Depozit qoldiqlari"
+              parent="menu_zakupka_moliya" action="action_hisobot_depozit"
+              sequence="20"/>
+
+    <!-- ==================== KPI ==================== -->
+    <menuitem id="menu_zakupka_kpi_root" name="KPI"
+              parent="menu_zakupka_root" sequence="30"/>
+    <menuitem id="menu_zakupka_kpi_meniki" name="Mening KPI'im"
+              parent="menu_zakupka_kpi_root" action="action_zakupka_kpi_meniki"
+              sequence="10"/>
+    <menuitem id="menu_zakupka_kpi_hisobot" name="KPI hisoboti"
+              parent="menu_zakupka_kpi_root" action="action_zakupka_kpi"
+              sequence="20"
+              groups="agronova_zakupka.group_zakupka_bolim_boshligi"/>
+    <menuitem id="menu_zakupka_kpi_etiroz" name="E'tirozlar"
+              parent="menu_zakupka_kpi_root" action="action_zakupka_kpi_etiroz"
+              sequence="30"
+              groups="agronova_zakupka.group_zakupka_bolim_boshligi"/>
+    <menuitem id="menu_zakupka_kpi_davr" name="KPI davrlari"
+              parent="menu_zakupka_kpi_root" action="action_zakupka_kpi_davr"
+              sequence="40"
+              groups="agronova_zakupka.group_zakupka_bolim_boshligi"/>
+
+    <!-- ==================== Hisobotlar (TZ 18-bo'lim) ==================== -->
+    <menuitem id="menu_zakupka_hisobot" name="Hisobotlar"
+              parent="menu_zakupka_root" sequence="40"/>
+    <menuitem id="menu_hisobot_ochiq_zayavka" name="Ochiq zayavkalar"
+              parent="menu_zakupka_hisobot" action="action_hisobot_ochiq_zayavka"
+              sequence="10"/>
+    <menuitem id="menu_hisobot_tasdiq_kutmoqda" name="Tasdiq kutayotgan ruxsatlar"
+              parent="menu_zakupka_hisobot" action="action_hisobot_tasdiq_kutmoqda"
+              sequence="20"/>
+    <menuitem id="menu_hisobot_tranzit" name="Tranzitda turgan tovarlar"
+              parent="menu_zakupka_hisobot" action="action_hisobot_tranzit"
+              sequence="30"/>
+    <menuitem id="menu_hisobot_faktura_kutmoqda" name="Faktura kutilayotgan tovarlar"
+              parent="menu_zakupka_hisobot" action="action_hisobot_faktura_kutmoqda"
+              sequence="40"/>
+    <menuitem id="menu_hisobot_faktura_ortiqcha" name="Fakturasi bor, tovari yo'q"
+              parent="menu_zakupka_hisobot" action="action_hisobot_faktura_ortiqcha"
+              sequence="50"/>
+    <menuitem id="menu_hisobot_narx_ogishi" name="Narx og'ishi"
+              parent="menu_zakupka_hisobot" action="action_hisobot_narx_ogishi"
+              sequence="60"/>
+    <menuitem id="menu_hisobot_kechikib" name="Kechikib kiritilgan yozuvlar"
+              parent="menu_zakupka_hisobot" action="action_hisobot_kechikib_kiritilgan"
+              sequence="70"/>
+    <menuitem id="menu_hisobot_kontragent_xarid" name="Kontragent bo'yicha xaridlar"
+              parent="menu_zakupka_hisobot" action="action_hisobot_kontragent_xarid"
+              sequence="80"/>
+    <menuitem id="menu_hisobot_muddat" name="Muddati tugayotgan tovarlar"
+              parent="menu_zakupka_hisobot" action="action_hisobot_muddat_tugayotgan"
+              sequence="90"/>
+    <menuitem id="menu_hisobot_import" name="Import holati"
+              parent="menu_zakupka_hisobot" action="action_hisobot_import_holati"
+              sequence="100"/>
+
+    <!-- ==================== Ma'lumotnomalar ==================== -->
+    <menuitem id="menu_zakupka_config" name="Sozlash"
+              parent="menu_zakupka_root" sequence="90"
+              groups="agronova_zakupka.group_zakupka_bolim_boshligi"/>
+    <menuitem id="menu_zakupka_kontragent" name="Kontragentlar"
+              parent="menu_zakupka_config" action="action_zakupka_kontragent"
+              sequence="10"/>
+    <menuitem id="menu_zakupka_narx_normasi" name="Norma narxlar"
+              parent="menu_zakupka_config" action="action_zakupka_narx_normasi"
+              sequence="20"/>
+    <menuitem id="menu_zakupka_tranzit_ombor" name="Zakupchik tranzit omborlari"
+              parent="menu_zakupka_config" action="action_zakupka_tranzit"
+              sequence="30"/>
+
+</odoo>

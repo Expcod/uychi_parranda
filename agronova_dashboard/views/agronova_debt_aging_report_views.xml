@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- List View -->
+        <record id="view_agronova_debt_aging_report_list" model="ir.ui.view">
+            <field name="name">agronova.debt.aging.report.list</field>
+            <field name="model">agronova.debt.aging.report</field>
+            <field name="arch" type="xml">
+                <list string="Mijozlar Qarzdorligi va To'lov Intizomi" create="0" edit="0" delete="0">
+                    <field name="partner_id"/>
+                    <field name="telefon"/>
+                    <field name="masul_sotuvchi_id"/>
+                    <field name="jami_qarz" widget="monetary" sum="Jami Debitorlik"/>
+                    <field name="qarz_0_30" widget="monetary" sum="Jami 0-30 kun"/>
+                    <field name="qarz_31_60" widget="monetary" sum="Jami 31-60 kun"/>
+                    <field name="qarz_60_plus" widget="monetary" sum="Jami 60+ kun"/>
+                    <field name="kechikish_kun_soni"/>
+                    <field name="xavf_darajasi" widget="badge" decoration-success="xavf_darajasi == 'yaxshi'" decoration-warning="xavf_darajasi == 'ogohlantirish'" decoration-danger="xavf_darajasi == 'xavfli'"/>
+                    <field name="currency_id" column_invisible="True"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Pivot View -->
+        <record id="view_agronova_debt_aging_report_pivot" model="ir.ui.view">
+            <field name="name">agronova.debt.aging.report.pivot</field>
+            <field name="model">agronova.debt.aging.report</field>
+            <field name="arch" type="xml">
+                <pivot string="Debitorlik Aging Pivot Tahlili" sample="1">
+                    <field name="masul_sotuvchi_id" type="row"/>
+                    <field name="partner_id" type="row"/>
+                    <field name="xavf_darajasi" type="col"/>
+                    <field name="jami_qarz" type="measure"/>
+                    <field name="qarz_0_30" type="measure"/>
+                    <field name="qarz_31_60" type="measure"/>
+                    <field name="qarz_60_plus" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Graph View -->
+        <record id="view_agronova_debt_aging_report_graph" model="ir.ui.view">
+            <field name="name">agronova.debt.aging.report.graph</field>
+            <field name="model">agronova.debt.aging.report</field>
+            <field name="arch" type="xml">
+                <graph string="Mijozlar Qarzdorligi Grafigi" type="bar" sample="1">
+                    <field name="partner_id"/>
+                    <field name="jami_qarz" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record id="view_agronova_debt_aging_report_search" model="ir.ui.view">
+            <field name="name">agronova.debt.aging.report.search</field>
+            <field name="model">agronova.debt.aging.report</field>
+            <field name="arch" type="xml">
+                <search string="Qarzdorlik Qidiruvi">
+                    <field name="partner_id"/>
+                    <field name="masul_sotuvchi_id"/>
+                    <separator/>
+                    <filter string="🔴 Xavfli qarzlar (60+ kun)" name="filter_danger" domain="[('xavf_darajasi', '=', 'xavfli')]"/>
+                    <filter string="🟡 Ogohlantirish (31-60 kun)" name="filter_warning" domain="[('xavf_darajasi', '=', 'ogohlantirish')]"/>
+                    <filter string="🟢 Normal qarzlar (0-30 kun)" name="filter_normal" domain="[('xavf_darajasi', '=', 'yaxshi')]"/>
+                    <separator/>
+                    <group>
+                        <filter string="Mas'ul sotuvchi bo'yicha" name="group_seller" context="{'group_by': 'masul_sotuvchi_id'}"/>
+                        <filter string="Xavf darajasi bo'yicha" name="group_risk" context="{'group_by': 'xavf_darajasi'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_agronova_debt_aging_report" model="ir.actions.act_window">
+            <field name="name">📊 Mijozlar Qarzdorligi va To'lov Intizomi</field>
+            <field name="res_model">agronova.debt.aging.report</field>
+            <field name="view_mode">list,pivot,graph</field>
+            <field name="context">{'search_default_group_risk': 1}</field>
+        </record>
+
+    </data>
+</odoo>

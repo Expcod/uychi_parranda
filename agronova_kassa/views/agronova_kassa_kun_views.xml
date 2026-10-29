@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_agronova_kassa_kun_list" model="ir.ui.view">
+        <field name="name">agronova.kassa.kun.list</field>
+        <field name="model">agronova.kassa.kun</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state == 'closed'" create="0">
+                <field name="date"/>
+                <field name="kassa_id"/>
+                <field name="opening" widget="monetary"/>
+                <field name="total_kirim" widget="monetary"/>
+                <field name="total_chiqim" widget="monetary"/>
+                <field name="closing" widget="monetary" decoration-bf="1"/>
+                <field name="sanoq" widget="monetary" optional="show"/>
+                <field name="farq" widget="monetary"
+                       decoration-danger="farq != 0"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="closed_by_id" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company"
+                       optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'open'"
+                       decoration-info="state == 'closed'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_agronova_kassa_kun_form" model="ir.ui.view">
+        <field name="name">agronova.kassa.kun.form</field>
+        <field name="model">agronova.kassa.kun</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_yopish" type="object"
+                            string="Kunni yopish" class="btn-primary"
+                            invisible="state != 'open'"/>
+                    <button name="action_ochish" type="object"
+                            string="Qayta ochish" class="btn-secondary"
+                            invisible="state != 'closed'"
+                            groups="agronova_kassa.group_agronova_kassa_menejer"/>
+                    <button name="action_print_kitob" type="object"
+                            string="Kassa kitobi (PDF)" class="btn-secondary"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object" name="action_open_harakat"
+                                class="oe_stat_button" icon="fa-exchange"
+                                string="Harakatlar"/>
+                    </div>
+                    <div class="oe_title">
+                        <span class="o_form_label">Kassa kitobi</span>
+                        <h1>
+                            <field name="kassa_id" options="{'no_create': True}"
+                                   readonly="state == 'closed'"/>
+                        </h1>
+                        <h3><field name="date" readonly="state == 'closed'"/></h3>
+                    </div>
+                    <group>
+                        <group string="Kun bo'yicha hisob">
+                            <field name="opening" widget="monetary"/>
+                            <field name="total_kirim" widget="monetary"/>
+                            <field name="total_chiqim" widget="monetary"/>
+                            <field name="closing" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="company_id" invisible="1"/>
+                        </group>
+                        <group string="Sanoq">
+                            <field name="sanoq" widget="monetary"
+                                   readonly="state == 'closed'"/>
+                            <field name="farq" widget="monetary"/>
+                            <field name="closed_by_id" readonly="1"
+                                   invisible="state != 'closed'"/>
+                            <field name="closed_at" readonly="1"
+                                   invisible="state != 'closed'"/>
+                        </group>
+                    </group>
+                    <group string="Izoh">
+                        <field name="note" nolabel="1"
+                               placeholder="Farq sababi, eslatma..."/>
+                    </group>
+                    <notebook>
+                        <page string="Kun harakatlari" name="harakatlar">
+                            <field name="harakat_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="date"/>
+                                    <field name="direction"/>
+                                    <field name="modda_id"/>
+                                    <field name="partner_id"/>
+                                    <field name="izoh"/>
+                                    <field name="amount" widget="monetary"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_agronova_kassa_kun_search" model="ir.ui.view">
+        <field name="name">agronova.kassa.kun.search</field>
+        <field name="model">agronova.kassa.kun</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="kassa_id"/>
+                <field name="date"/>
+                <filter name="ochiq" string="Ochiq kunlar"
+                        domain="[('state', '=', 'open')]"/>
+                <filter name="yopilgan" string="Yopilgan"
+                        domain="[('state', '=', 'closed')]"/>
+                <!-- `farq` saqlanmaydigan compute maydon — domen bo'yicha
+                     qidirib bo'lmaydi, shuning uchun filtr qo'yilmadi:
+                     ro'yxatda qizil rang bilan ajralib turadi. -->
+                <group>
+                    <filter name="g_kassa" string="Kassa"
+                            context="{'group_by': 'kassa_id'}"/>
+                    <filter name="g_sana" string="Oy"
+                            context="{'group_by': 'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_agronova_kassa_kun" model="ir.actions.act_window">
+        <field name="name">Kassa kitobi</field>
+        <field name="res_model">agronova.kassa.kun</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

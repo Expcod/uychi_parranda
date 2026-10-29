@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- TZ 14-band: yer, partiya va umumiy kesimdagi hisobotlar.
+         Inkubatoriyadagi kabi alohida model yasalmaydi — hisobot
+         hujjatlarning o'zidan, oldindan guruhlangan ko'rinishda
+         ochiladi. Shunda raqam bitta manbadan keladi va hisobot bilan
+         hujjat hech qachon bir-biriga zid chiqmaydi. -->
+
+    <!-- Sarf qatorining o'z ro'yxati yo'q edi: u faqat ish hujjati
+         ichida ko'rinardi. Materiallar hisoboti uchun kerak. -->
+    <record id="view_qx_ish_sarf_list" model="ir.ui.view">
+        <field name="name">agronova.qx.ish.sarf.list</field>
+        <field name="model">agronova.qx.ish.sarf</field>
+        <field name="arch" type="xml">
+            <list expand="context.get('expand', False)" string="Sarflangan materiallar" create="false" edit="false">
+                <field name="ish_id"/>
+                <field name="product_id"/>
+                <field name="miqdor" sum="Jami"/>
+                <field name="uom_id"/>
+                <field name="qiymat" sum="Jami" widget="monetary"/>
+                <field name="currency_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_qx_hisobot_yer" model="ir.actions.act_window">
+        <field name="name">Yer maydonlari hisoboti</field>
+        <field name="res_model">agronova.qx.yer</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'expand': True, 'group_by': ['joriy_ekin_id']}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Ma'lumot yo'q</p>
+            <p>Yerlar ro'yxati, maydoni, yetishtirilayotgan ekin va faol
+               partiyalar. Yer tarixi kartochka ichida.</p>
+        </field>
+    </record>
+
+    <record id="action_qx_hisobot_partiya" model="ir.actions.act_window">
+        <field name="name">Partiyalar hisoboti</field>
+        <field name="res_model">agronova.qx.partiya</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'expand': True, 'group_by': ['ekin_id']}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Ma'lumot yo'q</p>
+            <p>Partiya xarajatlari, olingan hosil, tannarx, daromad va
+               foyda — ekinlar kesimida.</p>
+        </field>
+    </record>
+
+    <record id="action_qx_hisobot_hosil" model="ir.actions.act_window">
+        <field name="name">Olingan hosil hisoboti</field>
+        <field name="res_model">agronova.qx.hosil</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('holat', '=', 'done')]</field>
+        <field name="context">{'expand': True, 'group_by': ['ekin_id', 'date:month']}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Ma'lumot yo'q</p>
+            <p>Qancha hosil olindi, qaysi yerdan va qaysi partiyadan —
+               ekin va oylar kesimida.</p>
+        </field>
+    </record>
+
+    <record id="action_qx_hisobot_material" model="ir.actions.act_window">
+        <field name="name">Sarflangan materiallar</field>
+        <field name="res_model">agronova.qx.ish.sarf</field>
+        <field name="view_mode">list</field>
+        <field name="context">{'expand': True, 'group_by': ['product_id']}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Ma'lumot yo'q</p>
+            <p>Urug', o'g'it, yoqilg'i va boshqa sarflar — mahsulotlar
+               kesimida, miqdori va qiymati bilan.</p>
+        </field>
+    </record>
+
+    <record id="action_qx_hisobot_sotuv" model="ir.actions.act_window">
+        <field name="name">Ichki berish hisoboti</field>
+        <field name="res_model">agronova.qx.ichki_berish</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('holat', '=', 'done')]</field>
+        <field name="context">{'expand': True, 'group_by': ['qabul_qiluvchi']}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Ma'lumot yo'q</p>
+            <p>Yem zavodiga va boshqa bo'limlarga berilgan hosil: miqdor,
+               summa, tannarx va marja. Tashqi sotuv standart Sotuv
+               hisobotlarida.</p>
+        </field>
+    </record>
+
+    <record id="action_qx_hisobot_tannarx" model="ir.actions.act_window">
+        <field name="name">Tannarx hisoboti</field>
+        <field name="res_model">account.analytic.line</field>
+        <field name="view_mode">list,pivot</field>
+        <!-- Bo'sh analitik reja ustunlari chiqmasin: umumiy ro'yxat
+             `agronova_base` da, bitta «Obyekt» ustuni bilan. -->
+        <field name="view_id" ref="agronova_base.view_agronova_analitik_tannarx_list"/>
+        <field name="search_view_id"
+               ref="agronova_base.view_agronova_analitik_tannarx_search"/>
+        <field name="domain">[('agronova_tannarx_bazasi', '=', True),
+                              ('amount', '&lt;', 0)]</field>
+        <field name="context">{'expand': True, 'group_by': ['agronova_kategoriya_id']}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Ma'lumot yo'q</p>
+            <p>Xarajatlar tarkibi — partiya va yer kesimida. 1 kg hosil
+               tannarxi partiya kartochkasida.</p>
+        </field>
+    </record>
+
+</odoo>

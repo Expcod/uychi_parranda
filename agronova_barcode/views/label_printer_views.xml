@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============ PRINTER ============ -->
+    <record id="view_label_printer_form" model="ir.ui.view">
+        <field name="name">agronova.label.printer.form</field>
+        <field name="model">agronova.label.printer</field>
+        <field name="arch" type="xml">
+            <form string="Stiker printeri">
+                <header>
+                    <button name="action_test_print" type="object"
+                            string="Sinab chop etish" class="btn-primary"
+                            icon="fa-print"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Arxivlangan" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Masalan: 3-sex printeri"/></h1>
+                    </div>
+
+                    <group>
+                        <group string="Ulanish">
+                            <field name="system_name" placeholder="Xprinter XP-365B"/>
+                            <field name="language"/>
+                            <field name="charset"/>
+                            <field name="delivery"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group string="Stiker o'lchami">
+                            <label for="label_width" string="O'lchami (mm)"/>
+                            <div class="o_row">
+                                <field name="label_width" class="oe_inline"/>
+                                <span class="mx-2">×</span>
+                                <field name="label_height" class="oe_inline"/>
+                            </div>
+                            <field name="gap_mm"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Ko'rinishi" name="design">
+                            <group>
+                                <group string="Nimalar chiqsin">
+                                    <field name="show_name"/>
+                                    <field name="name_font" invisible="not show_name"/>
+                                    <field name="show_lot"/>
+                                    <field name="lot_font" invisible="not show_lot"/>
+                                    <field name="show_date"/>
+                                    <field name="date_font" invisible="not show_date"/>
+                                    <field name="show_weight"/>
+                                    <field name="weight_font" invisible="not show_weight"/>
+                                    <field name="show_expiry"/>
+                                    <field name="expiry_font" invisible="not show_expiry"/>
+                                </group>
+                                <group string="Quti (BOX) stikeri">
+                                    <field name="box_show_count"/>
+                                    <field name="box_show_date"/>
+                                    <field name="box_date_font"
+                                           invisible="not box_show_date"/>
+                                    <field name="box_date_format"
+                                           invisible="not box_show_date"/>
+                                </group>
+                                <group string="QR kod">
+                                    <field name="code_mode"/>
+                                    <field name="qr_auto" invisible="code_mode == 'barcode'"/>
+                                    <field name="qr_cell" readonly="qr_auto"
+                                           widget="integer"
+                                           invisible="code_mode == 'barcode'"
+                                           help="2 dan 12 gacha. Kattaroq son — kattaroq QR."/>
+                                    <field name="qr_size_mm" readonly="1"
+                                           invisible="code_mode == 'barcode'"/>
+                                </group>
+                                <group string="Chiziqli kod (barcode)"
+                                       invisible="code_mode == 'qr'">
+                                    <field name="barcode_type"/>
+                                    <field name="barcode_source"/>
+                                    <field name="barcode_height_mm"/>
+                                    <field name="barcode_human"/>
+                                </group>
+                            </group>
+
+                            <separator string="Oldindan ko'rish"/>
+                            <group>
+                                <field name="test_product_id"
+                                       options="{'no_create': True, 'no_open': True}"
+                                       placeholder="Mahsulotni tanlang — nomi stikerda chiqadi"/>
+                            </group>
+                            <div class="text-center">
+                                <field name="fits" invisible="1"/>
+                                <div class="alert alert-danger d-inline-block" role="alert"
+                                     invisible="fits">
+                                    <field name="preview_info" nolabel="1"/>
+                                </div>
+                                <div class="alert alert-info d-inline-block py-1" role="alert"
+                                     invisible="not fits">
+                                    <field name="preview_info" nolabel="1"/>
+                                </div>
+                                <div>
+                                    <field name="preview_image" widget="image" nolabel="1"
+                                           class="border rounded"
+                                           options="{'size': [320, 240]}"/>
+                                </div>
+                                <p class="text-muted small mt-2">
+                                    Printerdan chiqadigan stikerning ko'rinishi —
+                                    sozlamani o'zgartirsangiz darhol yangilanadi.
+                                </p>
+                            </div>
+
+                            <separator string="Quti (BOX) stikeri"/>
+                            <div class="text-center">
+                                <div class="alert alert-info d-inline-block py-1" role="alert">
+                                    <field name="box_preview_info" nolabel="1"/>
+                                </div>
+                                <div>
+                                    <field name="box_preview_image" widget="image" nolabel="1"
+                                           class="border rounded"
+                                           options="{'size': [320, 240]}"/>
+                                </div>
+                                <p class="text-muted small mt-2">
+                                    Quti QR chop etilganda shunday chiqadi.
+                                </p>
+                            </div>
+                        </page>
+
+                        <page string="Chop etish sifati" name="quality">
+                            <group>
+                                <field name="density"/>
+                                <field name="speed"/>
+                            </group>
+                        </page>
+
+                        <page string="Agent" name="agent" invisible="delivery != 'queue'">
+                            <div class="alert alert-info" role="alert">
+                                Sexdagi kompyuterda <b>print_agent</b> dasturi ishlaydi.
+                                U shu kalit bilan navbatdan o'z ishlarini oladi.
+                            </div>
+                            <group>
+                                <field name="agent_token" readonly="1"/>
+                            </group>
+                            <button name="action_reset_token" type="object"
+                                    string="Kalitni yangilash" class="btn-secondary"
+                                    confirm="Eski kalit ishlamay qoladi — agentni qayta sozlash kerak bo'ladi. Davom etaymi?"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_label_printer_list" model="ir.ui.view">
+        <field name="name">agronova.label.printer.list</field>
+        <field name="model">agronova.label.printer</field>
+        <field name="arch" type="xml">
+            <list string="Stiker printerlari">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="system_name"/>
+                <field name="language"/>
+                <field name="delivery"/>
+                <field name="label_width" string="Kenglik"/>
+                <field name="label_height" string="Balandlik"/>
+                <field name="fits" string="Sig'adi" widget="boolean_toggle" readonly="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_label_printer" model="ir.actions.act_window">
+        <field name="name">Stiker printerlari</field>
+        <field name="res_model">agronova.label.printer</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Birinchi printerni qo'shing</p>
+            <p>
+                Printer qo'shsangiz, lot formasidagi "QR yorlig'ini chop etish"
+                tugmasi stikerni to'g'ridan-to'g'ri printerga yuboradi.
+            </p>
+        </field>
+    </record>
+
+    <!-- ============ NAVBAT ============ -->
+    <record id="view_label_print_job_list" model="ir.ui.view">
+        <field name="name">agronova.label.print.job.list</field>
+        <field name="model">agronova.label.print.job</field>
+        <field name="arch" type="xml">
+            <list string="Chop etish navbati"
+                  decoration-danger="state == 'failed'"
+                  decoration-muted="state == 'done'"
+                  decoration-info="state == 'sent'">
+                <field name="create_date" string="Yaratilgan"/>
+                <field name="printer_id"/>
+                <field name="lot_id"/>
+                <field name="copies"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'done'"
+                       decoration-danger="state == 'failed'"
+                       decoration-warning="state == 'pending'"/>
+                <field name="error" optional="show"/>
+                <field name="done_at" optional="hide"/>
+                <button name="action_retry" type="object" string="Qayta urinish"
+                        icon="fa-repeat" invisible="state not in ('failed', 'sent')"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_label_print_job_form" model="ir.ui.view">
+        <field name="name">agronova.label.print.job.form</field>
+        <field name="model">agronova.label.print.job</field>
+        <field name="arch" type="xml">
+            <form string="Chop etish ishi">
+                <header>
+                    <button name="action_retry" type="object" string="Qayta urinish"
+                            class="btn-primary" invisible="state not in ('failed', 'sent')"/>
+                    <button name="action_cancel" type="object" string="Bekor qilish"
+                            invisible="state not in ('pending', 'sent')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="pending,sent,done"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="printer_id"/>
+                            <field name="lot_id"/>
+                            <field name="copies"/>
+                            <field name="note"/>
+                        </group>
+                        <group>
+                            <field name="sent_at"/>
+                            <field name="done_at"/>
+                            <field name="error" invisible="not error"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Printer buyruqlari" name="payload">
+                            <!-- Oddiy matn maydoni: TSPL/ZPL buyruqlari uchun ace
+                                 muharririning rejimlari (javascript, xml, qweb,
+                                 scss, python) mos kelmaydi. -->
+                            <field name="payload" nolabel="1"
+                                   class="font-monospace"
+                                   readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_label_print_job" model="ir.actions.act_window">
+        <field name="name">Chop etish navbati</field>
+        <field name="res_model">agronova.label.print.job</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_group_state': 1}</field>
+    </record>
+
+    <!-- ============ WIZARD ============ -->
+    <record id="view_label_print_wizard_form" model="ir.ui.view">
+        <field name="name">agronova.label.print.wizard.form</field>
+        <field name="model">agronova.label.print.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Stiker chop etish">
+                <group>
+                    <field name="printer_id"/>
+                    <field name="copies"/>
+                    <field name="total_labels" readonly="1"/>
+                    <field name="lot_ids" widget="many2many_tags" readonly="1" invisible="not lot_ids"/>
+                    <field name="box_ids" widget="many2many_tags" readonly="1" invisible="not box_ids"/>
+                </group>
+                <footer>
+                    <button name="action_print" type="object" string="Chop etish"
+                            class="btn-primary"/>
+                    <button string="Bekor qilish" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Operator faqat o'ziga biriktirilgan sexni ko'radi (TZ 7-bo'lim) -->
+    <record id="rule_ot_sex_operator" model="ir.rule">
+        <field name="name">Ona tovuq: operator faqat o'z sexi</field>
+        <field name="model_id" ref="model_agronova_ona_tovuq_sex"/>
+        <field name="domain_force">[('mas_ul_xodim_id.user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_ot_operator'))]"/>
+    </record>
+
+    <record id="rule_ot_sex_boshliq" model="ir.rule">
+        <field name="name">Ona tovuq: boshliq barcha sexlarni ko'radi</field>
+        <field name="model_id" ref="model_agronova_ona_tovuq_sex"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_ot_boshliq'))]"/>
+    </record>
+
+    <record id="rule_ot_jurnal_operator" model="ir.rule">
+        <field name="name">Ona tovuq: operator faqat o'z sexi jurnali</field>
+        <field name="model_id" ref="model_agronova_ona_tovuq_jurnal_tuxum"/>
+        <field name="domain_force">[('sex_id.mas_ul_xodim_id.user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_ot_operator'))]"/>
+    </record>
+
+    <record id="rule_ot_jurnal_boshliq" model="ir.rule">
+        <field name="name">Ona tovuq: boshliq barcha jurnallarni ko'radi</field>
+        <field name="model_id" ref="model_agronova_ona_tovuq_jurnal_tuxum"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_ot_boshliq'))]"/>
+    </record>
+</odoo>

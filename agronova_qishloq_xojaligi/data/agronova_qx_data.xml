@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="seq_qx_partiya" model="ir.sequence">
+        <field name="name">Qishloq xo'jaligi — ekin partiyasi</field>
+        <field name="code">agronova.qx.partiya</field>
+        <field name="prefix">QX-%(year)s-</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_qx_xarajat" model="ir.sequence">
+        <field name="name">Qishloq xo'jaligi — xarajat</field>
+        <field name="code">agronova.qx.xarajat</field>
+        <field name="prefix">QX-X-%(year)s-</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_qx_ichki_berish" model="ir.sequence">
+        <field name="name">Qishloq xo'jaligi — ichki berish</field>
+        <field name="code">agronova.qx.ichki_berish</field>
+        <field name="prefix">QX-IB-%(year)s-</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_qx_yer" model="ir.sequence">
+        <field name="name">Qishloq xo'jaligi — yer kodi</field>
+        <field name="code">agronova.qx.yer</field>
+        <field name="prefix">Y</field>
+        <field name="padding">2</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+</odoo>

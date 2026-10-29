@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================= TUXUM JURNALI -->
+    <record id="view_ot_jurnal_tuxum_list" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.jurnal.tuxum.list</field>
+        <field name="model">agronova.ona_tovuq.jurnal.tuxum</field>
+        <field name="priority">10</field>
+        <field name="arch" type="xml">
+            <list string="Kunlik jurnal" decoration-warning="ogohlantirish"
+                  decoration-muted="holat == 'draft'">
+                <field name="date"/>
+                <field name="sex_id"/>
+                <field name="partiya_id"/>
+                <field name="kun_boshi_son"/>
+                <field name="xoroz_son" optional="show"/>
+                <field name="nobud_son" sum="Nobud"/>
+                <field name="brak_son" sum="Brak" optional="hide"/>
+                <field name="tovuq_son"/>
+                <field name="tovuq_oxiri" optional="hide"/>
+                <field name="jami_tuxum" sum="Jami tuxum"/>
+                <field name="sifatli_tuxum" sum="Sifatli" optional="show"/>
+                <field name="inkubatsiyaga_yarokli" sum="Inkubatsion" optional="show"/>
+                <field name="tuxum_berish_foiz"/>
+                <field name="norma_tuxum_berish" optional="hide"/>
+                <field name="sarf_qiymat" sum="Sarf" optional="show"/>
+                <field name="ogohlantirish" optional="show"/>
+                <field name="holat" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ot_jurnal_tuxum_form" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.jurnal.tuxum.form</field>
+        <field name="model">agronova.ona_tovuq.jurnal.tuxum</field>
+        <field name="arch" type="xml">
+            <form string="Kunlik jurnal">
+                <header>
+                    <button name="action_tasdiqlash" type="object" string="Tasdiqlash"
+                            class="btn-primary" invisible="holat != 'draft'"
+                            confirm="Sarf ombordan hisobdan chiqadi va tuxum kirimi ochiladi. Davom etamizmi?"/>
+                    <button name="action_qoralamaga" type="object" string="Qoralamaga"
+                            invisible="holat != 'posted'"/>
+                    <field name="holat" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="alert alert-warning" role="alert"
+                         invisible="not ogohlantirish">
+                        <field name="ogohlantirish" readonly="1" nolabel="1"/>
+                    </div>
+                    <group>
+                        <group string="Asosiy">
+                            <field name="date"/>
+                            <field name="partiya_id"
+                                   options="{'no_create': True}"/>
+                            <field name="sex_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Poda">
+                            <field name="kun_boshi_son"/>
+                            <field name="nobud_son"/>
+                            <field name="brak_son"/>
+                            <field name="kun_oxiri_son"/>
+                            <field name="nobud_xoroz"
+                                   invisible="not nobud_son and not brak_son"/>
+                            <field name="nobud_sabab" invisible="not nobud_son"/>
+                            <field name="xoroz_son" readonly="1"/>
+                            <field name="tovuq_son" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Tuxum">
+                            <field name="jami_tuxum"/>
+                            <field name="sifatli_tuxum"/>
+                            <field name="inkubatsiyaga_yarokli"/>
+                            <field name="brak_tuxum"/>
+                        </group>
+                        <group string="Ko'rsatkichlar">
+                            <field name="tuxum_berish_foiz"/>
+                            <field name="norma_tuxum_berish"/>
+                            <field name="uruglanish_foiz"/>
+                            <field name="suv_litr"/>
+                            <field name="harorat"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Resurs sarfi" name="sarf">
+                            <field name="sarf_ids" readonly="holat == 'posted'">
+                                <list editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="miqdor"/>
+                                    <field name="uom_id"/>
+                                    <field name="qiymat" readonly="1" sum="Jami"/>
+                                    <field name="move_id" readonly="1" optional="hide"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer">
+                                <field name="sarf_qiymat"/>
+                            </group>
+                        </page>
+                        <page string="Izoh" name="izoh">
+                            <field name="izoh" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ot_jurnal_tuxum_search" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.jurnal.tuxum.search</field>
+        <field name="model">agronova.ona_tovuq.jurnal.tuxum</field>
+        <field name="arch" type="xml">
+            <search string="Kunlik jurnal">
+                <field name="date"/>
+                <field name="sex_id"/>
+                <field name="partiya_id"/>
+                <filter name="qoralama" string="Qoralama"
+                        domain="[('holat', '=', 'draft')]"/>
+                <filter name="ogoh" string="Ogohlantirishli"
+                        domain="[('ogohlantirish', '!=', False)]"/>
+                <separator/>
+                <filter name="bugun" string="Bugun"
+                        domain="[('date', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <group>
+                    <filter name="g_sex" string="Sex" context="{'group_by': 'sex_id'}"/>
+                    <filter name="g_partiya" string="Partiya" context="{'group_by': 'partiya_id'}"/>
+                    <filter name="g_date" string="Sana" context="{'group_by': 'date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_ot_jurnal_tuxum" model="ir.actions.act_window">
+        <field name="name">Kunlik jurnal (ona tovuq)</field>
+        <field name="res_model">agronova.ona_tovuq.jurnal.tuxum</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_ot_jurnal_tuxum_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_ot_jurnal_tuxum_form')})]"/>
+        <field name="search_view_id" ref="view_ot_jurnal_tuxum_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Bugungi jurnalni to'ldiring</p>
+            <p>Har sex, har kun bitta yozuv. Tasdiqlanganda yem va dori ombordan
+               hisobdan chiqadi, yig'ilgan tuxum omborga kirim qilinadi.</p>
+        </field>
+    </record>
+
+    <!-- ============================================== O'STIRISH JURNALI -->
+    <record id="view_ot_jurnal_ostirish_list" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.jurnal.ostirish.list</field>
+        <field name="model">agronova.ona_tovuq.jurnal.ostirish</field>
+        <field name="arch" type="xml">
+            <list string="Jo'ja o'stirish jurnali" decoration-muted="holat == 'draft'">
+                <field name="date"/>
+                <field name="sex_id"/>
+                <field name="partiya_id"/>
+                <field name="kun_boshi_son"/>
+                <field name="nobud_son" sum="Nobud"/>
+                <field name="kun_oxiri_son"/>
+                <field name="ortacha_vazn" optional="show"/>
+                <field name="sarf_qiymat" sum="Sarf"/>
+                <field name="holat" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ot_jurnal_ostirish_form" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.jurnal.ostirish.form</field>
+        <field name="model">agronova.ona_tovuq.jurnal.ostirish</field>
+        <field name="arch" type="xml">
+            <form string="Jo'ja o'stirish jurnali">
+                <header>
+                    <button name="action_tasdiqlash" type="object" string="Tasdiqlash"
+                            class="btn-primary" invisible="holat != 'draft'"/>
+                    <button name="action_qoralamaga" type="object" string="Qoralamaga"
+                            invisible="holat != 'posted'"/>
+                    <field name="holat" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Asosiy">
+                            <field name="date"/>
+                            <field name="partiya_id" options="{'no_create': True}"/>
+                            <field name="sex_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Poda">
+                            <field name="kun_boshi_son"/>
+                            <field name="nobud_son"/>
+                            <field name="brak_son"/>
+                            <field name="kun_oxiri_son"/>
+                            <field name="nobud_sabab" invisible="not nobud_son"/>
+                            <field name="ortacha_vazn"/>
+                            <field name="suv_litr"/>
+                            <field name="harorat"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Resurs sarfi" name="sarf">
+                            <field name="sarf_ids" readonly="holat == 'posted'">
+                                <list editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="miqdor"/>
+                                    <field name="uom_id"/>
+                                    <field name="qiymat" readonly="1" sum="Jami"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer">
+                                <field name="sarf_qiymat"/>
+                            </group>
+                        </page>
+                        <page string="Izoh" name="izoh">
+                            <field name="izoh" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ot_jurnal_ostirish" model="ir.actions.act_window">
+        <field name="name">Kunlik jurnal (jo'ja o'stirish)</field>
+        <field name="res_model">agronova.ona_tovuq.jurnal.ostirish</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

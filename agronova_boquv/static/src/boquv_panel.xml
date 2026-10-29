@@ -1,0 +1,664 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="agronova_boquv.BrigadirPanel">
+    <div class="o_boquv_panel h-100 overflow-auto py-3 px-3">
+        <div class="bq-container mx-auto">
+
+            <!-- ================== SARLAVHA ================== -->
+            <div class="bq-header rounded-3 p-3 mb-3 d-flex align-items-center flex-wrap gap-2">
+                <span class="fs-1 me-2">&#128020;</span>
+                <div class="flex-grow-1 bq-min0">
+                    <h4 class="mb-0 fw-bold text-white">Brigadir paneli</h4>
+                    <small class="text-white opacity-75" t-if="state.home">
+                        <t t-esc="state.home.brigadir"/> · <t t-esc="state.home.sana"/>
+                    </small>
+                </div>
+                <div t-if="state.home and state.home.depozit"
+                     class="bq-depozit rounded-3 px-3 py-2 text-white">
+                    <div class="small opacity-75 text-uppercase">Qo'limdagi naqd</div>
+                    <div class="fw-bold fs-5" t-esc="pul(state.home.depozit.balans)"/>
+                </div>
+            </div>
+
+            <div t-if="state.loading" class="text-center py-5 text-muted">
+                Yuklanmoqda...
+            </div>
+
+            <t t-else="">
+                <div t-if="!state.home.partiyalar.length" class="alert alert-warning">
+                    Sizga biriktirilgan faol partiya yo'q. Bo'lim boshlig'i
+                    partiya ochib, sizni mas'ul brigadir qilib belgilashi kerak.
+                </div>
+
+                <t t-else="">
+                    <!-- ================== KUNLIK XULOSA ================== -->
+                    <div class="row g-2 mb-3">
+                        <div class="col-6 col-lg-3">
+                            <div class="bq-stat rounded-3 p-2 text-center">
+                                <div class="text-muted small">Faol partiya</div>
+                                <div class="fw-bold fs-4" t-esc="state.home.jami.partiya"/>
+                            </div>
+                        </div>
+                        <div class="col-6 col-lg-3">
+                            <div class="bq-stat rounded-3 p-2 text-center">
+                                <div class="text-muted small">Tirik jo'ja</div>
+                                <div class="fw-bold fs-4" t-esc="son(state.home.jami.joriy_son)"/>
+                            </div>
+                        </div>
+                        <div class="col-6 col-lg-3">
+                            <div class="bq-stat bq-stat-ogoh rounded-3 p-2 text-center">
+                                <div class="text-muted small">Jurnalsiz partiya</div>
+                                <div class="fw-bold fs-4"
+                                     t-att-class="state.home.jami.jurnalsiz ? 'text-danger' : 'text-success'"
+                                     t-esc="state.home.jami.jurnalsiz"/>
+                            </div>
+                        </div>
+                        <div class="col-6 col-lg-3">
+                            <div class="bq-stat bq-stat-ogoh rounded-3 p-2 text-center">
+                                <div class="text-muted small">Obxod yetmagan</div>
+                                <div class="fw-bold fs-4"
+                                     t-att-class="state.home.jami.obxod_yetmagan ? 'text-danger' : 'text-success'"
+                                     t-esc="state.home.jami.obxod_yetmagan"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ================== OGOHLANTIRISHLAR ================== -->
+                    <div t-if="state.home.ogohlar.length"
+                         class="card rounded-3 shadow-sm mb-3 border-warning">
+                        <div class="card-header fw-bold bg-warning-subtle">
+                            &#9888; Bugun bajarilmagan ishlar
+                            <span class="badge text-bg-warning ms-2" t-esc="state.home.ogohlar.length"/>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            <button t-foreach="state.home.ogohlar" t-as="o" t-key="o_index"
+                                    class="list-group-item list-group-item-action d-flex align-items-center gap-2 text-start"
+                                    t-on-click="() => this.selectPartiya(o.partiya_id)">
+                                <span t-att-class="o.daraja === 'xavf' ? 'text-danger' : 'text-warning'"
+                                      class="fs-5">&#9679;</span>
+                                <div class="flex-grow-1 bq-min0">
+                                    <div class="fw-bold text-truncate">
+                                        <t t-esc="o.partiya"/>
+                                        <span class="text-muted fw-normal"> · <t t-esc="o.bino"/></span>
+                                    </div>
+                                    <small class="text-muted" t-esc="o.matn"/>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ================== PARTIYA KARTOCHKALARI ================== -->
+                    <div class="row g-3 mb-3">
+                        <div t-foreach="state.home.partiyalar" t-as="p" t-key="p.id"
+                             class="col-12 col-md-6 col-xl-4">
+                            <div class="card bq-kart rounded-3 shadow-sm h-100"
+                                 t-att-class="{'bq-kart-active': p.id === state.partiyaId}"
+                                 t-on-click="() => this.selectPartiya(p.id)">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-1 gap-2">
+                                        <span class="fw-bold fs-5 text-truncate" t-esc="p.name"/>
+                                        <span class="badge text-bg-secondary ms-auto">
+                                            <t t-esc="p.yosh_kun"/>/<t t-esc="p.reja_kun"/> kun
+                                        </span>
+                                    </div>
+                                    <div class="text-muted small text-truncate">
+                                        <t t-esc="p.filial"/> · <t t-esc="p.bino"/>
+                                    </div>
+                                    <div class="bq-son fw-bold" t-esc="son(p.joriy_son)"/>
+                                    <div class="small text-muted">tirik jo'ja</div>
+                                    <div class="row g-2 mt-2 pt-2 border-top small">
+                                        <div class="col-6">
+                                            <div class="text-muted">Nobud</div>
+                                            <div class="fw-bold"
+                                                 t-att-class="p.nobud_norma and p.nobud_foiz > p.nobud_norma ? 'text-danger' : ''">
+                                                <t t-esc="p.nobud_foiz"/>%
+                                            </div>
+                                        </div>
+                                        <div class="col-6 text-end">
+                                            <div class="text-muted">FCR</div>
+                                            <div class="fw-bold"
+                                                 t-att-class="p.fcr_norma and p.fcr > p.fcr_norma ? 'text-danger' : ''"
+                                                 t-esc="p.fcr"/>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-2 mt-2 pt-2 border-top small">
+                                        <div class="flex-fill">
+                                            <span class="text-muted">Obxod </span>
+                                            <span class="fw-bold" t-att-class="obxodKlass(p)">
+                                                <t t-esc="p.obxod_bugun"/>/<t t-esc="p.obxod_norma"/>
+                                            </span>
+                                        </div>
+                                        <div class="flex-fill text-end">
+                                            <span class="text-muted">Jurnal </span>
+                                            <span t-if="p.jurnal_bugun" class="fw-bold text-success">&#10003;</span>
+                                            <span t-else="" class="fw-bold text-danger">&#10007;</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ================== TANLANGAN PARTIYA ================== -->
+                    <t t-if="state.detail">
+                        <div class="card rounded-3 shadow-sm mb-3">
+                            <div class="card-body">
+                                <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                                    <div class="bq-min0">
+                                        <div class="fw-bold fs-5" t-esc="kart.name"/>
+                                        <small class="text-muted">
+                                            <t t-esc="kart.bino"/> · <t t-esc="kart.yosh_kun"/>-kun ·
+                                            o'rtacha vazn <t t-esc="kart.ortacha_vazn"/> kg
+                                        </small>
+                                    </div>
+                                    <div class="ms-auto d-flex gap-2 flex-wrap">
+                                        <button class="btn btn-primary fw-bold"
+                                                t-on-click="openObxod">&#128065; OBXOD</button>
+                                        <button class="btn btn-success fw-bold"
+                                                t-on-click="openJurnal">&#128221; KUNLIK JURNAL</button>
+                                        <button class="btn btn-outline-dark"
+                                                t-on-click="openVazn">&#9878; Vazn</button>
+                                        <button class="btn btn-outline-danger"
+                                                t-on-click="openXarajat">&#128176; Xarajat</button>
+                                    </div>
+                                </div>
+
+                                <div class="row g-2 text-center">
+                                    <div class="col-6 col-lg-3">
+                                        <div class="bq-stat rounded-3 p-2">
+                                            <div class="text-muted small">Boshlang'ich</div>
+                                            <div class="fw-bold fs-5" t-esc="son(kart.boshlangich_son)"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-lg-3">
+                                        <div class="bq-stat rounded-3 p-2">
+                                            <div class="text-muted small">Nobud</div>
+                                            <div class="fw-bold fs-5 text-danger">
+                                                <t t-esc="son(kart.nobud_son)"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-lg-3">
+                                        <div class="bq-stat rounded-3 p-2">
+                                            <div class="text-muted small">Yashovchanlik</div>
+                                            <div class="fw-bold fs-5"><t t-esc="kart.yashovchanlik"/>%</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-lg-3">
+                                        <div class="bq-stat rounded-3 p-2">
+                                            <div class="text-muted small">EPEF</div>
+                                            <div class="fw-bold fs-5" t-esc="kart.epef"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div t-if="normativ and normativ.harorat_min"
+                                     class="alert alert-light border mt-3 mb-0 py-2 small">
+                                    <strong><t t-esc="kart.yosh_kun"/>-kun me'yori:</strong>
+                                    harorat <t t-esc="normativ.harorat_min"/>–<t t-esc="normativ.harorat_max"/> °C ·
+                                    yem <t t-esc="normativ.yem_bosh_kunlik_gr"/> g/bosh ·
+                                    vazn <t t-esc="normativ.ortacha_vazn_norma"/> kg ·
+                                    FCR <t t-esc="normativ.fcr_norma"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BUGUNGI OBXODLAR -->
+                        <div class="card rounded-3 shadow-sm mb-3">
+                            <div class="card-header fw-bold">
+                                Bugungi obxodlar
+                                <span class="badge ms-2"
+                                      t-att-class="kart.obxod_bugun >= kart.obxod_norma ? 'text-bg-success' : 'text-bg-danger'">
+                                    <t t-esc="kart.obxod_bugun"/>/<t t-esc="kart.obxod_norma"/>
+                                </span>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-sm mb-0 align-middle">
+                                    <thead>
+                                        <tr class="text-muted small">
+                                            <th style="width:70px;">Vaqt</th>
+                                            <th style="width:90px;">Harorat</th>
+                                            <th>Jo'ja</th>
+                                            <th>Yem</th>
+                                            <th>Suv</th>
+                                            <th style="width:70px;">O'lik</th>
+                                            <th>Muammo / chora</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="state.detail.obxodlar" t-as="o" t-key="o.id">
+                                            <td class="text-nowrap" t-esc="formatVaqt(o.vaqt)"/>
+                                            <td t-att-class="haroratKlass(o.harorat_holati)">
+                                                <t t-esc="o.harorat"/> °C
+                                            </td>
+                                            <td t-esc="o.jojalar"/>
+                                            <td t-esc="o.yem"/>
+                                            <td t-esc="o.suv"/>
+                                            <td t-esc="o.olgan_joja"/>
+                                            <td class="bq-min0">
+                                                <div class="text-truncate" t-esc="o.muammo"/>
+                                                <small class="text-muted text-truncate d-block" t-esc="o.chora"/>
+                                            </td>
+                                        </tr>
+                                        <tr t-if="!state.detail.obxodlar.length">
+                                            <td colspan="7" class="text-center text-muted py-3">
+                                                Bugun hali obxod qilinmagan
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- OXIRGI KUNLAR -->
+                        <div class="card rounded-3 shadow-sm">
+                            <div class="card-header fw-bold">Oxirgi kunlar</div>
+                            <div class="table-responsive">
+                                <table class="table table-sm mb-0 align-middle">
+                                    <thead>
+                                        <tr class="text-muted small">
+                                            <th style="width:70px;">Sana</th>
+                                            <th class="text-end">Nobud</th>
+                                            <th class="text-end">Qoldi</th>
+                                            <th class="text-end">Yem, kg</th>
+                                            <th class="text-end">Suv, l</th>
+                                            <th class="text-end">Harorat</th>
+                                            <th style="width:110px;">Holat</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="state.detail.jurnallar" t-as="j" t-key="j.id">
+                                            <td class="text-nowrap" t-esc="formatSana(j.sana)"/>
+                                            <td class="text-end" t-esc="son(j.nobud_son)"/>
+                                            <td class="text-end" t-esc="son(j.kun_oxiri_son)"/>
+                                            <td class="text-end" t-esc="j.yem_kg"/>
+                                            <td class="text-end" t-esc="j.suv_litr"/>
+                                            <td class="text-end"><t t-esc="j.harorat"/> °C</td>
+                                            <td>
+                                                <span t-if="j.holat === 'posted'"
+                                                      class="badge text-bg-success">Tasdiqlangan</span>
+                                                <span t-else="" class="badge text-bg-warning">Qoralama</span>
+                                            </td>
+                                        </tr>
+                                        <tr t-if="!state.detail.jurnallar.length">
+                                            <td colspan="7" class="text-center text-muted py-3">
+                                                Hali jurnal yuritilmagan
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+
+            <!-- ================== OBXOD MODALI ================== -->
+            <div t-if="state.showObxod" class="bq-modal-backdrop" t-on-click="closeObxod">
+                <div class="bq-modal card rounded-3 shadow-lg" t-on-click.stop="">
+                    <div class="card-header fw-bold fs-5 text-primary">
+                        &#128065; Obxod — <t t-esc="kart.bino"/>
+                        <button class="btn-close float-end" t-on-click="closeObxod"/>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="bq-label">Harorat (°C)</label>
+                                <input type="number" step="0.1"
+                                       class="form-control form-control-lg fw-bold"
+                                       t-model="state.obxod.harorat"/>
+                                <div t-if="normativ and normativ.harorat_min" class="form-text">
+                                    Me'yor: <t t-esc="normativ.harorat_min"/>–<t t-esc="normativ.harorat_max"/> °C
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <label class="bq-label">Namlik (%)</label>
+                                <input type="number" step="0.1" class="form-control"
+                                       t-model="state.obxod.namlik"/>
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-4">
+                                <label class="bq-label">Jo'jalar</label>
+                                <select class="form-select" t-model="state.obxod.jojalar_holati">
+                                    <option t-foreach="state.home.holat_baholari" t-as="h" t-key="h.kod"
+                                            t-att-value="h.kod" t-esc="h.nom"/>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <label class="bq-label">Yem</label>
+                                <select class="form-select" t-model="state.obxod.yem_holati">
+                                    <option t-foreach="state.home.holat_baholari" t-as="h" t-key="h.kod"
+                                            t-att-value="h.kod" t-esc="h.nom"/>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <label class="bq-label">Suv</label>
+                                <select class="form-select" t-model="state.obxod.suv_holati">
+                                    <option t-foreach="state.home.holat_baholari" t-as="h" t-key="h.kod"
+                                            t-att-value="h.kod" t-esc="h.nom"/>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="bq-label">Ko'rilgan o'lik jo'ja (ma'lumot uchun)</label>
+                            <input type="number" min="0" class="form-control"
+                                   t-model="state.obxod.olgan_joja"/>
+                            <div class="form-text">
+                                Rasmiy nobud soni kunlik jurnalda yoziladi — bu yerdagi
+                                raqam hisobga qo'shilmaydi.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="bq-label">Aniqlangan muammo</label>
+                            <textarea class="form-control" rows="2"
+                                      t-model="state.obxod.muammo"/>
+                        </div>
+                        <div class="mb-3">
+                            <label class="bq-label">Ko'rilgan chora</label>
+                            <textarea class="form-control" rows="2"
+                                      t-model="state.obxod.chora"/>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-secondary flex-fill" t-on-click="closeObxod">Bekor</button>
+                            <button class="btn btn-primary flex-fill fw-bold"
+                                    t-att-disabled="!obxodValid or state.saving"
+                                    t-on-click="saveObxod">Saqlash</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================== JURNAL MODALI ================== -->
+            <div t-if="state.showJurnal" class="bq-modal-backdrop" t-on-click="closeJurnal">
+                <div class="bq-modal bq-modal-wide card rounded-3 shadow-lg" t-on-click.stop="">
+                    <div class="card-header fw-bold fs-5 text-success">
+                        &#128221; Kunlik jurnal — <t t-esc="kart.bino"/>
+                        <button class="btn-close float-end" t-on-click="closeJurnal"/>
+                    </div>
+                    <div class="card-body">
+                        <div t-if="kart.jurnal_bugun and kart.jurnal_holati === 'posted'"
+                             class="alert alert-danger py-2">
+                            Bugungi jurnal allaqachon tasdiqlangan — sarf ombordan
+                            chiqib bo'lgan. Tuzatish uchun hisobchiga murojaat qiling.
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="bq-label">Nobud bo'lgan</label>
+                                <input type="number" min="0"
+                                       class="form-control form-control-lg fw-bold"
+                                       t-model="state.jurnal.nobud_son"/>
+                                <div class="form-text">
+                                    Kun boshida: <t t-esc="son(kart.joriy_son)"/> bosh
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <label class="bq-label">Nobud sababi</label>
+                                <select class="form-select" t-model="state.jurnal.nobud_sabab">
+                                    <option value="">— tanlang —</option>
+                                    <option t-foreach="state.home.nobud_sabablari" t-as="s" t-key="s.kod"
+                                            t-att-value="s.kod" t-esc="s.nom"/>
+                                </select>
+                                <div t-if="nobudSababKerak"
+                                     class="text-danger small mt-1">
+                                    Nobud bo'lsa sabab ko'rsatilishi shart.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="bq-label">Suv sarfi (litr)</label>
+                                <input type="number" step="0.1" class="form-control"
+                                       t-model="state.jurnal.suv_litr"/>
+                            </div>
+                            <div class="col-6">
+                                <label class="bq-label">O'rtacha harorat (°C)</label>
+                                <input type="number" step="0.1" class="form-control"
+                                       t-model="state.jurnal.harorat"/>
+                            </div>
+                        </div>
+
+                        <!-- SARF QATORLARI -->
+                        <div class="bq-label d-flex align-items-center">
+                            <span>Resurs sarfi</span>
+                            <span t-if="yemKutilgan" class="ms-auto text-muted text-lowercase fw-normal">
+                                normadagi yem: ~<t t-esc="son(yemKutilgan)"/> kg
+                            </span>
+                        </div>
+                        <div class="table-responsive mb-2">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr class="text-muted small">
+                                        <th style="width:120px;">Turi</th>
+                                        <th>Mahsulot</th>
+                                        <th style="width:110px;">Miqdor</th>
+                                        <th style="width:60px;">Birlik</th>
+                                        <th style="width:40px;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="state.jurnal.sarflar" t-as="s" t-key="s_index">
+                                        <td>
+                                            <select class="form-select form-select-sm" t-model="s.tur">
+                                                <option t-foreach="state.home.sarf_turlari" t-as="t" t-key="t.kod"
+                                                        t-att-value="t.kod" t-esc="t.nom"/>
+                                            </select>
+                                        </td>
+                                        <td class="position-relative">
+                                            <input type="text" class="form-control form-control-sm"
+                                                   placeholder="Mahsulotni qidiring..."
+                                                   t-att-value="s.product_nom"
+                                                   t-on-input="(ev) => this.searchProduct(s_index, ev)"/>
+                                            <div t-if="state.qidiruvIndex === s_index and state.qidiruvNatija.length"
+                                                 class="dropdown-menu show bq-dropdown">
+                                                <a t-foreach="state.qidiruvNatija" t-as="r" t-key="r.id"
+                                                   class="dropdown-item" href="#"
+                                                   t-on-click.prevent="() => this.pickProduct(r)">
+                                                    <span t-esc="r.nom"/>
+                                                    <small class="text-muted ms-1" t-esc="r.uom"/>
+                                                </a>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <input type="number" step="0.001" min="0"
+                                                   class="form-control form-control-sm"
+                                                   t-model="s.miqdor"/>
+                                        </td>
+                                        <td class="small text-muted" t-esc="s.uom"/>
+                                        <td class="text-end">
+                                            <button class="btn btn-sm btn-outline-danger py-0 px-1"
+                                                    t-on-click="() => this.removeSarf(s_index)">&#10005;</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <button class="btn btn-sm btn-outline-secondary mb-3" t-on-click="addSarf">
+                            + qator qo'shish
+                        </button>
+
+                        <div class="mb-3">
+                            <label class="bq-label">Izoh</label>
+                            <textarea class="form-control" rows="2" t-model="state.jurnal.izoh"/>
+                        </div>
+
+                        <div class="alert alert-light border py-2 small mb-3">
+                            <strong>Saqlash</strong> — keyin tuzatsa bo'ladi.
+                            <strong>Tasdiqlash</strong> — sarf ombordan hisobdan chiqadi
+                            va partiya tannarxiga tushadi, keyin o'zgartirib bo'lmaydi.
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-secondary flex-fill" t-on-click="closeJurnal">Bekor</button>
+                            <button class="btn btn-outline-success flex-fill"
+                                    t-att-disabled="!jurnalValid or state.saving"
+                                    t-on-click="() => this.saveJurnal(false)">Saqlash</button>
+                            <button class="btn btn-success flex-fill fw-bold"
+                                    t-att-disabled="!jurnalValid or state.saving"
+                                    t-on-click="() => this.saveJurnal(true)">Tasdiqlash</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================== VAZN MODALI ================== -->
+            <div t-if="state.showVazn" class="bq-modal-backdrop" t-on-click="closeVazn">
+                <div class="bq-modal card rounded-3 shadow-lg" t-on-click.stop="">
+                    <div class="card-header fw-bold fs-5">
+                        &#9878; Vazn nazorati — <t t-esc="kart.bino"/>
+                        <button class="btn-close float-end" t-on-click="closeVazn"/>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="bq-label">Tortilgan bosh soni</label>
+                                <input type="number" min="1" class="form-control"
+                                       t-model="state.vazn.tortilgan_son"/>
+                            </div>
+                            <div class="col-6">
+                                <label class="bq-label">O'rtacha vazn (kg)</label>
+                                <input type="number" step="0.001" min="0"
+                                       class="form-control form-control-lg fw-bold"
+                                       t-model="state.vazn.ortacha_vazn"/>
+                                <div t-if="normativ and normativ.ortacha_vazn_norma" class="form-text">
+                                    Me'yor: <t t-esc="normativ.ortacha_vazn_norma"/> kg
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="bq-label">Minimal (kg)</label>
+                                <input type="number" step="0.001" class="form-control"
+                                       t-model="state.vazn.min_vazn"/>
+                            </div>
+                            <div class="col-6">
+                                <label class="bq-label">Maksimal (kg)</label>
+                                <input type="number" step="0.001" class="form-control"
+                                       t-model="state.vazn.max_vazn"/>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="bq-label">Izoh</label>
+                            <textarea class="form-control" rows="2" t-model="state.vazn.izoh"/>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-secondary flex-fill" t-on-click="closeVazn">Bekor</button>
+                            <button class="btn btn-dark flex-fill fw-bold"
+                                    t-att-disabled="!vaznValid or state.saving"
+                                    t-on-click="saveVazn">Saqlash</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================== XARAJAT MODALI ================== -->
+            <div t-if="state.showXarajat" class="bq-modal-backdrop" t-on-click="closeXarajat">
+                <div class="bq-modal card rounded-3 shadow-lg" t-on-click.stop="">
+                    <div class="card-header fw-bold fs-5 text-danger">
+                        &#128176; Xarajat — <t t-esc="kart.name"/>
+                        <button class="btn-close float-end" t-on-click="closeXarajat"/>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="bq-label">Kategoriya</label>
+                            <select class="form-select" t-model="state.xarajat.kategoriya_id">
+                                <option value="">— tanlang —</option>
+                                <option t-foreach="state.home.kategoriyalar" t-as="k" t-key="k.id"
+                                        t-att-value="k.id" t-esc="k.nom"/>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="bq-label">Xarajat nomi</label>
+                            <input type="text" class="form-control"
+                                   placeholder="Masalan: 3-sexga lampochka"
+                                   t-model="state.xarajat.nom"/>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-4">
+                                <label class="bq-label">Miqdor</label>
+                                <input type="number" step="0.01" class="form-control"
+                                       t-model="state.xarajat.miqdor"/>
+                            </div>
+                            <div class="col-8">
+                                <label class="bq-label">Narx</label>
+                                <input type="number" step="1" class="form-control"
+                                       t-model="state.xarajat.narx"/>
+                            </div>
+                        </div>
+                        <div class="alert alert-light border py-2 mb-3 d-flex align-items-center">
+                            <span class="text-muted">Summa:</span>
+                            <strong class="fs-5 ms-2" t-esc="pul(xarajatSummasi)"/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="bq-label">To'lov turi</label>
+                            <div class="btn-group w-100" role="group">
+                                <button class="btn"
+                                        t-att-class="state.xarajat.tolov_turi === 'naqd' ? 'btn-primary' : 'btn-outline-primary'"
+                                        t-on-click="() => this.setTolovTuri('naqd')">
+                                    Naqd (depozitdan)
+                                </button>
+                                <button class="btn"
+                                        t-att-class="state.xarajat.tolov_turi === 'qarz' ? 'btn-primary' : 'btn-outline-primary'"
+                                        t-on-click="() => this.setTolovTuri('qarz')">
+                                    Qarzga
+                                </button>
+                            </div>
+                        </div>
+
+                        <div t-if="state.xarajat.tolov_turi === 'naqd'">
+                            <div t-if="!state.home.depozit" class="alert alert-danger py-2 small">
+                                Sizga depozit ochilmagan — naqd xarajat yozib bo'lmaydi.
+                                Kassa menejeriga murojaat qiling.
+                            </div>
+                            <t t-else="">
+                                <div class="mb-3">
+                                    <label class="bq-label">Chek / xarajat fotosi (majburiy)</label>
+                                    <input type="file" accept="image/*" capture="environment"
+                                           class="form-control" t-on-change="onFotoChange"/>
+                                    <div t-if="state.xarajat.foto" class="text-success small mt-1">
+                                        &#10003; <t t-esc="state.xarajat.foto_filename"/>
+                                    </div>
+                                    <div t-else="" class="form-text">
+                                        Fotosiz naqd xarajat saqlanmaydi.
+                                    </div>
+                                </div>
+                                <div t-if="depozitYetmaydi" class="alert alert-danger py-2 small">
+                                    Depozitda yetarli pul yo'q — qoldiq
+                                    <t t-esc="pul(state.home.depozit.balans)"/>.
+                                </div>
+                            </t>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="bq-label">Izoh</label>
+                            <textarea class="form-control" rows="2" t-model="state.xarajat.izoh"/>
+                        </div>
+
+                        <div class="alert alert-light border py-2 small mb-3">
+                            Xarajat «<t t-esc="kart.name"/>» partiyasiga to'g'ridan-to'g'ri
+                            yoziladi va uning tannarxiga tushadi.
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-secondary flex-fill" t-on-click="closeXarajat">Bekor</button>
+                            <button class="btn btn-danger flex-fill fw-bold"
+                                    t-att-disabled="!xarajatValid or state.saving"
+                                    t-on-click="saveXarajat">Yozish</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</t>
+
+</templates>

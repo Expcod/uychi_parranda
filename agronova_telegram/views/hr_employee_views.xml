@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_hr_employee_form_telegram" model="ir.ui.view">
+        <field name="name">hr.employee.form.telegram</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page string="Telegram bot" name="telegram"
+                      groups="hr.group_hr_user">
+                    <group>
+                        <group string="Ulanish">
+                            <field name="telegram_chat_id"
+                                   placeholder="masalan 123456789"/>
+                            <field name="telegram_username" readonly="1"/>
+                            <field name="telegram_linked" readonly="1"/>
+                        </group>
+                        <group>
+                            <button name="action_unlink_telegram" type="object"
+                                    string="Ulanishni uzish"
+                                    confirm="Xodim botdan uziladi. Davom etamizmi?"
+                                    icon="fa-unlink"
+                                    invisible="not telegram_linked"/>
+                        </group>
+                    </group>
+                    <div class="text-muted">
+                        Xodim botga <b>/start</b> yozadi — bot unga o'z
+                        <b>chat ID</b> raqamini ko'rsatadi. O'sha raqamni yuqoridagi
+                        maydonga kiritib saqlaysiz, shundan keyin bot ishlay boshlaydi.
+                        Bir chat ID faqat bitta xodimga biriktiriladi.
+                    </div>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+</odoo>

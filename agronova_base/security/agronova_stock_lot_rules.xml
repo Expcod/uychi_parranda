@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- Standart `stock.stock_production_lot_rule` (o'qishni ham
+             korxona bilan cheklaydigan qoida) ni XML orqali o'chirib
+             bo'lmaydi — u `noupdate="1"` bilan yuklangan
+             (`addons/stock/security/stock_security.xml`), Odoo bunday
+             yozuvlarni har modul yangilanishida ataylab o'tkazib
+             yuboradi. Shuning uchun `perm_read=False` qilib qo'yish
+             `agronova_base/__init__.py`dagi `post_init_hook()` orqali
+             amalga oshiriladi.
+
+             Bu yerda faqat qo'shimcha, cheklovsiz O'QISH qoidasi
+             qo'shiladi — Odoo'ning korxonalararo yetkazib berish/qabul
+             sinxronizatsiyasi bitta lot yozuvini ikkala tomon uchun
+             ham ishlatadi, qabul qiluvchi korxona jo'natuvchining
+             lotini o'qiy olishi kerak (yozish/yaratish/o'chirish esa
+             korxonaga bog'liq qolaveradi). -->
+        <record id="agronova_stock_lot_read_all" model="ir.rule">
+            <field name="name">Stock Production Lot — o'qish cheklovsiz</field>
+            <field name="model_id" ref="stock.model_stock_lot"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

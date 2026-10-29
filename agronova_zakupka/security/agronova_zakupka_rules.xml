@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Zakupchik faqat o'z zayavka va xaridlarini ko'radi (TZ 17-bo'lim).
+         Bo'lim boshlig'i va yuqorisi hammasini ko'radi. -->
+
+    <record id="rule_zayavka_zakupchik" model="ir.rule">
+        <field name="name">Zayavka: zakupchik o'ziga tegishlisini ko'radi</field>
+        <field name="model_id" ref="model_agronova_zayavka"/>
+        <field name="domain_force">['|', '|',
+            ('zakupchik_id', '=', user.id),
+            ('zakupchik_id', '=', False),
+            ('omborchi_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_zakupka_zakupchik'))]"/>
+    </record>
+
+    <record id="rule_zayavka_omborchi" model="ir.rule">
+        <field name="name">Zayavka: omborchi o'z omborini ko'radi</field>
+        <field name="model_id" ref="model_agronova_zayavka"/>
+        <field name="domain_force">[('omborchi_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_zakupka_omborchi'))]"/>
+    </record>
+
+    <record id="rule_zayavka_boshliq" model="ir.rule">
+        <field name="name">Zayavka: boshliq hammasini ko'radi</field>
+        <field name="model_id" ref="model_agronova_zayavka"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_zakupka_bolim_boshligi')),
+                                    (4, ref('group_zakupka_sifat_nazorat')),
+                                    (4, ref('group_zakupka_buxgalter'))]"/>
+    </record>
+
+    <record id="rule_ruxsat_zakupchik" model="ir.rule">
+        <field name="name">Ruxsat: zakupchik o'z so'rovlarini ko'radi</field>
+        <field name="model_id" ref="model_agronova_ruxsat"/>
+        <field name="domain_force">[('zakupchik_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_zakupka_zakupchik'))]"/>
+    </record>
+
+    <record id="rule_ruxsat_tasdiqlovchi" model="ir.rule">
+        <field name="name">Ruxsat: tasdiqlovchi hammasini ko'radi</field>
+        <field name="model_id" ref="model_agronova_ruxsat"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_zakupka_bolim_boshligi')),
+                                    (4, ref('group_zakupka_sifat_nazorat')),
+                                    (4, ref('group_zakupka_buxgalter'))]"/>
+    </record>
+
+    <record id="rule_kirim_zakupchik" model="ir.rule">
+        <field name="name">Kirim: zakupchik o'z xaridlarini ko'radi</field>
+        <field name="model_id" ref="model_agronova_kirim"/>
+        <field name="domain_force">[('zakupchik_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_zakupka_zakupchik'))]"/>
+    </record>
+
+    <record id="rule_kirim_boshliq" model="ir.rule">
+        <field name="name">Kirim: boshliq, omborchi va buxgalter hammasini ko'radi</field>
+        <field name="model_id" ref="model_agronova_kirim"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_zakupka_bolim_boshligi')),
+                                    (4, ref('group_zakupka_omborchi')),
+                                    (4, ref('group_zakupka_sifat_nazorat')),
+                                    (4, ref('group_zakupka_buxgalter'))]"/>
+    </record>
+
+    <!-- KPI: xodim o'z ballini ko'radi (jonli ko'rinish, TZ 13.2),
+         rahbar hammasini. -->
+    <record id="rule_kpi_xodim" model="ir.rule">
+        <field name="name">KPI: xodim faqat o'z ballini ko'radi</field>
+        <field name="model_id" ref="model_agronova_kpi"/>
+        <field name="domain_force">[('xodim_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="rule_kpi_boshliq" model="ir.rule">
+        <field name="name">KPI: rahbar barcha ballarni ko'radi</field>
+        <field name="model_id" ref="model_agronova_kpi"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_zakupka_bolim_boshligi')),
+                                    (4, ref('group_zakupka_admin'))]"/>
+    </record>
+
+    <record id="rule_kpi_etiroz_xodim" model="ir.rule">
+        <field name="name">E'tiroz: xodim faqat o'zinikini ko'radi</field>
+        <field name="model_id" ref="model_agronova_kpi_etiroz"/>
+        <field name="domain_force">[('xodim_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="rule_kpi_etiroz_boshliq" model="ir.rule">
+        <field name="name">E'tiroz: rahbar hammasini ko'radi</field>
+        <field name="model_id" ref="model_agronova_kpi_etiroz"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_zakupka_bolim_boshligi')),
+                                    (4, ref('group_zakupka_admin'))]"/>
+    </record>
+
+</odoo>

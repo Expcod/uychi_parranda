@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        OLIB TASHLANDI (2026-08-17): "Hikvision Holati" maydoni va
+        qurilmalar bo'yicha holat ro'yxati.
+
+        Modul endi xodimlarni qurilmada bloklamaydi, shuning uchun
+        ko'rsatiladigan holat ham qolmadi - qurilmada hamma normal.
+    -->
+</odoo>

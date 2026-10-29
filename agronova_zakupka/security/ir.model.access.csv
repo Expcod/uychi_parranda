@@ -1,0 +1,66 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_zayavka_omborchi,agronova.zayavka omborchi,model_agronova_zayavka,agronova_zakupka.group_zakupka_omborchi,1,1,1,1
+access_zayavka_zakupchik,agronova.zayavka zakupchik,model_agronova_zayavka,agronova_zakupka.group_zakupka_zakupchik,1,1,0,0
+access_zayavka_sifat,agronova.zayavka sifat nazorat,model_agronova_zayavka,agronova_zakupka.group_zakupka_sifat_nazorat,1,0,0,0
+access_zayavka_buxgalter,agronova.zayavka buxgalter,model_agronova_zayavka,agronova_zakupka.group_zakupka_buxgalter,1,0,0,0
+access_zayavka_admin,agronova.zayavka admin,model_agronova_zayavka,agronova_zakupka.group_zakupka_admin,1,1,1,1
+access_zayavka_qatori_omborchi,agronova.zayavka.qatori omborchi,model_agronova_zayavka_qatori,agronova_zakupka.group_zakupka_omborchi,1,1,1,1
+access_zayavka_qatori_zakupchik,agronova.zayavka.qatori zakupchik,model_agronova_zayavka_qatori,agronova_zakupka.group_zakupka_zakupchik,1,0,0,0
+access_zayavka_qatori_sifat,agronova.zayavka.qatori sifat,model_agronova_zayavka_qatori,agronova_zakupka.group_zakupka_sifat_nazorat,1,0,0,0
+access_zayavka_qatori_buxgalter,agronova.zayavka.qatori buxgalter,model_agronova_zayavka_qatori,agronova_zakupka.group_zakupka_buxgalter,1,0,0,0
+access_zayavka_qatori_admin,agronova.zayavka.qatori admin,model_agronova_zayavka_qatori,agronova_zakupka.group_zakupka_admin,1,1,1,1
+access_ruxsat_zakupchik,agronova.ruxsat zakupchik,model_agronova_ruxsat,agronova_zakupka.group_zakupka_zakupchik,1,1,1,1
+access_ruxsat_sifat,agronova.ruxsat sifat nazorat,model_agronova_ruxsat,agronova_zakupka.group_zakupka_sifat_nazorat,1,1,0,0
+access_ruxsat_omborchi,agronova.ruxsat omborchi,model_agronova_ruxsat,agronova_zakupka.group_zakupka_omborchi,1,0,0,0
+access_ruxsat_buxgalter,agronova.ruxsat buxgalter,model_agronova_ruxsat,agronova_zakupka.group_zakupka_buxgalter,1,0,0,0
+access_ruxsat_admin,agronova.ruxsat admin,model_agronova_ruxsat,agronova_zakupka.group_zakupka_admin,1,1,1,1
+access_taklif_zakupchik,agronova.taklif zakupchik,model_agronova_taklif,agronova_zakupka.group_zakupka_zakupchik,1,1,1,1
+access_taklif_sifat,agronova.taklif sifat nazorat,model_agronova_taklif,agronova_zakupka.group_zakupka_sifat_nazorat,1,0,0,0
+access_taklif_buxgalter,agronova.taklif buxgalter,model_agronova_taklif,agronova_zakupka.group_zakupka_buxgalter,1,0,0,0
+access_taklif_admin,agronova.taklif admin,model_agronova_taklif,agronova_zakupka.group_zakupka_admin,1,1,1,1
+access_kirim_zakupchik,agronova.kirim zakupchik,model_agronova_kirim,agronova_zakupka.group_zakupka_zakupchik,1,1,1,1
+access_kirim_omborchi,agronova.kirim omborchi,model_agronova_kirim,agronova_zakupka.group_zakupka_omborchi,1,1,0,0
+access_kirim_sifat,agronova.kirim sifat nazorat,model_agronova_kirim,agronova_zakupka.group_zakupka_sifat_nazorat,1,0,0,0
+access_kirim_buxgalter,agronova.kirim buxgalter,model_agronova_kirim,agronova_zakupka.group_zakupka_buxgalter,1,1,0,0
+access_kirim_admin,agronova.kirim admin,model_agronova_kirim,agronova_zakupka.group_zakupka_admin,1,1,1,1
+access_kirim_qatori_zakupchik,agronova.kirim.qatori zakupchik,model_agronova_kirim_qatori,agronova_zakupka.group_zakupka_zakupchik,1,1,1,1
+access_kirim_qatori_omborchi,agronova.kirim.qatori omborchi,model_agronova_kirim_qatori,agronova_zakupka.group_zakupka_omborchi,1,1,0,0
+access_kirim_qatori_sifat,agronova.kirim.qatori sifat,model_agronova_kirim_qatori,agronova_zakupka.group_zakupka_sifat_nazorat,1,0,0,0
+access_kirim_qatori_buxgalter,agronova.kirim.qatori buxgalter,model_agronova_kirim_qatori,agronova_zakupka.group_zakupka_buxgalter,1,0,0,0
+access_kirim_qatori_admin,agronova.kirim.qatori admin,model_agronova_kirim_qatori,agronova_zakupka.group_zakupka_admin,1,1,1,1
+access_qaytarish_omborchi,agronova.qaytarish omborchi,model_agronova_qaytarish,agronova_zakupka.group_zakupka_omborchi,1,1,1,1
+access_qaytarish_zakupchik,agronova.qaytarish zakupchik,model_agronova_qaytarish,agronova_zakupka.group_zakupka_zakupchik,1,1,1,0
+access_qaytarish_buxgalter,agronova.qaytarish buxgalter,model_agronova_qaytarish,agronova_zakupka.group_zakupka_buxgalter,1,1,0,0
+access_qaytarish_admin,agronova.qaytarish admin,model_agronova_qaytarish,agronova_zakupka.group_zakupka_admin,1,1,1,1
+access_qaytarish_qatori_omborchi,agronova.qaytarish.qatori omborchi,model_agronova_qaytarish_qatori,agronova_zakupka.group_zakupka_omborchi,1,1,1,1
+access_qaytarish_qatori_zakupchik,agronova.qaytarish.qatori zakupchik,model_agronova_qaytarish_qatori,agronova_zakupka.group_zakupka_zakupchik,1,1,1,0
+access_qaytarish_qatori_buxgalter,agronova.qaytarish.qatori buxgalter,model_agronova_qaytarish_qatori,agronova_zakupka.group_zakupka_buxgalter,1,0,0,0
+access_qaytarish_qatori_admin,agronova.qaytarish.qatori admin,model_agronova_qaytarish_qatori,agronova_zakupka.group_zakupka_admin,1,1,1,1
+access_import_zakupchik,agronova.import zakupchik,model_agronova_import,agronova_zakupka.group_zakupka_zakupchik,1,1,1,0
+access_import_buxgalter,agronova.import buxgalter,model_agronova_import,agronova_zakupka.group_zakupka_buxgalter,1,1,0,0
+access_import_omborchi,agronova.import omborchi,model_agronova_import,agronova_zakupka.group_zakupka_omborchi,1,0,0,0
+access_import_admin,agronova.import admin,model_agronova_import,agronova_zakupka.group_zakupka_admin,1,1,1,1
+access_nomenklatura_zakupchik,agronova.nomenklatura.sorovi zakupchik,model_agronova_nomenklatura_sorovi,agronova_zakupka.group_zakupka_zakupchik,1,1,1,0
+access_nomenklatura_omborchi,agronova.nomenklatura.sorovi omborchi,model_agronova_nomenklatura_sorovi,agronova_zakupka.group_zakupka_omborchi,1,1,1,0
+access_nomenklatura_boshliq,agronova.nomenklatura.sorovi boshliq,model_agronova_nomenklatura_sorovi,agronova_zakupka.group_zakupka_bolim_boshligi,1,1,1,0
+access_nomenklatura_admin,agronova.nomenklatura.sorovi admin,model_agronova_nomenklatura_sorovi,agronova_zakupka.group_zakupka_admin,1,1,1,1
+access_narx_normasi_user,agronova.narx.normasi ko'rish,model_agronova_narx_normasi,base.group_user,1,0,0,0
+access_narx_normasi_boshliq,agronova.narx.normasi boshliq,model_agronova_narx_normasi,agronova_zakupka.group_zakupka_bolim_boshligi,1,1,0,0
+access_narx_normasi_sifat,agronova.narx.normasi sifat nazorat,model_agronova_narx_normasi,agronova_zakupka.group_zakupka_sifat_nazorat,1,1,1,0
+access_narx_normasi_admin,agronova.narx.normasi admin,model_agronova_narx_normasi,agronova_zakupka.group_zakupka_admin,1,1,1,1
+access_kpi_user,agronova.kpi xodim,model_agronova_kpi,base.group_user,1,0,0,0
+access_kpi_boshliq,agronova.kpi boshliq,model_agronova_kpi,agronova_zakupka.group_zakupka_bolim_boshligi,1,1,0,0
+access_kpi_admin,agronova.kpi admin,model_agronova_kpi,agronova_zakupka.group_zakupka_admin,1,1,1,1
+access_kpi_davr_user,agronova.kpi.davr ko'rish,model_agronova_kpi_davr,base.group_user,1,0,0,0
+access_kpi_davr_boshliq,agronova.kpi.davr boshliq,model_agronova_kpi_davr,agronova_zakupka.group_zakupka_bolim_boshligi,1,1,0,0
+access_kpi_davr_admin,agronova.kpi.davr admin,model_agronova_kpi_davr,agronova_zakupka.group_zakupka_admin,1,1,1,1
+access_kpi_etiroz_user,agronova.kpi.etiroz xodim,model_agronova_kpi_etiroz,base.group_user,1,1,1,0
+access_kpi_etiroz_boshliq,agronova.kpi.etiroz boshliq,model_agronova_kpi_etiroz,agronova_zakupka.group_zakupka_bolim_boshligi,1,1,1,0
+access_kpi_etiroz_admin,agronova.kpi.etiroz admin,model_agronova_kpi_etiroz,agronova_zakupka.group_zakupka_admin,1,1,1,1
+access_didox_log_buxgalter,agronova.didox.log buxgalter,model_agronova_didox_log,agronova_zakupka.group_zakupka_buxgalter,1,1,1,0
+access_didox_log_boshliq,agronova.didox.log boshliq,model_agronova_didox_log,agronova_zakupka.group_zakupka_bolim_boshligi,1,0,0,0
+access_didox_log_admin,agronova.didox.log admin,model_agronova_didox_log,agronova_zakupka.group_zakupka_admin,1,1,1,1
+access_qabul_wizard_omborchi,agronova.qabul.wizard omborchi,model_agronova_qabul_wizard,agronova_zakupka.group_zakupka_omborchi,1,1,1,1
+access_qabul_wizard_admin,agronova.qabul.wizard admin,model_agronova_qabul_wizard,agronova_zakupka.group_zakupka_admin,1,1,1,1
+access_qabul_wizard_qatori_omborchi,agronova.qabul.wizard.qatori omborchi,model_agronova_qabul_wizard_qatori,agronova_zakupka.group_zakupka_omborchi,1,1,1,1
+access_qabul_wizard_qatori_admin,agronova.qabul.wizard.qatori admin,model_agronova_qabul_wizard_qatori,agronova_zakupka.group_zakupka_admin,1,1,1,1

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- Odoo 19 da res.groups `category_id` emas, `privilege_id` ishlatadi
+             (res.groups.privilege modeli). agronova_base bilan bir xil uslub. -->
+        <!-- O'z kategoriyamiz: `base.module_category_manufacturing` hamma bazada
+             mavjud emas (u mrp o'rnatilganda paydo bo'ladi), shuning uchun
+             tashqi xmlid ga tayanmaymiz. -->
+        <record id="module_category_ona_tovuq" model="ir.module.category">
+            <field name="name">AgroNova — Ona Tovuq</field>
+            <field name="sequence">45</field>
+        </record>
+
+        <record id="res_groups_privilege_ot" model="res.groups.privilege">
+            <field name="name">AgroNova — Ona Tovuq</field>
+            <field name="category_id" ref="module_category_ona_tovuq"/>
+            <field name="sequence">45</field>
+        </record>
+
+        <record id="group_ot_operator" model="res.groups">
+            <field name="name">Operator (faqat o'z sexi)</field>
+            <field name="privilege_id" ref="res_groups_privilege_ot"/>
+            <field name="sequence">10</field>
+            <field name="comment">Kunlik jurnal kiritadi, faqat biriktirilgan sexini ko'radi.</field>
+        </record>
+
+        <record id="group_ot_veterinar" model="res.groups">
+            <field name="name">Veterinar</field>
+            <field name="privilege_id" ref="res_groups_privilege_ot"/>
+            <field name="sequence">20</field>
+            <field name="implied_ids" eval="[(4, ref('group_ot_operator'))]"/>
+            <field name="comment">Dori va vaksina sarfini rasmiylashtiradi.</field>
+        </record>
+
+        <record id="group_ot_boshliq" model="res.groups">
+            <field name="name">Bo'lim boshlig'i</field>
+            <field name="privilege_id" ref="res_groups_privilege_ot"/>
+            <field name="sequence">30</field>
+            <field name="implied_ids" eval="[(4, ref('group_ot_veterinar'))]"/>
+            <field name="comment">Barcha sexlar, partiya ochish va yopish, hisobotlar.</field>
+        </record>
+
+        <record id="group_ot_hisobchi" model="res.groups">
+            <field name="name">Hisobchi</field>
+            <field name="privilege_id" ref="res_groups_privilege_ot"/>
+            <field name="sequence">40</field>
+            <field name="implied_ids" eval="[(4, ref('group_ot_boshliq'))]"/>
+            <field name="comment">Tannarx, ichki narx tasdiqlash, moliyaviy hisobotlar.</field>
+        </record>
+
+    </data>
+</odoo>

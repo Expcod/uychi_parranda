@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Sotuvchi KPI (TZ M08): kim, qancha va qanday marja bilan sotdi.
+
+         `pos.order.margin` SAQLANMAYDIGAN compute maydon — uni pivot
+         o'lchovi qilib bo'lmaydi. Shuning uchun Odooning o'z hisobot
+         modeli `report.pos.order` ishlatiladi: u SQL ko'rinish bo'lgani
+         uchun `margin` ham, `price_total` ham to'g'ridan-to'g'ri
+         yig'iladi. -->
+
+    <record id="view_report_pos_order_pivot_agronova" model="ir.ui.view">
+        <field name="name">report.pos.order.pivot.agronova</field>
+        <field name="model">report.pos.order</field>
+        <field name="arch" type="xml">
+            <pivot string="Sotuvchi kesimida">
+                <field name="user_id" type="row"/>
+                <field name="date" interval="day" type="col"/>
+                <field name="price_total" type="measure"/>
+                <field name="margin" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_report_pos_order_graph_agronova" model="ir.ui.view">
+        <field name="name">report.pos.order.graph.agronova</field>
+        <field name="model">report.pos.order</field>
+        <field name="arch" type="xml">
+            <graph string="Sotuvchi kesimida" type="bar">
+                <field name="user_id"/>
+                <field name="price_total" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_pos_sotuvchi_kpi" model="ir.actions.act_window">
+        <field name="name">Sotuvchi KPI</field>
+        <field name="res_model">report.pos.order</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="context">{'search_default_user_id': uid}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Hali sotuv yo'q</p>
+            <p>Sotuvchi kesimida tushum va marja (TZ M08).</p>
+        </field>
+    </record>
+
+    <record id="action_pos_sotuvchi_kpi_pivot" model="ir.actions.act_window.view">
+        <field name="sequence">1</field>
+        <field name="view_mode">pivot</field>
+        <field name="view_id" ref="view_report_pos_order_pivot_agronova"/>
+        <field name="act_window_id" ref="action_pos_sotuvchi_kpi"/>
+    </record>
+
+    <record id="action_pos_sotuvchi_kpi_graph" model="ir.actions.act_window.view">
+        <field name="sequence">2</field>
+        <field name="view_mode">graph</field>
+        <field name="view_id" ref="view_report_pos_order_graph_agronova"/>
+        <field name="act_window_id" ref="action_pos_sotuvchi_kpi"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_agronova_kassa_otkazma_list" model="ir.ui.view">
+        <field name="name">agronova.kassa.otkazma.list</field>
+        <field name="model">agronova.kassa.otkazma</field>
+        <field name="arch" type="xml">
+            <list decoration-warning="state == 'transit'"
+                  decoration-success="state == 'done'"
+                  decoration-muted="state == 'rad'">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="from_kassa_id"/>
+                <field name="to_kassa_id"/>
+                <field name="olib_boruvchi_id" optional="show"/>
+                <field name="amount" widget="monetary" sum="Jami"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="qabul_date" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company"
+                       optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-warning="state == 'transit'"
+                       decoration-success="state == 'done'"
+                       decoration-danger="state == 'rad'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_agronova_kassa_otkazma_form" model="ir.ui.view">
+        <field name="name">agronova.kassa.otkazma.form</field>
+        <field name="model">agronova.kassa.otkazma</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_jonatish" type="object"
+                            string="Jo'natish" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_qabul" type="object"
+                            string="Qabul qildim" class="btn-primary"
+                            invisible="state != 'transit'"/>
+                    <button name="action_rad_wizard" type="object"
+                            string="Rad etish" class="btn-secondary"
+                            invisible="state != 'transit'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,transit,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object" name="action_open_harakatlar"
+                                class="oe_stat_button" icon="fa-exchange"
+                                string="Kassa yozuvlari"
+                                invisible="state == 'draft'"/>
+                        <button type="object" name="action_open_moves"
+                                class="oe_stat_button" icon="fa-book"
+                                string="Provodkalar"
+                                invisible="state == 'draft'"/>
+                    </div>
+                    <widget name="web_ribbon" title="RAD ETILGAN"
+                            bg_color="text-bg-danger" invisible="state != 'rad'"/>
+                    <div class="oe_title">
+                        <span class="o_form_label">Transfer</span>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <div class="alert alert-warning" role="alert"
+                         invisible="state != 'transit'">
+                        Pul <strong>yo'lda</strong> — manba kassadan chiqdi,
+                        lekin qabul qiluvchiga hali kirmadi. Hozir u
+                        «Yo'ldagi pul» (5710) hisobida turibdi.
+                    </div>
+                    <group>
+                        <group string="Yo'nalish">
+                            <field name="from_kassa_id"
+                                   options="{'no_create': True}"
+                                   readonly="state != 'draft'"/>
+                            <field name="from_balance" widget="monetary"
+                                   readonly="1"/>
+                            <field name="to_kassa_id" options="{'no_create': True}"
+                                   readonly="state != 'draft'"/>
+                            <field name="to_balance" widget="monetary" readonly="1"/>
+                        </group>
+                        <group string="Summa va javobgar">
+                            <field name="amount" widget="monetary"
+                                   readonly="state != 'draft'"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="company_id" invisible="1"/>
+                            <field name="date" readonly="state != 'draft'"/>
+                            <field name="olib_boruvchi_id"
+                                   options="{'no_create': True}"
+                                   readonly="state not in ('draft', 'transit')"/>
+                            <field name="user_id" readonly="1"/>
+                            <field name="qabul_user_id" readonly="1"
+                                   invisible="state != 'done'"/>
+                            <field name="qabul_date" readonly="1"
+                                   invisible="state != 'done'"/>
+                        </group>
+                    </group>
+                    <group string="Izoh">
+                        <field name="izoh" nolabel="1"
+                               placeholder="Kim olib bordi, nima uchun jo'natildi..."/>
+                        <field name="rad_sabab" readonly="1"
+                               invisible="state != 'rad'"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_agronova_kassa_otkazma_search" model="ir.ui.view">
+        <field name="name">agronova.kassa.otkazma.search</field>
+        <field name="model">agronova.kassa.otkazma</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="from_kassa_id"/>
+                <field name="to_kassa_id"/>
+                <field name="olib_boruvchi_id"/>
+                <filter name="yolda" string="Yo'lda"
+                        domain="[('state', '=', 'transit')]"/>
+                <filter name="tasdiqlangan" string="Tasdiqlangan"
+                        domain="[('state', '=', 'done')]"/>
+                <filter name="rad" string="Rad etilgan"
+                        domain="[('state', '=', 'rad')]"/>
+                <group>
+                    <filter name="g_from" string="Kimdan"
+                            context="{'group_by': 'from_kassa_id'}"/>
+                    <filter name="g_to" string="Kimga"
+                            context="{'group_by': 'to_kassa_id'}"/>
+                    <filter name="g_state" string="Holat"
+                            context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_agronova_kassa_otkazma" model="ir.actions.act_window">
+        <field name="name">Kassalararo transfer</field>
+        <field name="res_model">agronova.kassa.otkazma</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Transfer yarating</p>
+            <p>Bir kassadan boshqasiga naqd pul topshirish. Pul yo'lda
+               ekan «Yo'ldagi pul» hisobida turadi va qabul qiluvchi
+               tasdiqlagach uning kassasiga kiradi.</p>
+        </field>
+    </record>
+
+    <record id="view_agronova_kassa_otkazma_rad_wizard_form" model="ir.ui.view">
+        <field name="name">agronova.kassa.otkazma.rad.wizard.form</field>
+        <field name="model">agronova.kassa.otkazma.rad.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <div class="alert alert-warning" role="alert">
+                    Rad etilganda pul manba kassaga qaytariladi va
+                    buxgalteriyada qaytish provodkasi yoziladi.
+                </div>
+                <group>
+                    <field name="otkazma_id" readonly="1"/>
+                    <field name="sabab"
+                           placeholder="Summa kam chiqdi / pul yetib kelmadi..."/>
+                </group>
+                <footer>
+                    <button name="action_tasdiqlash" type="object"
+                            string="Rad etish" class="btn-danger"/>
+                    <button string="Bekor" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

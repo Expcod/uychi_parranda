@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hikvision_log_tree" model="ir.ui.view">
+        <field name="name">hikvision.log.tree</field>
+        <field name="model">hikvision.log</field>
+        <field name="arch" type="xml">
+            <!--
+                Juftlanmagan loglar qizil - HR ularni darhol ko'rsin.
+                Bu xato emas, lekin e'tibor talab qiladi: odatda xodim
+                chiqishni unutgan yoki qurilma navbati buzilgan.
+            -->
+            <list string="Attendance Logs" create="false" edit="false"
+                  decoration-danger="state == 'unpaired'">
+                <field name="timestamp"/>
+                <field name="employee_id"/>
+                <field name="device_id"/>
+                <field name="attendance_type"/>
+                <field name="state"/>
+                <field name="skip_reason" optional="show"/>
+                <field name="attendance_id" optional="hide"/>
+                <field name="raw_minor" optional="hide"/>
+                <field name="serial_no" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_hikvision_log_form" model="ir.ui.view">
+        <field name="name">hikvision.log.form</field>
+        <field name="model">hikvision.log</field>
+        <field name="arch" type="xml">
+            <form string="Attendance Log" create="false" edit="false">
+                <sheet>
+                    <group>
+                        <group string="Hodisa">
+                            <field name="employee_id"/>
+                            <field name="timestamp"/>
+                            <field name="device_id"/>
+                            <field name="attendance_type"/>
+                        </group>
+                        <group string="Juftlash">
+                            <field name="state"/>
+                            <field name="attendance_id"/>
+                            <field name="skip_reason"
+                                   invisible="state == 'paired'"/>
+                        </group>
+                    </group>
+                    <group string="Qurilmadan kelgan xom ma'lumot">
+                        <group>
+                            <field name="raw_minor"/>
+                            <field name="serial_no"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_hikvision_log_search" model="ir.ui.view">
+        <field name="name">hikvision.log.search</field>
+        <field name="model">hikvision.log</field>
+        <field name="arch" type="xml">
+            <search string="Attendance Logs">
+                <field name="employee_id"/>
+                <field name="device_id"/>
+                <field name="timestamp"/>
+
+                <filter name="filter_unpaired" string="Juftlanmagan"
+                        domain="[('state', '=', 'unpaired')]"/>
+                <filter name="filter_paired" string="Juftlangan"
+                        domain="[('state', '=', 'paired')]"/>
+                <separator/>
+                <filter name="filter_check_in" string="Kirish"
+                        domain="[('attendance_type', '=', 'check_in')]"/>
+                <filter name="filter_check_out" string="Chiqish"
+                        domain="[('attendance_type', '=', 'check_out')]"/>
+                <separator/>
+                <filter name="filter_today" string="Bugun"
+                        domain="[('timestamp', '&gt;=', context_today().strftime('%Y-%m-%d 00:00:00'))]"/>
+
+                <group>
+                    <filter name="group_employee" string="Xodim"
+                            context="{'group_by': 'employee_id'}"/>
+                    <filter name="group_state" string="Holat"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_device" string="Qurilma"
+                            context="{'group_by': 'device_id'}"/>
+                    <filter name="group_type" string="Turi"
+                            context="{'group_by': 'attendance_type'}"/>
+                    <filter name="group_day" string="Sana"
+                            context="{'group_by': 'timestamp:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_hikvision_log" model="ir.actions.act_window">
+        <field name="name">Attendance Logs</field>
+        <field name="res_model">hikvision.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_hikvision_log_search"/>
+    </record>
+</odoo>

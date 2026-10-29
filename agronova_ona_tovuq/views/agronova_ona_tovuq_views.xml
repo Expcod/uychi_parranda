@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ SEX -->
+    <record id="view_ot_sex_list" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.sex.list</field>
+        <field name="model">agronova.ona_tovuq.sex</field>
+        <field name="arch" type="xml">
+            <list expand="context.get('expand', False)" string="Sexlar">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="maydoni" sum="Jami m²"/>
+                <field name="sigimi" sum="Jami sig'im"/>
+                <field name="joriy_son" string="Bosh soni" sum="Joriy bosh" width="98px"/>
+                <field name="mas_ul_xodim_id" string="Mas'ul"/>
+                <field name="aktiv_partiya_id" string="Aktiv partiya" optional="show"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ot_sex_form" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.sex.form</field>
+        <field name="model">agronova.ona_tovuq.sex</field>
+        <field name="arch" type="xml">
+            <form string="Sex">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="1-sex"/></h1>
+                    </div>
+                    <group>
+                        <group string="Asosiy">
+                            <field name="code"/>
+                            <field name="maydoni"/>
+                            <field name="sigimi"/>
+                            <field name="mas_ul_xodim_id"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                        <group string="Ombor va analitika">
+                            <field name="warehouse_id"/>
+                            <field name="location_id"/>
+                            <field name="analytic_account_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Holat">
+                        <group>
+                            <field name="joriy_son"/>
+                            <field name="aktiv_ostirish_id"/>
+                            <field name="aktiv_partiya_id"/>
+                        </group>
+                        <group>
+                            <field name="jami_xarajat"/>
+                            <field name="jami_daromad"/>
+                            <field name="foyda"/>
+                            <field name="rentabellik"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Partiyalar" name="partiyalar">
+                            <field name="tuxum_partiya_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="ochilish_sana"/>
+                                    <field name="joriy_son"/>
+                                    <field name="tuxum_berish_foiz"/>
+                                    <field name="holat" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ot_sex" model="ir.actions.act_window">
+        <field name="name">Sexlar</field>
+        <field name="res_model">agronova.ona_tovuq.sex</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Birinchi sexni yarating</p>
+            <p>Har sexning m² maydoni majburiy — doimiy xarajat shu nisbatda taqsimlanadi.</p>
+        </field>
+    </record>
+
+    <!-- ============================================================ ZOT -->
+    <record id="view_ot_zot_list" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.zot.list</field>
+        <field name="model">agronova.ona_tovuq.zot</field>
+        <field name="arch" type="xml">
+            <list string="Zotlar" editable="bottom">
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_ot_zot" model="ir.actions.act_window">
+        <field name="name">Zotlar</field>
+        <field name="res_model">agronova.ona_tovuq.zot</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <!-- ======================================================= NORMATIV -->
+    <record id="view_ot_normativ_list" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.normativ.list</field>
+        <field name="model">agronova.ona_tovuq.normativ</field>
+        <field name="arch" type="xml">
+            <list string="Normativlar" editable="bottom">
+                <field name="zot_id"/>
+                <field name="davr"/>
+                <field name="hafta_dan"/>
+                <field name="hafta_gacha"/>
+                <field name="tuxum_berish_foiz"/>
+                <field name="uruglanish_foiz"/>
+                <field name="nobud_foiz_haftalik"/>
+                <field name="xoroz_tovuq_nisbati"/>
+                <field name="yem_bosh_kunlik_gr"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_ot_normativ" model="ir.actions.act_window">
+        <field name="name">Normativlar</field>
+        <field name="res_model">agronova.ona_tovuq.normativ</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <!-- =============================================== O'STIRISH PARTIYA -->
+    <record id="view_ot_partiya_ostirish_list" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.partiya.ostirish.list</field>
+        <field name="model">agronova.ona_tovuq.partiya.ostirish</field>
+        <field name="arch" type="xml">
+            <list string="Jo'ja o'stirish partiyalari" decoration-muted="holat == 'closed'">
+                <field name="name"/>
+                <field name="sex_id"/>
+                <field name="zot_id"/>
+                <field name="kirim_sana"/>
+                <field name="yosh_hafta"/>
+                <field name="boshlangich_son" sum="Boshlang'ich"/>
+                <field name="joriy_son" sum="Joriy"/>
+                <field name="yashovchanlik"/>
+                <field name="holat" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ot_partiya_ostirish_form" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.partiya.ostirish.form</field>
+        <field name="model">agronova.ona_tovuq.partiya.ostirish</field>
+        <field name="arch" type="xml">
+            <form string="Jo'ja o'stirish partiyasi">
+                <header>
+                    <button name="action_close" type="object" string="Partiyani yopish"
+                            class="btn-primary" invisible="holat != 'active'"
+                            confirm="Partiya yopiladi, tannarx qotadi va tuxum partiyasi ochiladi. Davom etamizmi?"/>
+                    <button name="action_open_tuxum_partiya" type="object"
+                            string="Ona tovuq partiyasi" invisible="not tuxum_partiya_id"/>
+                    <field name="holat" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Asosiy">
+                            <field name="sex_id"/>
+                            <field name="zot_id"/>
+                            <field name="kirim_sana"/>
+                            <field name="yopilish_sana"/>
+                            <field name="analytic_account_id"/>
+                        </group>
+                        <group string="Bosh soni">
+                            <field name="boshlangich_son"/>
+                            <field name="nobud_son"/>
+                            <field name="brak_son"/>
+                            <field name="joriy_son"/>
+                            <field name="yashovchanlik"/>
+                            <field name="yosh_hafta"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Moliya">
+                            <field name="jami_xarajat"/>
+                            <field name="jami_daromad"/>
+                            <field name="foyda"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Sozlama">
+                            <field name="yem_product_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Kunlik jurnal" name="jurnal">
+                            <field name="jurnal_ids" readonly="1">
+                                <list>
+                                    <field name="date"/>
+                                    <field name="kun_boshi_son"/>
+                                    <field name="nobud_son"/>
+                                    <field name="brak_son"/>
+                                    <field name="kun_oxiri_son"/>
+                                    <field name="sarf_qiymat"/>
+                                    <field name="holat" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Izoh" name="izoh">
+                            <field name="izoh" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ot_partiya_ostirish" model="ir.actions.act_window">
+        <field name="name">Jo'ja o'stirish partiyalari</field>
+        <field name="res_model">agronova.ona_tovuq.partiya.ostirish</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ================================================== TUXUM PARTIYA -->
+    <record id="view_ot_partiya_tuxum_list" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.partiya.tuxum.list</field>
+        <field name="model">agronova.ona_tovuq.partiya.tuxum</field>
+        <field name="arch" type="xml">
+            <list expand="context.get('expand', False)" string="Ona tovuq partiyalari" decoration-muted="holat == 'closed'"
+                  decoration-warning="eskirganmi">
+                <field name="name"/>
+                <field name="sex_id"/>
+                <field name="zot_id"/>
+                <field name="yosh_hafta"/>
+                <field name="joriy_son" string="Bosh soni" sum="Joriy bosh" width="98px"/>
+                <field name="jami_tuxum" string="Jami tuxum" sum="Jami tuxum" width="106px"/>
+                <field name="tuxum_berish_foiz" string="Berish %" width="90px"/>
+                <field name="norma_tuxum_berish" string="Norma %" optional="show" width="90px"/>
+                <field name="tannarx_1_dona" string="1 dona tannarx" width="138px"/>
+                <field name="eskirganmi" optional="hide"/>
+                <field name="holat" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ot_partiya_tuxum_form" model="ir.ui.view">
+        <field name="name">agronova.ona_tovuq.partiya.tuxum.form</field>
+        <field name="model">agronova.ona_tovuq.partiya.tuxum</field>
+        <field name="arch" type="xml">
+            <form string="Ona tovuq partiyasi">
+                <header>
+                    <field name="holat" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Eskirgan" bg_color="text-bg-warning"
+                            invisible="not eskirganmi"/>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Asosiy">
+                            <field name="sex_id"/>
+                            <field name="zot_id"/>
+                            <field name="ochilish_sana"/>
+                            <field name="yopilish_sana"/>
+                            <field name="ostirish_partiya_id"/>
+                            <field name="analytic_account_id"/>
+                        </group>
+                        <group string="Poda">
+                            <field name="boshlangich_son"/>
+                            <field name="joriy_son"/>
+                            <field name="xoroz_boshlangich"
+                                   readonly="holat == 'closed'"/>
+                            <field name="xoroz_son"/>
+                            <field name="tovuq_son"/>
+                            <field name="xoroz_tovuq_nisbati"/>
+                            <field name="nisbat_norma"/>
+                            <field name="nisbat_ogohlantirish"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Tuxum">
+                            <field name="jami_tuxum"/>
+                            <field name="sifatli_tuxum"/>
+                            <field name="inkubatsiyaga_yarokli"/>
+                            <field name="brak_tuxum"/>
+                            <field name="tuxum_berish_foiz"/>
+                            <field name="norma_tuxum_berish"/>
+                            <field name="uruglanish_foiz"/>
+                        </group>
+                        <group string="Moliya">
+                            <field name="boshlangich_tannarx"/>
+                            <field name="tannarx_1_dona"/>
+                            <field name="jami_xarajat"/>
+                            <field name="jami_daromad"/>
+                            <field name="foyda"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Kunlik jurnal" name="jurnal">
+                            <field name="jurnal_ids" readonly="1">
+                                <list>
+                                    <field name="date"/>
+                                    <field name="tovuq_son"/>
+                                    <field name="jami_tuxum"/>
+                                    <field name="tuxum_berish_foiz"/>
+                                    <field name="nobud_son"/>
+                                    <field name="sarf_qiymat"/>
+                                    <field name="ogohlantirish" optional="show"/>
+                                    <field name="holat" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Tuxum kirimlari" name="kirim">
+                            <field name="kirim_ids" readonly="1">
+                                <list>
+                                    <field name="date"/>
+                                    <field name="jami_dona"/>
+                                    <field name="jami_qiymat"/>
+                                    <field name="holat" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ot_partiya_tuxum" model="ir.actions.act_window">
+        <field name="name">Ona tovuq partiyalari</field>
+        <field name="res_model">agronova.ona_tovuq.partiya.tuxum</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

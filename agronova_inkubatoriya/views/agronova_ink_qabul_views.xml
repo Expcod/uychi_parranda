@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_ink_qabul_list" model="ir.ui.view">
+        <field name="name">agronova.ink.qabul.list</field>
+        <field name="model">agronova.ink.qabul</field>
+        <field name="arch" type="xml">
+            <list expand="context.get('expand', False)" string="Tuxum qabullari"
+                  decoration-info="holat == 'draft'"
+                  decoration-muted="holat == 'cancel'">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="manba"/>
+                <field name="ot_company_id" string="Filial" optional="show"/>
+                <field name="ot_partiya_id" string="Manba partiya" optional="show"/>
+                <field name="partner_id" optional="hide"/>
+                <field name="product_id" string="Mahsulot"/>
+                <field name="dona" string="Miqdor (dona)" sum="Jami dona" width="130px"/>
+                <field name="qiymat" sum="Jami qiymat"/>
+                <field name="narx_1_dona"/>
+                <field name="partiya_id" string="Partiya"/>
+                <field name="holat" widget="badge"
+                       decoration-info="holat == 'draft'"
+                       decoration-success="holat == 'done'"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ink_qabul_form" model="ir.ui.view">
+        <field name="name">agronova.ink.qabul.form</field>
+        <field name="model">agronova.ink.qabul</field>
+        <field name="arch" type="xml">
+            <form string="Tuxum qabuli">
+                <header>
+                    <button name="action_qabul" type="object"
+                            string="Qabul qilish" class="btn-primary"
+                            invisible="holat != 'draft'"/>
+                    <button name="action_bekor" type="object"
+                            string="Bekor qilish" invisible="holat != 'done'"/>
+                    <button name="action_draft" type="object"
+                            string="Qoralamaga" invisible="holat != 'cancel'"/>
+                    <field name="holat" widget="statusbar"
+                           statusbar_visible="draft,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Kelib chiqishi">
+                            <field name="manba" readonly="holat != 'draft'"/>
+                            <field name="ot_company_id"
+                                   invisible="manba != 'ichki'"/>
+                            <field name="ot_partiya_id"
+                                   invisible="manba != 'ichki'"/>
+                            <field name="ot_ichki_sotuv_id"
+                                   invisible="not ot_ichki_sotuv_id"/>
+                            <field name="picking_id"
+                                   invisible="not picking_id"/>
+                            <field name="purchase_id"
+                                   invisible="not purchase_id"/>
+                            <field name="partner_id"
+                                   invisible="manba != 'tashqi'"
+                                   readonly="holat != 'draft'"/>
+                            <field name="date" readonly="holat != 'draft'"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Miqdor va qiymat">
+                            <field name="product_domain" invisible="1"/>
+                            <field name="product_id" domain="product_domain"
+                                   readonly="holat != 'draft'"/>
+                            <field name="dona" readonly="holat != 'draft'"/>
+                            <field name="qiymat"
+                                   readonly="holat != 'draft' or manba == 'ichki'"/>
+                            <field name="narx_1_dona"/>
+                            <field name="partiya_id" readonly="holat != 'draft'"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-info" role="alert"
+                         invisible="manba != 'ichki'">
+                        Tuxum Ona tovuq hujjati tasdiqlanganda <b>jismonan
+                        allaqachon ko'chgan</b> — bu hujjat ombor harakati
+                        yaratmaydi. Uning vazifasi tuxumning kelib chiqishini
+                        va qiymatini inkubatsiya partiyasiga bog'lash:
+                        qiymat jo'ja tannarxining birinchi tarkibiy qismi.
+                    </div>
+                    <group string="Izoh">
+                        <field name="izoh" nolabel="1"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ink_qabul_search" model="ir.ui.view">
+        <field name="name">agronova.ink.qabul.search</field>
+        <field name="model">agronova.ink.qabul</field>
+        <field name="arch" type="xml">
+            <search string="Tuxum qabullari">
+                <field name="name"/>
+                <field name="partiya_id"/>
+                <field name="ot_partiya_id"/>
+                <field name="ot_company_id"/>
+                <filter name="f_draft" string="Qoralama"
+                        domain="[('holat', '=', 'draft')]"/>
+                <filter name="f_done" string="Qabul qilingan"
+                        domain="[('holat', '=', 'done')]"/>
+                <separator/>
+                <filter name="f_ichki" string="Ona tovuqdan"
+                        domain="[('manba', '=', 'ichki')]"/>
+                <filter name="f_tashqi" string="Tashqaridan"
+                        domain="[('manba', '=', 'tashqi')]"/>
+                <separator/>
+                <filter name="g_partiya" string="Inkubatsiya partiyasi"
+                        context="{'group_by': 'partiya_id'}"/>
+                <filter name="g_filial" string="Jo'natuvchi filial"
+                        context="{'group_by': 'ot_company_id'}"/>
+                <filter name="g_oy" string="Oy"
+                        context="{'group_by': 'date:month'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_ink_qabul" model="ir.actions.act_window">
+        <field name="name">Tuxum qabuli</field>
+        <field name="res_model">agronova.ink.qabul</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_ink_qabul_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Hozircha qabul yo'q</p>
+            <p>Ona tovuq bo'limi tuxum bersa, qoralama shu yerga avtomat
+               tushadi. Tashqi ta'minotchidan olingan tuxumni qo'lda
+               kiritasiz.</p>
+        </field>
+    </record>
+
+</odoo>

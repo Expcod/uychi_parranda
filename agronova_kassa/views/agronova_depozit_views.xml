@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Depozit formasiga kassa bilan bog'lanish qo'shiladi: pul qayerdan
+         kelgani ko'rinib tursin va shu yerdan yangi berish ochilsin. -->
+    <record id="view_agronova_depozit_form_kassa" model="ir.ui.view">
+        <field name="name">agronova.depozit.form.kassa</field>
+        <field name="model">agronova.depozit</field>
+        <field name="inherit_id" ref="agronova_savdo_moliya.view_agronova_depozit_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_kassadan_toldirish" type="object"
+                            string="Kassadan pul berish" class="btn-primary"
+                            groups="agronova_kassa.group_agronova_kassir"/>
+                </header>
+            </xpath>
+            <xpath expr="//notebook" position="before">
+                <group string="Kassa bilan bog'lanish">
+                    <field name="kassadan_olingan" widget="monetary"/>
+                    <field name="kassa_harakat_count" invisible="1"/>
+                    <button name="action_open_kassa_harakat" type="object"
+                            string="Kassa yozuvlarini ko'rish"
+                            class="btn-link" icon="fa-arrow-right"
+                            invisible="not kassa_harakat_count"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

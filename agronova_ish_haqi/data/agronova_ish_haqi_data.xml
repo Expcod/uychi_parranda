@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_ish_haqi_davr" model="ir.sequence">
+        <field name="name">Ish haqi — oylik hisoblash</field>
+        <field name="code">agronova.ish_haqi.davr</field>
+        <field name="prefix">IH-%(year)s-</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>

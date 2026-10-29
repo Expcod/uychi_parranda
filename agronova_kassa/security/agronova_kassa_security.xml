@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- ============ KORXONA (FILIAL) BO'YICHA ============
+             AgroNovada har filial alohida korxona, shuning uchun
+             ko'p korxonali qoida avtomatik ravishda «filial bo'yicha
+             cheklov» bo'lib ham ishlaydi (TZ M13). -->
+
+        <record id="rule_kassa_company" model="ir.rule">
+            <field name="name">Kassa: korxona bo'yicha</field>
+            <field name="model_id" ref="model_agronova_kassa"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="rule_kassa_harakat_company" model="ir.rule">
+            <field name="name">Kassa harakati: korxona bo'yicha</field>
+            <field name="model_id" ref="model_agronova_kassa_harakat"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="rule_kassa_kun_company" model="ir.rule">
+            <field name="name">Kassa kitobi: korxona bo'yicha</field>
+            <field name="model_id" ref="model_agronova_kassa_kun"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="rule_kassa_otkazma_company" model="ir.rule">
+            <field name="name">Kassalararo transfer: korxona bo'yicha</field>
+            <field name="model_id" ref="model_agronova_kassa_otkazma"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="rule_kassa_inkassatsiya_company" model="ir.rule">
+            <field name="name">Inkassatsiya: korxona bo'yicha</field>
+            <field name="model_id" ref="model_agronova_kassa_inkassatsiya"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <!-- ============ KASSIR — FAQAT O'Z KASSASI ============
+             Menejer ham kassir guruhini meros olgani uchun bu qoida unga
+             ham tegadi — pastdagi «menejer cheklovsiz» qoidasi uni OR
+             bo'yicha bo'shatadi. -->
+
+        <record id="rule_kassa_kassir" model="ir.rule">
+            <field name="name">Kassa: kassir faqat o'z kassasini ko'radi</field>
+            <field name="model_id" ref="model_agronova_kassa"/>
+            <field name="groups" eval="[(4, ref('group_agronova_kassir'))]"/>
+            <field name="domain_force">[('user_ids', 'in', user.id)]</field>
+        </record>
+
+        <record id="rule_kassa_harakat_kassir" model="ir.rule">
+            <field name="name">Kassa harakati: kassir faqat o'z kassasi</field>
+            <field name="model_id" ref="model_agronova_kassa_harakat"/>
+            <field name="groups" eval="[(4, ref('group_agronova_kassir'))]"/>
+            <field name="domain_force">[('kassa_id.user_ids', 'in', user.id)]</field>
+        </record>
+
+        <record id="rule_kassa_kun_kassir" model="ir.rule">
+            <field name="name">Kassa kitobi: kassir faqat o'z kassasi</field>
+            <field name="model_id" ref="model_agronova_kassa_kun"/>
+            <field name="groups" eval="[(4, ref('group_agronova_kassir'))]"/>
+            <field name="domain_force">[('kassa_id.user_ids', 'in', user.id)]</field>
+        </record>
+
+        <!-- Transferda kassir ikkala tomonni ham ko'rishi kerak: jo'natgan
+             ham, kutayotgan ham o'z hujjatini ko'rmasa qabul qila olmaydi. -->
+        <record id="rule_kassa_otkazma_kassir" model="ir.rule">
+            <field name="name">Transfer: kassir o'z kassasiga tegishlisini ko'radi</field>
+            <field name="model_id" ref="model_agronova_kassa_otkazma"/>
+            <field name="groups" eval="[(4, ref('group_agronova_kassir'))]"/>
+            <field name="domain_force">['|', ('from_kassa_id.user_ids', 'in', user.id), ('to_kassa_id.user_ids', 'in', user.id)]</field>
+        </record>
+
+        <record id="rule_kassa_inkassatsiya_kassir" model="ir.rule">
+            <field name="name">Inkassatsiya: kassir faqat o'z kassasi</field>
+            <field name="model_id" ref="model_agronova_kassa_inkassatsiya"/>
+            <field name="groups" eval="[(4, ref('group_agronova_kassir'))]"/>
+            <field name="domain_force">[('kassa_id.user_ids', 'in', user.id)]</field>
+        </record>
+
+        <!-- ============ MENEJER — CHEKLOVSIZ ============
+             Odooda guruh qoidalari OR bilan birlashadi. Menejer guruhi
+             kassir guruhini `implied_ids` orqali o'z ichiga olgani uchun
+             yuqoridagi «faqat o'z kassasi» qoidasi unga ham tegadi.
+             Shuning uchun menejerga ochiq qoida qo'yiladi — u OR bo'yicha
+             ustun keladi va menejer barcha kassalarni ko'radi. -->
+
+        <record id="rule_kassa_menejer" model="ir.rule">
+            <field name="name">Kassa: menejer hammasini ko'radi</field>
+            <field name="model_id" ref="model_agronova_kassa"/>
+            <field name="groups" eval="[(4, ref('group_agronova_kassa_menejer'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <record id="rule_kassa_harakat_menejer" model="ir.rule">
+            <field name="name">Kassa harakati: menejer hammasini ko'radi</field>
+            <field name="model_id" ref="model_agronova_kassa_harakat"/>
+            <field name="groups" eval="[(4, ref('group_agronova_kassa_menejer'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <record id="rule_kassa_kun_menejer" model="ir.rule">
+            <field name="name">Kassa kitobi: menejer hammasini ko'radi</field>
+            <field name="model_id" ref="model_agronova_kassa_kun"/>
+            <field name="groups" eval="[(4, ref('group_agronova_kassa_menejer'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <record id="rule_kassa_otkazma_menejer" model="ir.rule">
+            <field name="name">Transfer: menejer hammasini ko'radi</field>
+            <field name="model_id" ref="model_agronova_kassa_otkazma"/>
+            <field name="groups" eval="[(4, ref('group_agronova_kassa_menejer'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <record id="rule_kassa_inkassatsiya_menejer" model="ir.rule">
+            <field name="name">Inkassatsiya: menejer hammasini ko'radi</field>
+            <field name="model_id" ref="model_agronova_kassa_inkassatsiya"/>
+            <field name="groups" eval="[(4, ref('group_agronova_kassa_menejer'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_ruxsat_list" model="ir.ui.view">
+        <field name="name">agronova.ruxsat.list</field>
+        <field name="model">agronova.ruxsat</field>
+        <field name="arch" type="xml">
+            <list string="Ruxsat so'rovlari"
+                  decoration-danger="kechikdimi or ogishli"
+                  decoration-muted="holat in ('rad_etildi', 'bekor')">
+                <field name="name"/>
+                <field name="zakupchik_id" widget="many2one_avatar_user"/>
+                <field name="tovar_nomi"/>
+                <field name="miqdor"/>
+                <field name="taklif_narx"/>
+                <field name="norma_narx" optional="show"/>
+                <field name="ogish_foizi" optional="show" string="Og'ish %"/>
+                <field name="ogish_chegara" optional="hide" string="Chegara %"/>
+                <field name="summa" sum="Jami"/>
+                <field name="muhimlik_darajasi" optional="hide"/>
+                <field name="javob_muddati" optional="show"/>
+                <field name="kechikish_soati" optional="hide"/>
+                <field name="holat" widget="badge"
+                       decoration-success="holat == 'tasdiqlandi'"
+                       decoration-warning="holat in ('bolim_boshligi', 'sifat_nazorat')"
+                       decoration-danger="holat == 'rad_etildi'"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="kechikdimi" column_invisible="True"/>
+                <field name="ogishli" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ruxsat_form" model="ir.ui.view">
+        <field name="name">agronova.ruxsat.form</field>
+        <field name="model">agronova.ruxsat</field>
+        <field name="arch" type="xml">
+            <form string="Sotib olishga ruxsat">
+                <header>
+                    <button name="action_yuborish" type="object"
+                            string="Tasdiqqa yuborish" class="btn-primary"
+                            invisible="holat != 'draft'"/>
+                    <button name="action_tasdiqlash" type="object"
+                            string="Tasdiqlayman" class="btn-primary"
+                            invisible="holat not in ('bolim_boshligi', 'sifat_nazorat')"/>
+                    <button name="action_rad_etish" type="object" string="Rad etish"
+                            invisible="holat not in ('bolim_boshligi', 'sifat_nazorat')"/>
+                    <button name="action_kirim_yaratish" type="object"
+                            string="Kirim hujjati yaratish" class="btn-primary"
+                            invisible="holat != 'tasdiqlandi'"/>
+                    <button name="action_qoralamaga" type="object" string="Qoralamaga"
+                            invisible="holat not in ('rad_etildi', 'bekor')"/>
+                    <button name="action_bekor" type="object" string="Bekor qilish"
+                            invisible="holat in ('tasdiqlandi', 'rad_etildi', 'bekor')"/>
+                    <field name="holat" widget="statusbar"
+                           statusbar_visible="draft,bolim_boshligi,sifat_nazorat,tasdiqlandi"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_kirimlarni_korish" type="object"
+                                class="oe_stat_button" icon="fa-truck">
+                            <field name="kirim_soni" widget="statinfo" string="Kirimlar"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Og'ish chegaradan yuqori"
+                            bg_color="text-bg-danger" invisible="not ogishli"/>
+                    <widget name="web_ribbon" title="Birinchi xarid"
+                            bg_color="text-bg-warning"
+                            invisible="not birinchi_xarid or ogishli"/>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="So'rov">
+                            <field name="zakupchik_id" widget="many2one_avatar_user"/>
+                            <field name="zayavka_id"/>
+                            <field name="zayavka_qatori_id"
+                                   invisible="not zayavka_id"/>
+                            <field name="product_id"/>
+                            <field name="tovar_nomi"/>
+                            <field name="miqdor"/>
+                            <field name="olchov_birligi_id"/>
+                            <field name="muhimlik_darajasi"/>
+                        </group>
+                        <group string="Narx va joy">
+                            <field name="taklif_narx"/>
+                            <field name="summa"/>
+                            <field name="sotib_olish_joyi"/>
+                            <field name="kontragent_id"/>
+                            <field name="ilova" filename="ilova_filename"/>
+                            <field name="ilova_filename" invisible="1"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="bitta_tasdiq"/>
+                        </group>
+                    </group>
+                    <group string="Narx nazorati (uch qatlamli)" name="narx">
+                        <group>
+                            <field name="norma_narx"/>
+                            <field name="norma_manba"/>
+                            <field name="norma_eski"
+                                   decoration-danger="norma_eski"/>
+                            <field name="birinchi_xarid"/>
+                        </group>
+                        <group>
+                            <field name="ogish_foizi"/>
+                            <field name="ogish_chegara"/>
+                            <field name="ogish_chegara_manba"/>
+                            <field name="ogishli"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Takliflar" name="takliflar"
+                              invisible="not birinchi_xarid">
+                            <div class="alert alert-warning" role="alert">
+                                Bu tovarda norma narx yo'q — «birinchi xarid»
+                                rejimi. Kamida uchta taklif kiritilishi va
+                                tasdiqlovchi eng maqbulini sabab bilan tanlashi
+                                shart. Tanlangan narx avtomat norma narxga
+                                aylanadi.
+                            </div>
+                            <field name="taklif_ids">
+                                <list editable="bottom">
+                                    <field name="taklif_beruvchi"/>
+                                    <field name="kontragent_id"/>
+                                    <field name="narx"/>
+                                    <field name="yetkazish_muddati"/>
+                                    <field name="dalil" filename="dalil_filename" widget="binary"/>
+                                    <field name="dalil_filename" column_invisible="True"/>
+                                    <field name="izoh"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                </list>
+                            </field>
+                            <group>
+                                <field name="tanlangan_taklif_id"/>
+                                <field name="tanlov_sababi"/>
+                            </group>
+                        </page>
+                        <page string="Asos" name="asos">
+                            <field name="asos" nolabel="1"
+                                   placeholder="Nima uchun kerak, nega shu narxda..."/>
+                        </page>
+                        <page string="Tasdiqlash zanjiri" name="zanjir">
+                            <group>
+                                <group string="1 — Zakupka bo'lim boshlig'i">
+                                    <field name="tasdiqlovchi_1_id"/>
+                                    <field name="tasdiq_1_vaqti"/>
+                                </group>
+                                <group string="2 — Sifat va narx nazorati">
+                                    <field name="tasdiqlovchi_2_id"/>
+                                    <field name="tasdiq_2_vaqti"/>
+                                </group>
+                                <group string="Muddat">
+                                    <field name="yuborilgan_vaqti"/>
+                                    <field name="javob_muddati"/>
+                                    <field name="javob_vaqti"/>
+                                    <field name="kechikish_soati"/>
+                                    <field name="eskalatsiya_darajasi"/>
+                                </group>
+                                <group string="Rad etilgan bo'lsa">
+                                    <field name="rad_izohi"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ruxsat_search" model="ir.ui.view">
+        <field name="name">agronova.ruxsat.search</field>
+        <field name="model">agronova.ruxsat</field>
+        <field name="arch" type="xml">
+            <search string="Ruxsat so'rovlari">
+                <field name="name"/>
+                <field name="tovar_nomi"/>
+                <field name="product_id"/>
+                <field name="zakupchik_id"/>
+                <field name="kontragent_id"/>
+                <filter name="tasdiq_kutmoqda" string="Tasdiq kutilmoqda"
+                        domain="[('holat', 'in', ('bolim_boshligi', 'sifat_nazorat'))]"/>
+                <filter name="kechikkan" string="Kechikkan tasdiq"
+                        domain="[('kechikdimi', '=', True)]"/>
+                <filter name="ogishli" string="Og'ish chegaradan yuqori"
+                        domain="[('ogishli', '=', True)]"/>
+                <filter name="birinchi_xarid" string="Birinchi xarid"
+                        domain="[('birinchi_xarid', '=', True)]"/>
+                <filter name="tasdiqlangan" string="Tasdiqlangan"
+                        domain="[('holat', '=', 'tasdiqlandi')]"/>
+                <group>
+                    <filter name="g_holat" string="Holati" context="{'group_by': 'holat'}"/>
+                    <filter name="g_zakupchik" string="Zakupchik" context="{'group_by': 'zakupchik_id'}"/>
+                    <filter name="g_tasdiq1" string="1-tasdiqlovchi" context="{'group_by': 'tasdiqlovchi_1_id'}"/>
+                    <filter name="g_tovar" string="Tovar" context="{'group_by': 'product_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_zakupka_ruxsat" model="ir.actions.act_window">
+        <field name="name">Ruxsat so'rovlari</field>
+        <field name="res_model">agronova.ruxsat</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_ruxsat_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Ruxsat so'rovi yarating</p>
+            <p>Xarid faqat tasdiqlangan ruxsat asosida rasmiylashtiriladi.
+               Zanjir ketma-ket: bo'lim boshlig'i → sifat va narx nazorati.</p>
+        </field>
+    </record>
+
+</odoo>

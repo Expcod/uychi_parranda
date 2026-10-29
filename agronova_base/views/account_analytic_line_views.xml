@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Tannarx hisoboti uchun umumiy ro'yxat.
+
+         Standart analitik ro'yxat har bir analitik REJA uchun alohida
+         ustun chiqaradi (Filial, Bino, Boquv partiyasi, Reys, Yer
+         maydoni, Ekin partiyasi, ...). Bitta qator faqat bitta rejaga
+         tegishli bo'lgani uchun qolganlari bo'sh turadi va ekranni
+         egallaydi. Shu yerda ular o'rniga bitta «Obyekt» ustuni bor —
+         qator qaysi partiya yoki yerga tushganini o'zi ko'rsatadi. -->
+    <record id="view_agronova_analitik_tannarx_list" model="ir.ui.view">
+        <field name="name">account.analytic.line.agronova.tannarx.list</field>
+        <field name="model">account.analytic.line</field>
+        <field name="arch" type="xml">
+            <list expand="context.get('expand', False)" string="Tannarx qatorlari" create="false" edit="false">
+                <field name="date"/>
+                <field name="agronova_obyekt"/>
+                <field name="name" string="Tavsif"/>
+                <field name="agronova_kategoriya_id" optional="show"/>
+                <field name="product_id" optional="hide"/>
+                <field name="unit_amount" string="Miqdor" optional="hide"/>
+                <field name="partner_id" optional="hide"/>
+                <field name="amount" sum="Jami" widget="monetary"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="company_id" optional="hide"
+                       groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_agronova_analitik_tannarx_search" model="ir.ui.view">
+        <field name="name">account.analytic.line.agronova.tannarx.search</field>
+        <field name="model">account.analytic.line</field>
+        <field name="arch" type="xml">
+            <search string="Tannarx qatorlari">
+                <field name="name"/>
+                <field name="agronova_kategoriya_id"/>
+                <field name="partner_id"/>
+                <filter name="bu_oy" string="Shu oy"
+                        domain="[('date', '&gt;=', (context_today() + relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                <group>
+                    <filter name="g_kategoriya" string="Kategoriya"
+                            context="{'group_by': 'agronova_kategoriya_id'}"/>
+                    <filter name="g_sana" string="Oy"
+                            context="{'group_by': 'date:month'}"/>
+                    <filter name="g_mahsulot" string="Mahsulot"
+                            context="{'group_by': 'product_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_inherit_lot_qr_label" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.lot.qr.label</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="45"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="QR Stiker va Qutilar" string="QR Stiker va Qutilar" name="agronova_barcode" groups="stock.group_stock_manager">
+                    <block title="Stiker va Serial sozlamalari" name="lot_qr_settings_container">
+                        <setting string="Lot QR yorlig'i o'lchami"
+                                 help="Lot uchun chop etiladigan QR stiker yorlig'ining o'lchamini (mm) belgilang.">
+                            <div class="content-group">
+                                <div class="mt16">
+                                    <label for="lot_qr_label_width" string="Kenglik (mm)"/>
+                                    <field name="lot_qr_label_width" class="oe_inline"/>
+                                </div>
+                                <div class="mt16">
+                                    <label for="lot_qr_label_height" string="Balandlik (mm)"/>
+                                    <field name="lot_qr_label_height" class="oe_inline"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting string="Murakkab serial raqamlar"
+                                 help="Serial raqamlar ketma-ket (0000353) o'rniga 8 xonali murakkab kod bo'ladi: harf + raqam + belgi, masalan K7#mQ2@x. Chalkashadigan belgilar (O/0, I/1) ishlatilmaydi.">
+                            <field name="lot_complex_serials"/>
+                        </setting>
+                    </block>
+                    <block title="Tezkor havolalar" name="lot_qr_shortcuts_container">
+                        <setting string="Stiker printerlari" help="Sexlardagi printerlarni sozlash va sinovdan o'tkazish.">
+                            <div class="mt8">
+                                <button name="%(agronova_barcode.action_label_printer)d" icon="oi-arrow-right" type="action" string="Printerlar ro'yxati" class="btn-link"/>
+                            </div>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

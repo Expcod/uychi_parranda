@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_boquv_bino_list" model="ir.ui.view">
+        <field name="name">agronova.boquv.bino.list</field>
+        <field name="model">agronova.boquv.bino</field>
+        <field name="arch" type="xml">
+            <list string="Binolar" decoration-muted="holat == 'no_aktiv'"
+                  decoration-warning="holat == 'dizinfeksiya'">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="filial_id"/>
+                <field name="maydoni" sum="Jami m²"/>
+                <field name="sigimi" optional="show"/>
+                <field name="joriy_son" sum="Jami bosh"/>
+                <field name="band_foiz" widget="percentage" optional="show"/>
+                <field name="aktiv_partiya_soni" optional="show"/>
+                <field name="operator_id" optional="hide"/>
+                <field name="brigadir_id" optional="show"/>
+                <field name="holat" widget="badge"
+                       decoration-success="holat == 'aktiv'"
+                       decoration-warning="holat == 'dizinfeksiya'"
+                       decoration-muted="holat == 'no_aktiv'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_boquv_bino_form" model="ir.ui.view">
+        <field name="name">agronova.boquv.bino.form</field>
+        <field name="model">agronova.boquv.bino</field>
+        <field name="arch" type="xml">
+            <form string="Bino">
+                <header>
+                    <button name="action_dizinfeksiya" type="object"
+                            string="Dizinfeksiyaga" class="btn-warning"
+                            invisible="holat == 'dizinfeksiya'"/>
+                    <button name="action_aktiv" type="object"
+                            string="Aktivga" class="btn-primary"
+                            invisible="holat == 'aktiv'"/>
+                    <button name="action_no_aktiv" type="object"
+                            string="No aktivga"
+                            invisible="holat == 'no_aktiv'"/>
+                    <field name="holat" widget="statusbar"
+                           statusbar_visible="no_aktiv,dizinfeksiya,aktiv"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_partiyalar" type="object"
+                                class="oe_stat_button" icon="fa-list">
+                            <field name="aktiv_partiya_soni" widget="statinfo"
+                                   string="Faol partiyalar"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Arxivlangan"
+                            bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="3-seh"/></h1>
+                    </div>
+                    <group>
+                        <group string="Asosiy">
+                            <field name="code" placeholder="BQ01-03"/>
+                            <field name="filial_id"/>
+                            <field name="maydoni"/>
+                            <field name="sigimi"/>
+                            <field name="active" invisible="1"/>
+                            <field name="company_id" invisible="1"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Mas'ul xodimlar">
+                            <field name="operator_id"/>
+                            <field name="brigadir_id"/>
+                            <field name="warehouse_id" readonly="1"/>
+                            <field name="location_id" readonly="1"/>
+                            <field name="analytic_account_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-info" role="status"
+                         invisible="holat != 'dizinfeksiya'">
+                        Bino dizinfeksiya holatida: doimiy xarajatdan
+                        <b>m² ulushi to'liq</b> olinadi, lekin veterinar mehnati
+                        kabi faqat jonivorga tegishli xarajatlar tushmaydi.
+                    </div>
+                    <div class="alert alert-secondary" role="status"
+                         invisible="holat != 'no_aktiv'">
+                        Bino «No aktiv»: <b>hech qanday xarajat tushmaydi</b>.
+                        Partiya ochish uchun avval dizinfeksiyaga o'tkazing.
+                    </div>
+                    <group string="Ko'rsatkichlar">
+                        <group>
+                            <field name="joriy_son"/>
+                            <field name="band_foiz" widget="percentage"/>
+                        </group>
+                        <group>
+                            <field name="jami_xarajat"/>
+                            <field name="foyda"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Partiyalar" name="partiyalar">
+                            <field name="partiya_ids" readonly="1">
+                                <list decoration-success="holat == 'active'"
+                                      decoration-muted="holat in ('closed', 'cancel')">
+                                    <field name="name"/>
+                                    <field name="ochilish_sana"/>
+                                    <field name="joja_sana" optional="show"/>
+                                    <field name="yosh_kun"/>
+                                    <field name="boshlangich_son"/>
+                                    <field name="joriy_son"/>
+                                    <field name="nobud_foiz"
+                                           widget="percentage" optional="show"/>
+                                    <field name="tannarx_1_bosh"/>
+                                    <field name="holat" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Izoh" name="izoh">
+                            <field name="izoh"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_boquv_bino_search" model="ir.ui.view">
+        <field name="name">agronova.boquv.bino.search</field>
+        <field name="model">agronova.boquv.bino</field>
+        <field name="arch" type="xml">
+            <search string="Binolar">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="filial_id"/>
+                <field name="brigadir_id"/>
+                <filter name="filter_aktiv" string="Aktiv"
+                        domain="[('holat', '=', 'aktiv')]"/>
+                <filter name="filter_dizinfeksiya" string="Dizinfeksiyada"
+                        domain="[('holat', '=', 'dizinfeksiya')]"/>
+                <filter name="filter_bosh" string="Bo'sh (no aktiv)"
+                        domain="[('holat', '=', 'no_aktiv')]"/>
+                <separator/>
+                <filter name="filter_band" string="Jo'ja bor"
+                        domain="[('joriy_son', '>', 0)]"/>
+                <group>
+                    <filter name="group_filial" string="Filial"
+                            context="{'group_by': 'filial_id'}"/>
+                    <filter name="group_holat" string="Holati"
+                            context="{'group_by': 'holat'}"/>
+                    <filter name="group_brigadir" string="Brigader"
+                            context="{'group_by': 'brigadir_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_boquv_bino" model="ir.actions.act_window">
+        <field name="name">Binolar (sehlar)</field>
+        <field name="res_model">agronova.boquv.bino</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Birinchi binoni qo'shing</p>
+            <p>
+                Bino — jo'ja boqiladigan obyekt. Uch holatda bo'ladi:
+                <b>Aktiv</b> (jo'ja bor), <b>Dizinfeksiya</b> (yangi partiyaga
+                tayyorlanmoqda), <b>No aktiv</b> (bo'sh — xarajat tushmaydi).
+                Maydon (m²) majburiy: doimiy xarajat shu nisbatda taqsimlanadi.
+            </p>
+        </field>
+    </record>
+
+    <!-- ================================================== NORMATIV -->
+
+    <record id="view_boquv_normativ_list" model="ir.ui.view">
+        <field name="name">agronova.boquv.normativ.list</field>
+        <field name="model">agronova.boquv.normativ</field>
+        <field name="arch" type="xml">
+            <list string="Normativlar" editable="bottom">
+                <field name="yosh_kun_dan"/>
+                <field name="yosh_kun_gacha"/>
+                <field name="fcr_norma"/>
+                <field name="nobud_foiz_norma"/>
+                <field name="ortacha_vazn_norma"/>
+                <field name="kunlik_osish_norma" optional="show"/>
+                <field name="yem_bosh_kunlik_gr" optional="show"/>
+                <field name="harorat_min" optional="hide"/>
+                <field name="harorat_max" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_boquv_normativ" model="ir.actions.act_window">
+        <field name="name">Normativlar</field>
+        <field name="res_model">agronova.boquv.normativ</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Normativ kiritilmagan</p>
+            <p>
+                FCR, nobudgarchilik va vazn normalari yosh (kun) oralig'i
+                bo'yicha kiritiladi. Ular <b>reja-fakt</b> taqqoslash va
+                normadan og'ish ogohlantirishi uchun ishlatiladi.
+            </p>
+            <p>
+                Qiymatlar buyurtmachi tomonidan beriladi (umumiy TZ §10, 4-band).
+                Kiritilmagan bo'lsa taqqoslash o'tkazilmaydi — noto'g'ri
+                raqamga tayanib signal berilmaydi.
+            </p>
+        </field>
+    </record>
+
+</odoo>

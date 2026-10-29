@@ -1,0 +1,100 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Language: uz_UZ@Cyrl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+
+#. module: hr_hikvision_attendance
+#: model:ir.actions.act_window,name:hr_hikvision_attendance.action_hikvision_log
+#: model_terms:ir.ui.view,arch_db:hr_hikvision_attendance.view_hikvision_log_tree
+msgid "Attendance Logs"
+msgstr "Давомат логлари"
+
+#. module: hr_hikvision_attendance
+#: model:ir.model.fields.selection,name:hr_hikvision_attendance.selection__hr_employee__hikvision_status__blocked
+msgid "Bloklangan"
+msgstr "Блокланган"
+
+#. module: hr_hikvision_attendance
+#: model:ir.model.fields.selection,name:hr_hikvision_attendance.selection__hikvision_device__state__confirmed
+msgid "Confirmed"
+msgstr "Confirmed"
+
+#. module: hr_hikvision_attendance
+#: model:ir.model.fields,field_description:hr_hikvision_attendance.field_hikvision_device__device_id
+msgid "Device ID"
+msgstr "Device ID"
+
+#. module: hr_hikvision_attendance
+#: model:ir.model.fields,field_description:hr_hikvision_attendance.field_hikvision_device__name
+msgid "Device Name"
+msgstr "Device Наме"
+
+#. module: hr_hikvision_attendance
+#: model:ir.ui.menu,name:hr_hikvision_attendance.menu_hikvision_device
+msgid "Devices"
+msgstr "Қурилмалар"
+
+#. module: hr_hikvision_attendance
+#: model:ir.model.fields.selection,name:hr_hikvision_attendance.selection__hikvision_device__state__draft
+msgid "Draft"
+msgstr "Драфт"
+
+#. module: hr_hikvision_attendance
+#: model:ir.ui.menu,name:hr_hikvision_attendance.menu_hikvision_root
+msgid "Hikvision"
+msgstr "Ҳиквисион"
+
+#. module: hr_hikvision_attendance
+#: model:ir.actions.act_window,name:hr_hikvision_attendance.action_hikvision_device
+#: model_terms:ir.ui.view,arch_db:hr_hikvision_attendance.view_hikvision_device_tree
+msgid "Hikvision Devices"
+msgstr "Ҳиквисион қурилмалари"
+
+#. module: hr_hikvision_attendance
+#: model:ir.model.fields,field_description:hr_hikvision_attendance.field_hr_employee__hikvision_status
+msgid "Hikvision Holati"
+msgstr "Ҳиквисион Ҳолати"
+
+#. module: hr_hikvision_attendance
+#: model:ir.model.fields,field_description:hr_hikvision_attendance.field_hikvision_device__ip_address
+msgid "IP Address"
+msgstr "IP Аддресс"
+
+#. module: hr_hikvision_attendance
+#: model:ir.ui.menu,name:hr_hikvision_attendance.menu_hikvision_log
+msgid "Logs"
+msgstr "Логлар"
+
+#. module: hr_hikvision_attendance
+#: model:ir.model.fields.selection,name:hr_hikvision_attendance.selection__hr_employee__hikvision_status__normal
+msgid "Normal"
+msgstr "Нормал"
+
+#. module: hr_hikvision_attendance
+#: model:ir.model.fields,field_description:hr_hikvision_attendance.field_hikvision_device__password
+msgid "Password"
+msgstr "Password"
+
+#. module: hr_hikvision_attendance
+#: model:ir.model.fields,field_description:hr_hikvision_attendance.field_hikvision_device__port
+msgid "Port"
+msgstr "Порт"
+
+#. module: hr_hikvision_attendance
+#: model_terms:ir.ui.view,arch_db:hr_hikvision_attendance.view_hikvision_device_form
+msgid "Sozlamalar"
+msgstr "Созламалар"
+
+#. module: hr_hikvision_attendance
+#: model:ir.model.fields,field_description:hr_hikvision_attendance.field_hikvision_device__username
+msgid "Username"
+msgstr "Усернаме"
+
+#. module: hr_hikvision_attendance
+msgid "Hikvision Face ID Attendance"
+msgstr "Ҳиквисион Face ID давомати"

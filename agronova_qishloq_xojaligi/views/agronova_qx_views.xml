@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ======================================================== EKIN TURI -->
+    <record id="view_qx_ekin_list" model="ir.ui.view">
+        <field name="name">agronova.qx.ekin.list</field>
+        <field name="model">agronova.qx.ekin</field>
+        <field name="arch" type="xml">
+            <list string="Ekin turlari" editable="bottom">
+                <field name="name"/>
+                <field name="code" optional="show"/>
+                <field name="product_id"/>
+                <field name="urug_product_id" optional="hide"/>
+                <field name="yetishtirish_kun"/>
+                <field name="norma_hosildorlik"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_qx_ekin" model="ir.actions.act_window">
+        <field name="name">Ekin turlari</field>
+        <field name="res_model">agronova.qx.ekin</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ===================================================== YER MAYDONI -->
+    <record id="view_qx_yer_list" model="ir.ui.view">
+        <field name="name">agronova.qx.yer.list</field>
+        <field name="model">agronova.qx.yer</field>
+        <field name="arch" type="xml">
+            <list expand="context.get('expand', False)" string="Yer maydonlari" decoration-muted="holat == 'bosh'">
+                <field name="code"/>
+                <field name="name" string="Yer"/>
+                <field name="maydoni_ga" string="Maydon (ga)" sum="Jami gektar" width="114px"/>
+                <field name="joylashuvi" optional="show"/>
+                <field name="joriy_ekin_id"/>
+                <field name="aktiv_partiya_id" optional="show"/>
+                <field name="holat" string="Holati" widget="badge"/>
+                <field name="partiya_soni" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_qx_yer_form" model="ir.ui.view">
+        <field name="name">agronova.qx.yer.form</field>
+        <field name="model">agronova.qx.yer</field>
+        <field name="arch" type="xml">
+            <form string="Yer maydoni">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_partiyalar" type="object"
+                                class="oe_stat_button" icon="fa-history">
+                            <field name="partiya_soni" widget="statinfo"
+                                   string="Partiyalar"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Yer №01"/></h1>
+                    </div>
+                    <group>
+                        <group string="Asosiy">
+                            <field name="code"/>
+                            <field name="maydoni_ga"/>
+                            <field name="joylashuvi"/>
+                            <field name="mas_ul_xodim_id"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group string="Holat">
+                            <field name="holat"/>
+                            <field name="joriy_ekin_id"/>
+                            <field name="aktiv_partiya_id"/>
+                            <field name="warehouse_id"/>
+                            <field name="location_id"/>
+                            <field name="analytic_account_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Partiyalar tarixi" name="tarix">
+                            <field name="partiya_ids" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="ekin_id"/>
+                                    <field name="ekish_sana"/>
+                                    <field name="yopilish_sana"/>
+                                    <field name="olingan_hosil_kg" sum="Hosil"/>
+                                    <field name="jami_xarajat" sum="Xarajat"/>
+                                    <field name="jami_daromad" sum="Sotuv"/>
+                                    <field name="foyda" sum="Foyda"/>
+                                    <field name="rentabellik"/>
+                                    <field name="holat" widget="badge"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Moliyaviy natija" name="moliya">
+                            <group>
+                                <group>
+                                    <field name="jami_xarajat"/>
+                                    <field name="jami_daromad"/>
+                                    <field name="foyda"/>
+                                    <field name="rentabellik"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Izoh" name="izoh">
+                            <field name="izoh" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_qx_yer_search" model="ir.ui.view">
+        <field name="name">agronova.qx.yer.search</field>
+        <field name="model">agronova.qx.yer</field>
+        <field name="arch" type="xml">
+            <search string="Yer maydonlari">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="joriy_ekin_id"/>
+                <filter name="ekilgan" string="Yetishtirilmoqda"
+                        domain="[('holat', '=', 'ekilgan')]"/>
+                <filter name="bosh" string="Bo'sh"
+                        domain="[('holat', '=', 'bosh')]"/>
+                <group>
+                    <filter name="g_ekin" string="Joriy ekin"
+                            context="{'group_by': 'joriy_ekin_id'}"/>
+                    <filter name="g_holat" string="Holati"
+                            context="{'group_by': 'holat'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_qx_yer" model="ir.actions.act_window">
+        <field name="name">Yer maydonlari</field>
+        <field name="res_model">agronova.qx.yer</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_qx_yer_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Birinchi yer maydonini kiriting</p>
+            <p>Har yerga analitik hisob va ombor lokatsiyasi avtomat ochiladi.
+               Maydoni (gektar) majburiy — sug'orish, elektr va texnika
+               xarajatlari shu nisbatda taqsimlanadi.</p>
+        </field>
+    </record>
+
+    <!-- ================================================== EKIN PARTIYASI -->
+    <record id="view_qx_partiya_list" model="ir.ui.view">
+        <field name="name">agronova.qx.partiya.list</field>
+        <field name="model">agronova.qx.partiya</field>
+        <field name="arch" type="xml">
+            <list expand="context.get('expand', False)" string="Ekin partiyalari" decoration-muted="holat == 'closed'"
+                  decoration-success="holat == 'active'">
+                <field name="name"/>
+                <field name="yer_id"/>
+                <field name="ekin_id"/>
+                <field name="ekish_sana"/>
+                <field name="maydoni_ga" string="Maydon (ga)" sum="Gektar" width="114px"/>
+                <field name="reja_hosil_kg" string="Reja (kg)" sum="Reja" optional="show" width="98px"/>
+                <field name="olingan_hosil_kg" string="Hosil (kg)" sum="Fakt" width="106px"/>
+                <field name="reja_bajarilishi" string="Reja %" optional="show"/>
+                <field name="hosildorlik" string="kg/ga" optional="show"/>
+                <field name="tannarx_1_kg"/>
+                <field name="jami_xarajat" sum="Xarajat"/>
+                <field name="foyda" sum="Foyda"/>
+                <field name="holat" widget="badge"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_qx_partiya_form" model="ir.ui.view">
+        <field name="name">agronova.qx.partiya.form</field>
+        <field name="model">agronova.qx.partiya</field>
+        <field name="arch" type="xml">
+            <form string="Ekin partiyasi">
+                <header>
+                    <button name="action_faollashtirish" type="object"
+                            string="Faollashtirish" class="btn-primary"
+                            invisible="holat != 'draft'"/>
+                    <button name="action_close" type="object" string="Yopish"
+                            class="btn-primary" invisible="holat != 'active'"
+                            confirm="Partiya yopiladi va 1 kg tannarxi qotadi. Davom etamizmi?"/>
+                    <button name="action_qayta_ochish" type="object"
+                            string="Qayta ochish" invisible="holat != 'closed'"
+                            groups="agronova_qishloq_xojaligi.group_qx_hisobchi"/>
+                    <field name="holat" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Asosiy">
+                            <field name="yer_id"/>
+                            <field name="ekin_id"/>
+                            <field name="maydoni_ga"/>
+                            <field name="ekish_sana"/>
+                            <field name="yopilish_sana"
+                                   invisible="holat != 'closed'"/>
+                            <field name="analytic_account_id" readonly="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Hosil">
+                            <field name="reja_hosil_kg"/>
+                            <field name="olingan_hosil_kg"/>
+                            <field name="reja_bajarilishi"/>
+                            <field name="hosildorlik"/>
+                            <field name="ish_soni"/>
+                        </group>
+                    </group>
+                    <group string="Moliyaviy natija">
+                        <group>
+                            <field name="jami_xarajat"/>
+                            <field name="jami_daromad"/>
+                            <field name="foyda"/>
+                            <field name="rentabellik"/>
+                        </group>
+                        <group>
+                            <field name="tannarx_1_kg"/>
+                            <field name="tannarx_qotgan"
+                                   invisible="holat != 'closed'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Dalada bajarilgan ishlar" name="ishlar">
+                            <field name="ish_ids" readonly="1">
+                                <list>
+                                    <field name="date"/>
+                                    <field name="tur"/>
+                                    <field name="maydoni_ga"/>
+                                    <field name="texnika_soat" optional="hide"/>
+                                    <field name="sarf_qiymat" sum="Sarf"/>
+                                    <field name="holat" widget="badge"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Olingan hosil" name="hosil">
+                            <field name="hosil_ids" readonly="1">
+                                <list>
+                                    <field name="date"/>
+                                    <field name="product_id"/>
+                                    <field name="miqdor_kg" sum="Jami kg"/>
+                                    <field name="tannarx_1_kg"/>
+                                    <field name="qiymat" sum="Qiymat"/>
+                                    <field name="lot_id" optional="show"/>
+                                    <field name="holat" widget="badge"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Izoh" name="izoh">
+                            <field name="izoh" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_qx_partiya_search" model="ir.ui.view">
+        <field name="name">agronova.qx.partiya.search</field>
+        <field name="model">agronova.qx.partiya</field>
+        <field name="arch" type="xml">
+            <search string="Ekin partiyalari">
+                <field name="name"/>
+                <field name="yer_id"/>
+                <field name="ekin_id"/>
+                <filter name="aktiv" string="Yetishtirilmoqda"
+                        domain="[('holat', '=', 'active')]"/>
+                <filter name="yopilgan" string="Yopilgan"
+                        domain="[('holat', '=', 'closed')]"/>
+                <group>
+                    <filter name="g_yer" string="Yer" context="{'group_by': 'yer_id'}"/>
+                    <filter name="g_ekin" string="Ekin" context="{'group_by': 'ekin_id'}"/>
+                    <filter name="g_sana" string="Ekilgan sana"
+                            context="{'group_by': 'ekish_sana'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_qx_partiya" model="ir.actions.act_window">
+        <field name="name">Ekin partiyalari</field>
+        <field name="res_model">agronova.qx.partiya</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_qx_partiya_search"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_agronova_kassa_harakat_list" model="ir.ui.view">
+        <field name="name">agronova.kassa.harakat.list</field>
+        <field name="model">agronova.kassa.harakat</field>
+        <field name="arch" type="xml">
+            <list decoration-success="direction == 'in' and state == 'posted'"
+                  decoration-danger="direction == 'out' and state == 'posted'"
+                  decoration-muted="state == 'storno'"
+                  decoration-warning="state == 'draft'"
+                  create="0">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="date_day" optional="hide"/>
+                <field name="kassa_id"/>
+                <field name="direction"/>
+                <field name="modda_id"/>
+                <field name="partner_id" optional="show"/>
+                <field name="employee_id" optional="hide"/>
+                <field name="depozit_id" optional="hide"/>
+                <field name="izoh" optional="show"/>
+                <field name="analytic_distribution" widget="analytic_distribution"
+                       optional="hide" groups="analytic.group_analytic_accounting"/>
+                <field name="amount" widget="monetary" sum="Jami"/>
+                <field name="signed_amount" widget="monetary" sum="Sof"
+                       optional="hide"/>
+                <field name="manba" optional="hide"/>
+                <field name="user_id" optional="hide"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="company_id" groups="base.group_multi_company"
+                       optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'posted'"
+                       decoration-warning="state == 'draft'"
+                       decoration-danger="state == 'storno'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_agronova_kassa_harakat_form" model="ir.ui.view">
+        <field name="name">agronova.kassa.harakat.form</field>
+        <field name="model">agronova.kassa.harakat</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_post" type="object" string="Tasdiqlash"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_storno_wizard" type="object"
+                            string="Storno" class="btn-secondary"
+                            invisible="state != 'posted' or auto"/>
+                    <button name="action_print_chek" type="object"
+                            string="Chek chiqarish" class="btn-secondary"
+                            invisible="state == 'draft'"/>
+                    <button name="action_open_source" type="object"
+                            string="Manba hujjat" class="btn-secondary"
+                            invisible="not auto"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,posted"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="STORNO"
+                            bg_color="text-bg-danger" invisible="state != 'storno'"/>
+                    <div class="oe_title">
+                        <span class="o_form_label">Order raqami</span>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <div class="alert alert-warning" role="alert"
+                         invisible="not auto">
+                        Bu yozuv manba hujjatdan avtomatik ko'chirilgan —
+                        summa va sanani shu yerda o'zgartirib bo'lmaydi.
+                    </div>
+                    <group>
+                        <group string="Pul harakati">
+                            <field name="kassa_id" options="{'no_create': True}"
+                                   readonly="state != 'draft'"/>
+                            <field name="direction" widget="radio"
+                                   options="{'horizontal': True}"
+                                   readonly="state != 'draft'"/>
+                            <field name="amount" widget="monetary"
+                                   readonly="state != 'draft'"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="date" readonly="state != 'draft'"/>
+                            <field name="modda_id" options="{'no_create': True}"
+                                   domain="[('direction', '=', direction), ('faqat_hujjat', '=', False)]"
+                                   readonly="state != 'draft'"/>
+                        </group>
+                        <group string="Kim bilan">
+                            <field name="partner_id" options="{'no_create_edit': True}"
+                                   readonly="state != 'draft'"/>
+                            <field name="employee_id" options="{'no_create': True}"
+                                   readonly="state != 'draft'"/>
+                            <field name="depozit_id" options="{'no_create': True}"
+                                   readonly="state != 'draft'"/>
+                            <field name="user_id"/>
+                            <field name="auto" invisible="1"/>
+                            <field name="company_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Analitik kesim"
+                           groups="analytic.group_analytic_accounting">
+                        <field name="analytic_distribution" nolabel="1"
+                               widget="analytic_distribution"
+                               readonly="state != 'draft'"/>
+                    </group>
+                    <group string="Izoh">
+                        <field name="izoh" nolabel="1" readonly="state != 'draft'"
+                               placeholder="Pul nima uchun kirdi yoki chiqdi..."/>
+                    </group>
+                    <group string="Buxgalteriya va chek" invisible="state == 'draft'">
+                        <group>
+                            <field name="move_id" readonly="1"/>
+                            <field name="storno_move_id" readonly="1"
+                                   invisible="state != 'storno'"/>
+                            <field name="payment_id" readonly="1"
+                                   invisible="not payment_id"/>
+                            <field name="depozit_harakat_id" readonly="1"
+                                   invisible="not depozit_harakat_id"/>
+                        </group>
+                        <group>
+                            <field name="kun_id" readonly="1"/>
+                            <field name="manba" readonly="1"/>
+                            <field name="origin" readonly="1" invisible="not origin"/>
+                            <field name="storno_sabab" readonly="1"
+                                   invisible="state != 'storno'"/>
+                            <field name="chek_url" widget="url" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_agronova_kassa_harakat_search" model="ir.ui.view">
+        <field name="name">agronova.kassa.harakat.search</field>
+        <field name="model">agronova.kassa.harakat</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="kassa_id"/>
+                <field name="modda_id"/>
+                <field name="partner_id"/>
+                <field name="employee_id"/>
+                <field name="depozit_id"/>
+                <field name="izoh"/>
+                <filter name="kirim" string="Kirim"
+                        domain="[('direction', '=', 'in')]"/>
+                <filter name="chiqim" string="Chiqim"
+                        domain="[('direction', '=', 'out')]"/>
+                <separator/>
+                <filter name="tasdiqlangan" string="Tasdiqlangan"
+                        domain="[('state', '=', 'posted')]"/>
+                <filter name="qoralama" string="Qoralama"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter name="storno" string="Storno"
+                        domain="[('state', '=', 'storno')]"/>
+                <separator/>
+                <!-- Sana filtrlarida `context_today().replace(...)` ISHLATILMAYDI:
+                     brauzerdagi py.js da PyDate.replace yo'q, chaqirilsa panel
+                     yiqiladi. Oy boshi strftime bilan olinadi. -->
+                <filter name="bugun" string="Bugun"
+                        domain="[('date_day', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="shu_oy" string="Shu oy"
+                        domain="[('date_day', '&gt;=', context_today().strftime('%Y-%m-01'))]"/>
+                <separator/>
+                <filter name="qolda" string="Qo'lda kiritilgan"
+                        domain="[('manba', '=', 'qol')]"/>
+                <filter name="avtomatik" string="Avtomatik"
+                        domain="[('manba', '!=', 'qol')]"/>
+                <group>
+                    <filter name="g_kassa" string="Kassa"
+                            context="{'group_by': 'kassa_id'}"/>
+                    <filter name="g_modda" string="Modda"
+                            context="{'group_by': 'modda_id'}"/>
+                    <filter name="g_turi" string="Turi"
+                            context="{'group_by': 'direction'}"/>
+                    <filter name="g_kun" string="Kun"
+                            context="{'group_by': 'date_day'}"/>
+                    <filter name="g_partner" string="Kontragent"
+                            context="{'group_by': 'partner_id'}"/>
+                    <filter name="g_manba" string="Manba"
+                            context="{'group_by': 'manba'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_agronova_kassa_harakat_pivot" model="ir.ui.view">
+        <field name="name">agronova.kassa.harakat.pivot</field>
+        <field name="model">agronova.kassa.harakat</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="modda_id" type="row"/>
+                <field name="date_day" interval="month" type="col"/>
+                <field name="signed_amount" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_agronova_kassa_harakat_graph" model="ir.ui.view">
+        <field name="name">agronova.kassa.harakat.graph</field>
+        <field name="model">agronova.kassa.harakat</field>
+        <field name="arch" type="xml">
+            <graph type="bar">
+                <field name="date_day" interval="day"/>
+                <field name="signed_amount" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_agronova_kassa_harakat" model="ir.actions.act_window">
+        <field name="name">Kassa harakatlari</field>
+        <field name="res_model">agronova.kassa.harakat</field>
+        <field name="view_mode">list,form,pivot,graph</field>
+        <field name="context">{'search_default_tasdiqlangan': 1}</field>
+    </record>
+
+    <record id="action_agronova_kassa_harakat_kirim" model="ir.actions.act_window">
+        <field name="name">Kirimlar</field>
+        <field name="res_model">agronova.kassa.harakat</field>
+        <field name="view_mode">list,form,pivot,graph</field>
+        <field name="domain">[('direction', '=', 'in')]</field>
+        <field name="context">{'search_default_tasdiqlangan': 1}</field>
+    </record>
+
+    <record id="action_agronova_kassa_harakat_chiqim" model="ir.actions.act_window">
+        <field name="name">Chiqimlar</field>
+        <field name="res_model">agronova.kassa.harakat</field>
+        <field name="view_mode">list,form,pivot,graph</field>
+        <field name="domain">[('direction', '=', 'out')]</field>
+        <field name="context">{'search_default_tasdiqlangan': 1}</field>
+    </record>
+
+    <!-- ================= STORNO OYNASI ================= -->
+    <record id="view_agronova_kassa_storno_wizard_form" model="ir.ui.view">
+        <field name="name">agronova.kassa.storno.wizard.form</field>
+        <field name="model">agronova.kassa.storno.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <div class="alert alert-warning" role="alert">
+                    Storno qilingan yozuv o'chirilmaydi — kassa kitobida
+                    ustidan chizilgan holda qoladi, buxgalteriyada esa
+                    teskari provodka yoziladi.
+                </div>
+                <group>
+                    <field name="harakat_id" readonly="1"/>
+                    <field name="sabab" placeholder="Nima uchun storno qilinyapti..."/>
+                </group>
+                <footer>
+                    <button name="action_tasdiqlash" type="object"
+                            string="Storno qilish" class="btn-danger"/>
+                    <button string="Bekor" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

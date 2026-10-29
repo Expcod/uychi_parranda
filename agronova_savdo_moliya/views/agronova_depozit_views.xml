@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_agronova_depozit_list" model="ir.ui.view">
+        <field name="name">agronova.depozit.list</field>
+        <field name="model">agronova.depozit</field>
+        <field name="arch" type="xml">
+            <list string="Depozitlar">
+                <field name="name"/>
+                <field name="egasi_id"/>
+                <field name="kirim" sum="Jami kirim"/>
+                <field name="chiqim" sum="Jami chiqim"/>
+                <field name="balans" sum="Qoldiq"
+                       decoration-danger="balans &lt; 0"
+                       decoration-warning="balans &gt;= 0 and limit &gt; 0 and balans &lt; limit"/>
+                <field name="limit" optional="hide"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_agronova_depozit_form" model="ir.ui.view">
+        <field name="name">agronova.depozit.form</field>
+        <field name="model">agronova.depozit</field>
+        <field name="arch" type="xml">
+            <form string="Depozit">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Masalan: 1-sex brigadiri depoziti"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="egasi_id"/>
+                            <field name="user_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="kirim"/>
+                            <field name="chiqim"/>
+                            <field name="balans"/>
+                            <field name="limit"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Harakatlar" name="harakatlar">
+                            <field name="harakat_ids">
+                                <list editable="bottom">
+                                    <field name="sana"/>
+                                    <field name="turi"/>
+                                    <field name="summa"/>
+                                    <field name="izoh"/>
+                                    <field name="holat"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <button name="action_storno" type="object"
+                                            string="Storno" icon="fa-undo"
+                                            invisible="holat != 'tasdiqlangan'"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_agronova_depozit" model="ir.actions.act_window">
+        <field name="name">Depozitlar</field>
+        <field name="res_model">agronova.depozit</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_agronova_depozit"
+              name="Depozitlar"
+              parent="agronova_base.menu_agronova_config_root"
+              action="action_agronova_depozit"
+              sequence="20"/>
+
+</odoo>

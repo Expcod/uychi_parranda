@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_agronova_mahsulot_guruh_list" model="ir.ui.view">
+        <field name="name">agronova.mahsulot.guruh.list</field>
+        <field name="model">agronova.mahsulot.guruh</field>
+        <field name="arch" type="xml">
+            <list string="Mahsulot guruhlari"
+                  decoration-warning="product_soni == 0">
+                <field name="name"/>
+                <field name="kod"/>
+                <field name="categ_ids" widget="many2many_tags"/>
+                <field name="product_soni"/>
+                <field name="izoh"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_agronova_mahsulot_guruh_form" model="ir.ui.view">
+        <field name="name">agronova.mahsulot.guruh.form</field>
+        <field name="model">agronova.mahsulot.guruh</field>
+        <field name="arch" type="xml">
+            <form string="Mahsulot guruhi">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_products" type="object"
+                                class="oe_stat_button" icon="fa-cubes">
+                            <field name="product_soni" widget="statinfo"
+                                   string="Mahsulot"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="kod" readonly="1"/>
+                            <field name="izoh"/>
+                        </group>
+                        <group>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    <group string="Qamrovi">
+                        <field name="categ_ids" widget="many2many_tags"
+                               options="{'no_create': True}"/>
+                        <field name="product_ids" widget="many2many_tags"
+                               options="{'no_create': True}"/>
+                    </group>
+                    <div class="alert alert-info" role="alert">
+                        Hujjatlarda mahsulot tanlashda faqat shu guruhga
+                        kiradiganlar ko'rinadi.
+                        <br/>
+                        Guruh <b>bo'sh qoldirilsa</b> filtr ishlamaydi —
+                        barcha mahsulot chiqaveradi. Ya'ni noto'g'ri
+                        sozlangan guruh hujjatni to'xtatib qo'ymaydi.
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_agronova_mahsulot_guruh" model="ir.actions.act_window">
+        <field name="name">Mahsulot guruhlari</field>
+        <field name="res_model">agronova.mahsulot.guruh</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiley_face">Guruh yo'q</p>
+            <p>Guruh hujjatdagi mahsulot ro'yxatini toraytiradi:
+               tuxum qabulida faqat tuxum, dezinfeksiyada faqat
+               dezinfeksiya vositasi chiqadi.</p>
+        </field>
+    </record>
+
+</odoo>

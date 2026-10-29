@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_agronova_depozit_user,agronova.depozit user read,model_agronova_depozit,base.group_user,1,0,0,0
+access_agronova_depozit_boshliq,agronova.depozit boshliq,model_agronova_depozit,agronova_base.group_agronova_bolim_boshliq,1,1,0,0
+access_agronova_depozit_buxgalter,agronova.depozit bosh buxgalter,model_agronova_depozit,agronova_base.group_agronova_bosh_buxgalter,1,1,1,1
+access_agronova_depozit_harakat_user,agronova.depozit.harakat user read,model_agronova_depozit_harakat,base.group_user,1,0,0,0
+access_agronova_depozit_harakat_boshliq,agronova.depozit.harakat boshliq,model_agronova_depozit_harakat,agronova_base.group_agronova_bolim_boshliq,1,1,1,0
+access_agronova_depozit_harakat_buxgalter,agronova.depozit.harakat bosh buxgalter,model_agronova_depozit_harakat,agronova_base.group_agronova_bosh_buxgalter,1,1,1,1

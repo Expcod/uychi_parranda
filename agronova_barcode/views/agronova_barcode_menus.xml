@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Asosiy Root App menyusi (Bosh ekran ilovasi) -->
+    <menuitem id="menu_agronova_barcode_root"
+              name="QR Stiker va Qutilar"
+              sequence="26"
+              web_icon="agronova_barcode,static/description/icon.png"
+              groups="stock.group_stock_user"/>
+
+    <!-- 1. Qutilar (Boxes) -->
+    <menuitem id="menu_agronova_barcode_boxes_cat"
+              name="Qutilar"
+              parent="menu_agronova_barcode_root"
+              sequence="10"/>
+
+    <menuitem id="menu_agronova_barcode_boxes"
+              name="Qutilar ro'yxati"
+              parent="menu_agronova_barcode_boxes_cat"
+              action="action_stock_lot_box"
+              sequence="10"/>
+
+    <!-- 2. Serial raqamlar (Lots / Seriyalar) -->
+    <menuitem id="menu_agronova_barcode_lots_cat"
+              name="Serial raqamlar"
+              parent="menu_agronova_barcode_root"
+              sequence="20"/>
+
+    <menuitem id="menu_agronova_barcode_lots"
+              name="Barcha serial raqamlar"
+              parent="menu_agronova_barcode_lots_cat"
+              action="stock.action_production_lot_form"
+              sequence="10"/>
+
+    <menuitem id="menu_agronova_barcode_quants"
+              name="Ombor qoldiqlari (Seriyalar)"
+              parent="menu_agronova_barcode_lots_cat"
+              action="stock.action_view_quants"
+              sequence="20"/>
+
+    <!-- 3. Stiker printerlari va Navbat -->
+    <menuitem id="menu_agronova_barcode_printers_cat"
+              name="Printerlar va Navbat"
+              parent="menu_agronova_barcode_root"
+              sequence="30"/>
+
+    <menuitem id="menu_agronova_barcode_printers"
+              name="Stiker printerlari"
+              parent="menu_agronova_barcode_printers_cat"
+              action="action_label_printer"
+              sequence="10"/>
+
+    <menuitem id="menu_agronova_barcode_print_jobs"
+              name="Chop etish navbati"
+              parent="menu_agronova_barcode_printers_cat"
+              action="action_label_print_job"
+              sequence="20"/>
+
+    <!-- 4. Sozlamalar -->
+    <record id="action_agronova_barcode_config_settings" model="ir.actions.act_window">
+        <field name="name">Sozlamalar</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="context">{'module': 'agronova_barcode'}</field>
+    </record>
+
+    <menuitem id="menu_agronova_barcode_config_cat"
+              name="Sozlamalar"
+              parent="menu_agronova_barcode_root"
+              sequence="90"
+              groups="stock.group_stock_manager"/>
+
+    <menuitem id="menu_agronova_barcode_config"
+              name="Umumiy sozlamalar"
+              parent="menu_agronova_barcode_config_cat"
+              action="action_agronova_barcode_config_settings"
+              sequence="10"/>
+
+</odoo>

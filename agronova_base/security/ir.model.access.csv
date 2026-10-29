@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_agronova_xarajat_kategoriya_user,agronova.xarajat.kategoriya read,model_agronova_xarajat_kategoriya,base.group_user,1,0,0,0
+access_agronova_xarajat_kategoriya_boshliq,agronova.xarajat.kategoriya boshliq,model_agronova_xarajat_kategoriya,agronova_base.group_agronova_bolim_boshliq,1,0,0,0
+access_agronova_xarajat_kategoriya_admin,agronova.xarajat.kategoriya admin,model_agronova_xarajat_kategoriya,base.group_system,1,1,1,1
+access_agronova_mahsulot_guruh_user,agronova.mahsulot.guruh user,model_agronova_mahsulot_guruh,base.group_user,1,0,0,0
+access_agronova_mahsulot_guruh_admin,agronova.mahsulot.guruh admin,model_agronova_mahsulot_guruh,base.group_system,1,1,1,1

@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hikvision_device_manager,access_hikvision_device_manager,model_hikvision_device,hr.group_hr_manager,1,1,1,1
+access_hikvision_log_manager,access_hikvision_log_manager,model_hikvision_log,hr.group_hr_manager,1,1,1,1
+access_hikvision_log_hr_user,access_hikvision_log_hr_user,model_hikvision_log,hr.group_hr_user,1,0,0,0

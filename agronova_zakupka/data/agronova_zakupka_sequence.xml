@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="seq_zakupka_zayavka" model="ir.sequence">
+            <field name="name">Xarid — zayavka</field>
+            <field name="code">agronova.zayavka</field>
+            <field name="prefix">ZY-%(year)s-</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_zakupka_ruxsat" model="ir.sequence">
+            <field name="name">Xarid — sotib olishga ruxsat</field>
+            <field name="code">agronova.ruxsat</field>
+            <field name="prefix">RX-%(year)s-</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_zakupka_kirim" model="ir.sequence">
+            <field name="name">Xarid — kirim hujjati</field>
+            <field name="code">agronova.kirim</field>
+            <field name="prefix">XK-%(year)s-</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_zakupka_qaytarish" model="ir.sequence">
+            <field name="name">Xarid — qaytarish</field>
+            <field name="code">agronova.qaytarish</field>
+            <field name="prefix">XQ-%(year)s-</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_zakupka_import" model="ir.sequence">
+            <field name="name">Xarid — import partiyasi</field>
+            <field name="code">agronova.import</field>
+            <field name="prefix">IM-%(year)s-</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_zakupka_nomenklatura" model="ir.sequence">
+            <field name="name">Xarid — nomenklatura so'rovi</field>
+            <field name="code">agronova.nomenklatura.sorovi</field>
+            <field name="prefix">NM-%(year)s-</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

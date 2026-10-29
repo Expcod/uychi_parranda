@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_production_lot_form_qr" model="ir.ui.view">
+        <field name="name">stock.lot.form.qr.label</field>
+        <field name="model">stock.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Chop etish tugmasi (header) -->
+            <xpath expr="//div[@name='button_box']" position="before">
+                <header>
+                    <button name="action_print_qr_label"
+                            type="object"
+                            string="QR yorlig'ini chop etish"
+                            class="btn-primary"
+                            icon="fa-qrcode"
+                            invisible="not name"/>
+                </header>
+            </xpath>
+
+            <!-- QR kod rasmi (Information group ichida) -->
+            <xpath expr="//group[@name='main_group']" position="after">
+                <group name="qr_group" string="QR kod">
+                    <field name="qr_scan_required" widget="boolean_toggle"/>
+                    <field name="label_printed" readonly="1"/>
+                    <field name="label_printed_at" readonly="1"
+                           invisible="not label_printed"/>
+                    <field name="label_weight"/>
+                    <field name="qr_code_image" widget="image"
+                           nolabel="1" options="{'size': [150, 150]}"/>
+                </group>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="view_production_lot_tree_qr" model="ir.ui.view">
+        <field name="name">stock.lot.tree.qr.label</field>
+        <field name="model">stock.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="qr_scan_required" widget="boolean_toggle" optional="show"/>
+                <field name="label_printed" readonly="1" optional="show"/>
+                <field name="label_printed_at" readonly="1" optional="hide"/>
+                <field name="label_weight" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

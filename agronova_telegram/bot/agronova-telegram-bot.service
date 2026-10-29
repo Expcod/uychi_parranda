@@ -1,0 +1,18 @@
+[Unit]
+Description=AgroNova — transport Telegram boti
+After=network.target odoo.service
+
+[Service]
+Type=simple
+User=odoo
+WorkingDirectory=/opt/odoo/server/odoo/agronova-custom/agronova_telegram/bot
+Environment="AGRONOVA_URL=https://demo.novaodoo.uz"
+Environment="AGRONOVA_DB=agronova_demo"
+Environment="AGRONOVA_USER=agronova_demo"
+EnvironmentFile=/etc/agronova-telegram-bot.env
+ExecStart=/opt/odoo/venv/bin/python bot.py --no-verify-ssl
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

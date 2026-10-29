@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_product_category_form_zakupka" model="ir.ui.view">
+        <field name="name">product.category.form.zakupka</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <group string="Xarid nazorati" name="zakupka">
+                    <group>
+                        <field name="narx_ogish_foizi"/>
+                        <field name="kategoriya_limit_narx"/>
+                    </group>
+                    <group>
+                        <field name="kuzatuv_majburiy"/>
+                    </group>
+                </group>
+                <div class="text-muted">
+                    Og'ish chegarasi bo'sh bo'lsa ota kategoriyadan, u ham
+                    bo'lmasa umumiy sozlamadan olinadi. Kuzatuv majburiyati
+                    kategoriyadagi barcha tovarlarga darhol tarqaladi —
+                    keyinroq yoqish omborda turgan eski qoldiqda muammo
+                    tug'diradi.
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_product_template_form_zakupka" model="ir.ui.view">
+        <field name="name">product.template.form.zakupka</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Xarid nazorati" name="zakupka"
+                      groups="agronova_zakupka.group_zakupka_zakupchik">
+                    <group>
+                        <group string="Norma narx">
+                            <field name="norma_narx"/>
+                            <field name="norma_narx_manba"/>
+                            <field name="norma_narx_sana"/>
+                            <field name="norma_narx_eski"
+                                   decoration-danger="norma_narx_eski"/>
+                        </group>
+                        <group string="Nazorat sozlamalari">
+                            <field name="xarajat_turi"/>
+                            <field name="narx_ogish_foizi"/>
+                            <field name="seriya_kuzatuv_shart" readonly="1"/>
+                            <field name="tracking" readonly="1"/>
+                            <field name="use_expiration_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <div class="text-muted">
+                        Norma narx qo'lda kiritilmaydi: oxirgi xaridlar
+                        o'rtachasi → kategoriya limiti → «birinchi xarid»
+                        tartibida avtomat aniqlanadi.
+                    </div>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

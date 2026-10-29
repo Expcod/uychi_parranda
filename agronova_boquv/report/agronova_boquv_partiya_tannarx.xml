@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Partiya tannarxi hisoboti — umumiy TZ, A ilova shakli bo'yicha. -->
+
+    <record id="action_report_partiya_tannarx" model="ir.actions.report">
+        <field name="name">Partiya tannarxi</field>
+        <field name="model">agronova.boquv.partiya</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">agronova_boquv.report_partiya_tannarx</field>
+        <field name="report_file">agronova_boquv.report_partiya_tannarx</field>
+        <field name="binding_model_id" ref="model_agronova_boquv_partiya"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Tannarx - %s' % (object.name)</field>
+    </record>
+
+    <template id="report_partiya_tannarx_document">
+        <t t-call="web.external_layout">
+            <t t-set="doc" t-value="doc.with_context(lang='uz_UZ')"/>
+            <div class="page">
+
+                <h2 class="mt-0">
+                    Partiya tannarxi hisoboti
+                </h2>
+                <h4 class="text-muted mb-4">
+                    <span t-field="doc.name"/> ·
+                    <span t-field="doc.filial_id.name"/> ·
+                    <span t-field="doc.bino_id.name"/>
+                </h4>
+
+                <!-- ============================= UMUMIY MA'LUMOT -->
+                <table class="table table-sm table-borderless mb-4">
+                    <tbody>
+                        <tr>
+                            <td class="w-25 text-muted">Brigader</td>
+                            <td class="w-25"><span t-field="doc.brigadir_id.name"/></td>
+                            <td class="w-25 text-muted">Davri</td>
+                            <td class="w-25">
+                                <span t-field="doc.yosh_kun"/> kun
+                                (reja <span t-field="doc.reja_kun"/>)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Ochilgan sana</td>
+                            <td><span t-field="doc.ochilish_sana"/></td>
+                            <td class="text-muted">Jo'ja kelgan sana</td>
+                            <td><span t-field="doc.joja_sana"/></td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Boshlang'ich bosh soni</td>
+                            <td><span t-field="doc.boshlangich_son"/> bosh</td>
+                            <td class="text-muted">Nobudgarchilik</td>
+                            <td>
+                                <span t-field="doc.nobud_son"/> bosh
+                                (<span t-esc="'%.2f' % doc.nobud_foiz"/>%)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Yakuniy bosh soni</td>
+                            <td>
+                                <span t-esc="doc.joriy_son + doc.chiqim_son"/> bosh
+                            </td>
+                            <td class="text-muted">O'rtacha vazn</td>
+                            <td><span t-esc="'%.2f' % doc.ortacha_vazn"/> kg</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Jami tirik vazn</td>
+                            <td>
+                                <span t-esc="'{:,.0f}'.format((doc.joriy_son + doc.chiqim_son) * doc.ortacha_vazn)"/> kg
+                            </td>
+                            <td class="text-muted">Yem sarfi / FCR</td>
+                            <td>
+                                <span t-esc="'{:,.0f}'.format(doc.yem_sarf_kg)"/> kg /
+                                <span t-esc="'%.3f' % doc.fcr"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- ============================= XARAJAT TARKIBI -->
+                <t t-set="tarkib" t-value="doc.xarajat_tarkibi()"/>
+                <h4>Xarajat tarkibi</h4>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th class="text-start" style="width:6%">№</th>
+                            <th class="text-start">Xarajat turi</th>
+                            <th class="text-end" style="width:25%">Summa</th>
+                            <th class="text-end" style="width:15%">Ulushi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="tarkib" t-as="satr">
+                            <td><span t-esc="satr_index + 1"/></td>
+                            <td><span t-esc="satr['nom']"/></td>
+                            <td class="text-end">
+                                <span t-esc="satr['summa']"
+                                      t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                            </td>
+                            <td class="text-end">
+                                <span t-esc="'%.1f' % satr['ulush']"/>%
+                            </td>
+                        </tr>
+                        <tr t-if="not tarkib">
+                            <td colspan="4" class="text-center text-muted">
+                                Xarajat yozilmagan
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="border-top">
+                            <td colspan="2"><strong>JAMI</strong></td>
+                            <td class="text-end">
+                                <strong>
+                                    <span t-field="doc.jami_xarajat"
+                                          t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                </strong>
+                            </td>
+                            <td class="text-end"><strong>100,0%</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <!-- ============================= KO'RSATKICHLAR -->
+                <h4 class="mt-4">Asosiy ko'rsatkichlar</h4>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th class="text-start">Ko'rsatkich</th>
+                            <th class="text-end" style="width:30%">Qiymati</th>
+                            <th class="text-end" style="width:30%">Normativ / og'ish</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1 bosh tannarxi</td>
+                            <td class="text-end">
+                                <span t-field="doc.tannarx_1_bosh"
+                                      t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                            </td>
+                            <td class="text-end text-muted">—</td>
+                        </tr>
+                        <tr>
+                            <td>1 kg tirik vazn tannarxi</td>
+                            <td class="text-end">
+                                <span t-field="doc.tannarx_1_kg"
+                                      t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                            </td>
+                            <td class="text-end text-muted">—</td>
+                        </tr>
+                        <tr>
+                            <td>FCR (yem konversiyasi)</td>
+                            <td class="text-end"><span t-esc="'%.3f' % doc.fcr"/></td>
+                            <td class="text-end">
+                                <t t-if="doc.fcr_norma">
+                                    <span t-esc="'%.2f' % doc.fcr_norma"/>
+                                    <span t-attf-class="ms-2 #{'text-danger' if doc.fcr_ogish &gt; 0 else 'text-success'}">
+                                        <t t-if="doc.fcr_ogish &gt; 0">+</t>
+                                        <span t-esc="'%.3f' % doc.fcr_ogish"/>
+                                    </span>
+                                </t>
+                                <span t-else="" class="text-muted">normativ yo'q</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Nobudgarchilik</td>
+                            <td class="text-end">
+                                <span t-esc="'%.2f' % doc.nobud_foiz"/>%
+                            </td>
+                            <td class="text-end">
+                                <t t-if="doc.nobud_norma">
+                                    <span t-esc="'%.2f' % doc.nobud_norma"/>%
+                                    <span t-attf-class="ms-2 #{'text-danger' if doc.nobud_ogish &gt; 0 else 'text-success'}">
+                                        <t t-if="doc.nobud_ogish &gt; 0">+</t>
+                                        <span t-esc="'%.2f' % doc.nobud_ogish"/> p.p.
+                                    </span>
+                                </t>
+                                <span t-else="" class="text-muted">normativ yo'q</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Yashovchanlik</td>
+                            <td class="text-end">
+                                <span t-esc="'%.2f' % doc.yashovchanlik"/>%
+                            </td>
+                            <td class="text-end text-muted">—</td>
+                        </tr>
+                        <tr>
+                            <td>EPEF (samaradorlik indeksi)</td>
+                            <td class="text-end"><span t-esc="'%.1f' % doc.epef"/></td>
+                            <td class="text-end text-muted">—</td>
+                        </tr>
+                        <tr>
+                            <td>O'rtacha kunlik o'sish</td>
+                            <td class="text-end">
+                                <span t-esc="'%.1f' % doc.kunlik_osish_gr"/> gr
+                            </td>
+                            <td class="text-end text-muted">—</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- ============================= NATIJA -->
+                <h4 class="mt-4">Moliyaviy natija</h4>
+                <table class="table table-sm">
+                    <tbody>
+                        <tr>
+                            <td>Ichki sotuv summasi</td>
+                            <td class="text-end">
+                                <span t-field="doc.jami_daromad"
+                                      t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Jami tannarx</td>
+                            <td class="text-end">
+                                <span t-field="doc.jami_xarajat"
+                                      t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                            </td>
+                        </tr>
+                        <tr class="border-top">
+                            <td>
+                                <strong>
+                                    <t t-if="doc.foyda &gt;= 0">Foyda</t>
+                                    <t t-else="">Zarar</t>
+                                </strong>
+                            </td>
+                            <td class="text-end">
+                                <strong t-attf-class="#{'text-success' if doc.foyda &gt;= 0 else 'text-danger'}">
+                                    <span t-field="doc.foyda"
+                                          t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                </strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Rentabellik</td>
+                            <td class="text-end">
+                                <span t-esc="'%.2f' % doc.rentabellik"/>%
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p t-if="doc.ortiqcha_kutish_kun" class="mt-3 small text-muted">
+                    Izoh: jo'ja <span t-field="doc.kutish_kun"/> kun kutildi,
+                    normadan ortiq <span t-field="doc.ortiqcha_kutish_kun"/>
+                    kunning xarajati partiya tannarxidan chiqarilib,
+                    «bo'sh turish zarari» sifatida binoga yozilgan.
+                </p>
+
+            </div>
+        </t>
+    </template>
+
+    <template id="report_partiya_tannarx">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="agronova_boquv.report_partiya_tannarx_document"/>
+            </t>
+        </t>
+    </template>
+
+</odoo>

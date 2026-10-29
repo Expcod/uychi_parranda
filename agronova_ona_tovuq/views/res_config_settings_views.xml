@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_res_config_settings_ot" model="ir.ui.view">
+        <field name="name">res.config.settings.ona.tovuq</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@id='user_default_rights']" position="before">
+                <block title="Ona Tovuq" name="agronova_ot">
+                    <setting string="Eskirish chegarasi"
+                             help="So'nggi 7 kunlik o'rtacha tuxum berish shu foizdan past bo'lsa poda eskirgan deb belgilanadi.">
+                        <field name="agronova_ot_eskirish_chegara"/>
+                    </setting>
+                    <setting string="Tannarxdan past sotuvni taqiqlash">
+                        <field name="agronova_ot_tannarxdan_past_taqiq"/>
+                    </setting>
+                    <setting string="Tuxum mahsulotlari"
+                             help="Kirim hujjati shu mahsulotlarga yozadi.">
+                        <field name="agronova_ot_product_inkubatsion"/>
+                        <field name="agronova_ot_product_tovar"/>
+                        <field name="agronova_ot_product_brak"/>
+                    </setting>
+                    <setting string="Ichki sotuv yo'nalishlari"
+                             help="Tuxum va eskirgan poda qaysi bo'limga, qaysi mahsulot sifatida o'tadi.">
+                        <field name="agronova_ot_company_inkubatsiya"/>
+                        <field name="agronova_ot_company_soyish"/>
+                        <field name="agronova_ot_product_poda"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>
