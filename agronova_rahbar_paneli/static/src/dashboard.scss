@@ -1,0 +1,6 @@
+.o_smd:has(.o_smd_nav_item[title="Energiya va tannarx"]) {
+    .o_smd_sidebar { box-shadow: 8px 0 30px rgba(15, 23, 42, .08); }
+    .o_smd_kpi, .o_smd_panel { border-radius: 16px; }
+    .o_smd_kpi { transition: transform .18s ease, box-shadow .18s ease; }
+    .o_smd_kpi:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(15, 23, 42, .12); }
+}

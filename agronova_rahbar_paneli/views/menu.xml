@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_feed_manager" model="ir.actions.client">
+        <field name="name">Rahbar paneli — Yem zavodi</field>
+        <field name="tag">agronova_feed_manager_dashboard</field>
+    </record>
+    <menuitem id="menu_feed_manager_root" name="Rahbar paneli"
+              web_icon="agronova_rahbar_paneli,static/description/icon.png"
+              action="action_feed_manager" sequence="9"
+              groups="agronova_dashboard.group_agronova_dashboard_manager"/>
+</odoo>
