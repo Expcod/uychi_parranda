@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import math
+
 from odoo import _, api, models
 from odoo.exceptions import AccessError, UserError
 
@@ -11,17 +13,52 @@ class FeedManagerDashboard(models.TransientModel):
         if not self.env.user.has_group('agronova_dashboard.group_agronova_dashboard_manager'):
             raise AccessError(_("Rahbar paneliga kirish huquqingiz yo'q."))
 
+    def _feed_company(self):
+        raw = self.env['ir.config_parameter'].sudo().get_param('agronova_rahbar_paneli.company_id')
+        company = self.env['res.company'].browse(int(raw)) if raw and raw.isdigit() else self.env['res.company']
+        company = company.exists()
+        if company and company.id not in self.env.user.company_ids.ids:
+            raise AccessError(_("Yem zavodi korxonasiga kirish huquqingiz yo'q."))
+        return company
+
+    def _feed_scoped(self):
+        company = self._feed_company()
+        if not company:
+            raise UserError(_("Sozlamalar → Rahbar paneli bo'limida yem zavodi korxonasini tanlang."))
+        return self.with_context(allowed_company_ids=[company.id], feed_manager_scope=True)
+
+    def _company_domain(self, model):
+        if self.env.context.get('feed_manager_scope') and model is not None and model._name == 'hr.attendance':
+            return [('employee_id.company_id', 'in', self.env.companies.ids)]
+        return super()._company_domain(model)
+
     @api.model
     def get_feed_manager_meta(self):
         self._check_feed_manager_access()
-        return self.get_dashboard_meta()
+        company = self._feed_company()
+        if not company:
+            return {'company': '', 'user': self.env.user.name, 'feed_company_id': False}
+        meta = self._feed_scoped().get_dashboard_meta()
+        meta['feed_company_id'] = company.id
+        return meta
+
+    @api.model
+    def get_feed_manager_detail(self, key, period='month', date_from=None, date_to=None, ref=None):
+        self._check_feed_manager_access()
+        return self._feed_scoped().get_detail(key, period, date_from, date_to, ref)
 
     @api.model
     def get_feed_manager_data(self, section='overview', period='month', date_from=None, date_to=None):
         self._check_feed_manager_access()
-        allowed = {'overview', 'production', 'stock', 'quality', 'dispatch', 'energy'}
+        allowed = {'overview', 'production', 'stock', 'quality', 'dispatch', 'energy',
+                   'moliya', 'qarzdorlar', 'ombor', 'zakupka', 'transport', 'ish_haqi', 'davomat'}
         if section not in allowed:
             raise UserError(_("Noma'lum bo'lim."))
+        if not self._feed_company():
+            return {'available': False, 'message': _("Sozlamalar → Rahbar paneli bo'limida yem zavodi korxonasini tanlang. Bu korxona faqat yem zavodiga tegishli bo'lishi kerak."), 'kpis': [], 'panels': [], 'alerts': []}
+        self = self._feed_scoped()
+        if section in {'moliya', 'qarzdorlar', 'ombor', 'zakupka', 'transport', 'ish_haqi', 'davomat'}:
+            return self.get_dashboard_data(section, period, date_from, date_to)
         data = self.get_dashboard_data('yem_zavodi', period, date_from, date_to)
         if not data.get('available'):
             return data
@@ -101,3 +138,78 @@ class FeedManagerDashboard(models.TransientModel):
         data['kpis'], data['panels'] = sections[section]
         data['section'] = section
         return data
+
+    def _yem_scene(self, a):
+        """Zavod ichidagi zanjir 3D da: kirim tarozisidan jo'natmagacha.
+
+        Har bino — bitta bosqich, bosilsa o'sha bosqichning tafsiloti ochiladi.
+        Rang — muammo bor-yo'qligi: kritik zaxira, me'yordan ortiq yo'qotish,
+        to'xtab turgan liniya, kritik tarozi tafovuti.
+        """
+        lin = self.env["agronova.yem.liniya"].sudo().search([("company_id", "in", self.env.companies.ids)], limit=2)
+        nodes = [
+            {"id": "tarozi", "label": _("Tarozi (kirim)"), "shape": "truck", "pos": [-10, 0],
+             "value": a["kirim_t_kg"], "display": self._fmt(a["kirim_t_kg"] / 1000.0, "ton"),
+             "metric": _("Qabul qilingan xomashyo, tafovutli tortish: %s", len(a["tt_tafovut"])),
+             "status": "bad" if (a["tt_ochiq"] and len(a["tt_kritik"]) > len(a["tt"]) * 0.05)
+             or len(a["tt_kritik"]) > len(a["tt"]) * 0.05 else ("ok" if a["kirim_t_kg"] else "idle"),
+             "detail": self._det("yem_tortish")},
+            {"id": "xomashyo", "label": _("Xomashyo ombori"), "shape": "crates", "pos": [-6, -2.6],
+             "value": a["xomashyo_kg"], "display": self._fmt(a["xomashyo_kg"] / 1000.0, "ton"),
+             "metric": _("Qoldiq; minimumdan past: %s", len(a["zaxira_kritik"])),
+             "status": "bad" if a["zaxira_kritik"] else "ok", "detail": self._det("yem_zaxira")},
+            {"id": "silos", "label": _("Dozalash"), "shape": "silo", "pos": [-6, 2.6],
+             "value": a["kirim_kg"], "display": self._fmt(a["kirim_kg"] / 1000.0, "ton"),
+             "metric": _("Berilgan xomashyo; me'yordan tashqari sarf: %s", len(a["ogish"])),
+             "status": "bad" if len(a["ogish"]) > len(a["mos"]) * 0.1 else ("ok" if a["kirim_kg"] else "idle"),
+             "detail": self._det("yem_sarf")},
+        ]
+        for i, l in enumerate(lin):
+            l_mos = a["mos"].filtered(lambda m: m.agronova_liniya_id == l)
+            kg = sum(l_mos.mapped("agronova_miqdor_kg"))
+            ortiq = sum(l_mos.mapped("agronova_ortiqcha_yoqotish_kg"))
+            toxtagan = a["tox_hozir"].filtered(lambda t: t.liniya_id == l)
+            nodes.append({
+                "id": "liniya%s" % l.id, "label": l.name, "shape": "factory",
+                "pos": [-1.5, -2.8 if i == 0 else 2.8], "value": kg,
+                "display": self._fmt(kg / 1000.0, "ton"),
+                "metric": _("To'xtab turibdi") if toxtagan else _("Me'yordan ortiq yo'qotish: %s",
+                                                                  self._fmt(ortiq, "kg")),
+                "status": "bad" if (toxtagan or ortiq > 0.005 * (kg or 1)) else ("ok" if kg else "idle"),
+                "detail": self._det("yem_smena", l.id),
+            })
+        nodes += [
+            {"id": "qadoq", "label": _("Qadoqlash"), "shape": "dome", "pos": [2.8, 0],
+             "value": a["qadoq_kg"], "display": _("%s qop", formatLang(self.env, a["qop"], digits=0)),
+             "metric": _("To'ldirishda tafovut: %s", len(a["qd_tafovut"])),
+             "status": "bad" if len(a["qd_tafovut"]) > max(3, len(a["qd"]) * 0.1) else
+             ("ok" if a["qadoq_kg"] else "idle"), "detail": self._det("yem_qadoqlash")},
+            {"id": "tayyor", "label": _("Tayyor mahsulot"), "shape": "crates", "pos": [6.5, -2.6],
+             "value": a["tayyor_kg"], "display": self._fmt(a["tayyor_kg"] / 1000.0, "ton"),
+             "metric": _("Ombordagi qoldiq"), "status": "ok" if a["tayyor_kg"] else "idle",
+             "detail": self._det("yem_jonatma")},
+            {"id": "jonatma", "label": _("Jo'natma"), "shape": "truck", "pos": [10, 0],
+             "value": a["jon_kg"], "display": self._fmt(a["jon_kg"] / 1000.0, "ton"),
+             "metric": _("Sotuv va ichki xo'jaliklar"), "status": "ok" if a["jon_kg"] else "idle",
+             "detail": self._det("yem_jonatma")},
+            {"id": "sotuv", "label": _("Sotuv tushumi"), "shape": "bank", "pos": [6.5, 2.6],
+             "value": a["sotuv_summa"], "display": self._fmt_compact(a["sotuv_summa"]),
+             "metric": _("Tashqi mijozlarga sotuv"), "status": "ok" if a["sotuv_summa"] else "idle",
+             "detail": self._det("yem_jonatma", "sotuv")},
+        ]
+        logs = {n["id"]: math.log10(abs(n["value"]) + 1) for n in nodes}
+        top = max(logs.values(), default=0.0) or 1.0
+        for n in nodes:
+            n["h"] = round(0.35 + 0.65 * (logs[n["id"]] / top), 3)
+        lid = ["liniya%s" % l.id for l in lin]
+        links = [["tarozi", "xomashyo"], ["xomashyo", "silos"]] + [["silos", x] for x in lid] \
+            + [[x, "qadoq"] for x in lid] + [["qadoq", "tayyor"], ["tayyor", "jonatma"], ["jonatma", "sotuv"]]
+        return {
+            "type": "scene3d", "mode": "chain", "title": _("Yem zavodi — 3D jarayon xaritasi"),
+            "icon": "fa-cube", "nodes": nodes, "links": links,
+            "hint": _("Kirim tarozisidan jo'natmagacha. Binoni bosing — o'sha bosqichning hujjatlari ochiladi."),
+            "legend": [{"label": _("Normada"), "color": "green"},
+                       {"label": _("Muammo bor"), "color": "red"},
+                       {"label": _("Davrda faoliyat yo'q"), "color": "gray"}],
+        }
+

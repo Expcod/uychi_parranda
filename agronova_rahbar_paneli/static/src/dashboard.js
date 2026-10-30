@@ -9,6 +9,13 @@ const SECTIONS = [
     { code: "quality", label: "Yo'qotish va to'xtashlar", icon: "fa-exclamation-triangle", group: "Jarayonlar" },
     { code: "dispatch", label: "Qadoqlash va jo'natma", icon: "fa-truck", group: "Jarayonlar" },
     { code: "energy", label: "Energiya va tannarx", icon: "fa-bolt", group: "Moliyaviy tahlil" },
+    { code: "moliya", label: "Moliya va kassa", icon: "fa-university", group: "Boshqaruv" },
+    { code: "qarzdorlar", label: "Qarzdorlar", icon: "fa-user-times", group: "Boshqaruv" },
+    { code: "ombor", label: "Ombor", icon: "fa-cubes", group: "Ta'minot" },
+    { code: "zakupka", label: "Xarid", icon: "fa-shopping-basket", group: "Ta'minot" },
+    { code: "transport", label: "Transport", icon: "fa-truck", group: "Ta'minot" },
+    { code: "ish_haqi", label: "Ish haqi", icon: "fa-money", group: "Xodimlar" },
+    { code: "davomat", label: "Davomat", icon: "fa-clock-o", group: "Xodimlar" },
 ];
 
 export class FeedManagerDashboard extends AgroNovaExecutiveDashboard {
@@ -20,6 +27,30 @@ export class FeedManagerDashboard extends AgroNovaExecutiveDashboard {
     _persistState() {}
     async loadMeta() {
         this.state.meta = await this.orm.call("agronova.executive.dashboard", "get_feed_manager_meta", []);
+    }
+    async _fetchDetail(detail) {
+        const payload = await this.orm.call("agronova.executive.dashboard", "get_feed_manager_detail", [
+            detail.key, this.state.period, this.state.dateFrom || false, this.state.dateTo || false, detail.ref ?? false,
+        ]);
+        payload.request = detail;
+        payload.page = 0;
+        payload.pageSize = 15;
+        this._decorate([payload.chart, payload.split]);
+        return payload;
+    }
+    openAction(action) {
+        if (!action || !action.res_model) return;
+        this.action.doAction({
+            type: "ir.actions.act_window", name: action.name, res_model: action.res_model,
+            domain: action.domain || [], views: [[false, "list"], [false, "form"]], target: "current",
+            context: { allowed_company_ids: [this.state.meta.feed_company_id] },
+        });
+    }
+    openRecord(resModel, resId) {
+        if (!resModel || !resId) return;
+        this.action.doAction({ type: "ir.actions.act_window", res_model: resModel, res_id: resId,
+            views: [[false, "form"]], target: "current",
+            context: { allowed_company_ids: [this.state.meta.feed_company_id] } });
     }
     async load() {
         this.state.loading = true;
