@@ -7,4 +7,4 @@ class ResConfigSettings(models.TransientModel):
     feed_manager_company_id = fields.Many2one(
         'res.company', string="Yem zavodi korxonasi",
         config_parameter='agronova_rahbar_paneli.company_id',
-        help="Faqat yem zavodiga tegishli alohida korxonani tanlang. Barcha panel bo'limlari shu korxona bilan chegaralanadi.")
+        help="Yem zavodi korxonasi. Bo'sh qoldirilsa, asosiy korxona olinadi. Barcha panel bo'limlari shu korxona bilan chegaralanadi.")

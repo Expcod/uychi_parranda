@@ -3,6 +3,7 @@ import math
 
 from odoo import _, api, models
 from odoo.exceptions import AccessError, UserError
+from odoo.tools.misc import formatLang
 
 
 class FeedManagerDashboard(models.TransientModel):
@@ -15,7 +16,9 @@ class FeedManagerDashboard(models.TransientModel):
 
     def _feed_company(self):
         raw = self.env['ir.config_parameter'].sudo().get_param('agronova_rahbar_paneli.company_id')
-        company = self.env['res.company'].browse(int(raw)) if raw and raw.isdigit() else self.env['res.company']
+        # Sozlama bo'sh bo'lsa — asosiy korxona (Uychi Paranda) yem zavodi hisoblanadi.
+        company = self.env['res.company'].browse(int(raw)) if raw and raw.isdigit() \
+            else self.env.ref('base.main_company', raise_if_not_found=False) or self.env['res.company']
         company = company.exists()
         if company and company.id not in self.env.user.company_ids.ids:
             raise AccessError(_("Yem zavodi korxonasiga kirish huquqingiz yo'q."))

@@ -7,7 +7,7 @@
     <field name="arch" type="xml">
       <xpath expr="//app[@name='agronova_dashboard']" position="inside">
         <block title="Yem zavodi rahbar paneli">
-          <setting string="Yem zavodi korxonasi" help="Yem zavodiga tegishli alohida korxonani tanlang. Barcha bo'limlar shu korxona bo'yicha hisoblanadi.">
+          <setting string="Yem zavodi korxonasi" help="Yem zavodi korxonasi. Bo'sh qoldirilsa, asosiy korxona olinadi. Barcha bo'limlar shu korxona bo'yicha hisoblanadi.">
             <field name="feed_manager_company_id"/>
           </setting>
         </block>
