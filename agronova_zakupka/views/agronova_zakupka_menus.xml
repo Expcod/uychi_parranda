@@ -2,6 +2,7 @@
 <odoo>
 
     <menuitem id="menu_zakupka_root" name="Xarid"
+              web_icon="agronova_zakupka,static/description/icon.png"
               sequence="26"
               groups="agronova_zakupka.group_zakupka_zakupchik,agronova_zakupka.group_zakupka_omborchi,agronova_zakupka.group_zakupka_sifat_nazorat,agronova_zakupka.group_zakupka_buxgalter"/>
 
