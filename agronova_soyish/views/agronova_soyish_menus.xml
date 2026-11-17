@@ -32,6 +32,9 @@
     <!-- Xarajat kategoriyasi umumiy ma'lumotnoma (`agronova_base`) — har
          bo'lim o'z sozlamasidan ham ochadi, alohida ro'yxat yasalmaydi.
          TZ bo'yicha yangi kategoriyani faqat administrator qo'shadi. -->
+    <menuitem id="menu_soyish_bosqich" name="Ish bosqichlari"
+              parent="menu_soyish_config" action="action_soyish_bosqich"
+              sequence="10"/>
     <menuitem id="menu_soyish_xarajat_kategoriya" name="Xarajat kategoriyalari"
               parent="menu_soyish_config"
               action="agronova_base.action_agronova_xarajat_kategoriya"
@@ -59,6 +62,12 @@
     <menuitem id="menu_soyish_hisobot_mijoz" name="Tashqi mijozlar hisoboti"
               parent="menu_soyish_hisobot" action="action_soyish_hisobot_mijoz"
               sequence="30"/>
+    <menuitem id="menu_soyish_hisobot_ishchi" name="Xodimlar unumdorligi"
+              parent="menu_soyish_hisobot" action="action_soyish_ishchi_hisobot"
+              sequence="25"/>
+    <menuitem id="menu_soyish_hisobot_bolak" name="Bo'laklar chiqishi"
+              parent="menu_soyish_hisobot" action="action_soyish_hisobot_bolak"
+              sequence="35"/>
     <menuitem id="menu_soyish_hisobot_ichki" name="Ichki ishlab chiqarish"
               parent="menu_soyish_hisobot" action="action_soyish_hisobot_ichki"
               sequence="40"/>

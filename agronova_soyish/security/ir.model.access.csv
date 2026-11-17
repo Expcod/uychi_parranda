@@ -17,3 +17,9 @@ access_xarajat_boshliq,xarajat boshliq,model_agronova_soyish_xarajat,agronova_so
 access_xarajat_hisobchi,xarajat hisobchi,model_agronova_soyish_xarajat,agronova_soyish.group_soyish_hisobchi,1,1,1,1
 access_soyish_pl_boshliq,soyish pl boshliq,model_agronova_soyish_pl,agronova_soyish.group_soyish_boshliq,1,1,1,1
 access_soyish_pl_qator_boshliq,soyish pl_qator boshliq,model_agronova_soyish_pl_qator,agronova_soyish.group_soyish_boshliq,1,1,1,1
+access_bosqich_operator,bosqich operator,model_agronova_soyish_bosqich,agronova_soyish.group_soyish_operator,1,0,0,0
+access_bosqich_boshliq,bosqich boshliq,model_agronova_soyish_bosqich,agronova_soyish.group_soyish_boshliq,1,1,1,0
+access_bosqich_hisobchi,bosqich hisobchi,model_agronova_soyish_bosqich,agronova_soyish.group_soyish_hisobchi,1,1,1,1
+access_ishchi_operator,ishchi operator,model_agronova_soyish_ishchi,agronova_soyish.group_soyish_operator,1,1,1,1
+access_ishchi_boshliq,ishchi boshliq,model_agronova_soyish_ishchi,agronova_soyish.group_soyish_boshliq,1,1,1,1
+access_ishchi_hisobchi,ishchi hisobchi,model_agronova_soyish_ishchi,agronova_soyish.group_soyish_hisobchi,1,1,1,1

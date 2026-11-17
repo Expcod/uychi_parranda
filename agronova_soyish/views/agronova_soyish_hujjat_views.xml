@@ -16,6 +16,12 @@
                 <field name="nobud_son" string="Nobud/brak" sum="Nobud"/>
                 <field name="tushka_vazn_kg" string="Tayyor (kg)" sum="Tayyor kg" width="114px"/>
                 <field name="chiqim_foiz" string="Chiqim %" width="90px"/>
+                <field name="ortacha_tushka_kg" string="1 tovuqdan (kg)" optional="show"/>
+                <field name="yoqotish_kg" string="Yo'qotish (kg)" sum="Yo'qotish" optional="hide"/>
+                <field name="xodim_soni" string="Xodim" optional="show"/>
+                <field name="dona_soat" string="Dona/soat" optional="hide"/>
+                <field name="ishbay_summa" optional="hide" sum="Ishbay"
+                       groups="agronova_soyish.group_soyish_boshliq"/>
                 <field name="tirik_qiymat" optional="hide" sum="Tirik qiymat"/>
                 <field name="holat" widget="badge"/>
                 <field name="currency_id" column_invisible="1"/>
@@ -62,6 +68,44 @@
                                    invisible="manba != 'ichki' or holat != 'done'"/>
                         </group>
                     </group>
+                    <group>
+                        <group string="Vazn bosqichlari">
+                            <field name="tirik_vazn_kg"/>
+                            <field name="tozalangan_vazn_kg"/>
+                            <field name="ichaksiz_vazn_kg"/>
+                            <field name="yoqotish_kg"/>
+                            <field name="ortacha_tushka_kg"/>
+                        </group>
+                        <group string="Bosqich chiqimlari">
+                            <field name="tozalash_chiqim_foiz"
+                                   invisible="not tozalangan_vazn_kg"/>
+                            <field name="ichak_chiqim_foiz"
+                                   invisible="not ichaksiz_vazn_kg or not tozalangan_vazn_kg"/>
+                            <field name="bolaklash_yoqotish_kg"
+                                   invisible="not ichaksiz_vazn_kg"/>
+                            <div class="text-muted" colspan="2"
+                                 invisible="tozalangan_vazn_kg or ichaksiz_vazn_kg">
+                                Apparatdan keyin tortilsa (tozalangan va ichi
+                                tozalangan tushka), yo'qotish apparatda yoki
+                                bo'laklashda bo'lgani ko'rinadi.
+                            </div>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Vaqt">
+                            <field name="boshlanish"/>
+                            <field name="tugash"/>
+                            <field name="davomiylik_soat" widget="float_time"/>
+                            <field name="dona_soat"/>
+                        </group>
+                        <group string="Xodimlar">
+                            <field name="xodim_soni"/>
+                            <field name="dona_xodim"/>
+                            <field name="xodim_brak_son"/>
+                            <field name="ishbay_summa"
+                                   groups="agronova_soyish.group_soyish_boshliq"/>
+                        </group>
+                    </group>
                     <notebook>
                         <page string="Sortirovka" name="sortirovka">
                             <field name="natija_ids" readonly="holat == 'done'">
@@ -79,6 +123,31 @@
                                 «Qiymat ulushi» bo'sh qoldirilsa tannarx vazn
                                 bo'yicha bo'linadi. To'ldirilsa — shu nisbatda,
                                 chunki 1 kg file va 1 kg oyoq bir xil turmaydi.
+                            </div>
+                        </page>
+                        <page string="Xodimlar ishi" name="ishchi">
+                            <field name="ishchi_ids">
+                                <list editable="bottom">
+                                    <field name="employee_id" options="{'no_create': True}"/>
+                                    <field name="bosqich_id" options="{'no_create': True}"/>
+                                    <field name="dona" sum="Dona"/>
+                                    <field name="kg" sum="kg" optional="show"/>
+                                    <field name="brak_son" sum="Brak" optional="show"/>
+                                    <field name="soat" widget="float_time" optional="show"/>
+                                    <field name="dona_soat" optional="show"/>
+                                    <field name="narx" optional="hide"
+                                           groups="agronova_soyish.group_soyish_boshliq"/>
+                                    <field name="summa" sum="Ishbay"
+                                           groups="agronova_soyish.group_soyish_boshliq"/>
+                                    <field name="izoh" optional="hide"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                            <div class="text-muted">
+                                Har xodim nechta tovuqni bo'laklagani (tozalash
+                                va ichini tozalashni apparat qiladi).
+                                Bir bosqichda jami dona so'yilgan sondan oshmaydi.
+                                Hujjat tasdiqlangandan keyin ham to'ldirsa bo'ladi.
                             </div>
                         </page>
                         <page string="Izoh" name="izoh">
@@ -104,10 +173,63 @@
         </field>
     </record>
 
+    <record id="view_soyish_jarayon_graph" model="ir.ui.view">
+        <field name="name">agronova.soyish.jarayon.graph</field>
+        <field name="model">agronova.soyish.jarayon</field>
+        <field name="arch" type="xml">
+            <graph string="Kunlik so'yish" type="bar" sample="1">
+                <field name="sana" interval="day"/>
+                <field name="soyilgan_son" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_soyish_jarayon_search" model="ir.ui.view">
+        <field name="name">agronova.soyish.jarayon.search</field>
+        <field name="model">agronova.soyish.jarayon</field>
+        <field name="arch" type="xml">
+            <search string="So'yish jarayonlari">
+                <field name="partiya_id"/>
+                <field name="ishchi_ids" string="Xodim"
+                       filter_domain="[('ishchi_ids.employee_id', 'ilike', self)]"/>
+                <filter name="bugun" string="Bugun"
+                        domain="[('sana', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="hafta" string="Oxirgi 7 kun"
+                        domain="[('sana', '>=', (context_today() - relativedelta(days=6)).strftime('%Y-%m-%d'))]"/>
+                <filter name="oy" string="Shu oy"
+                        domain="[('sana', '>=', (context_today() + relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter name="tasdiqlangan" string="Tasdiqlangan"
+                        domain="[('holat', '=', 'done')]"/>
+                <filter name="qoralama" string="Qoralama"
+                        domain="[('holat', '=', 'draft')]"/>
+                <separator/>
+                <filter name="ichki" string="Ichki boquvdan"
+                        domain="[('manba', '=', 'ichki')]"/>
+                <filter name="tashqi" string="Tashqi mijozdan"
+                        domain="[('manba', '=', 'tashqi')]"/>
+                <separator/>
+                <filter name="past_chiqim" string="Chiqim 65% dan past"
+                        domain="[('chiqim_foiz', '&lt;', 65), ('holat', '=', 'done')]"/>
+                <group>
+                    <filter name="g_kun" string="Kun"
+                            context="{'group_by': 'sana:day'}"/>
+                    <filter name="g_oy" string="Oy"
+                            context="{'group_by': 'sana:month'}"/>
+                    <filter name="g_partiya" string="Partiya"
+                            context="{'group_by': 'partiya_id'}"/>
+                    <filter name="g_manba" string="Kelib chiqishi"
+                            context="{'group_by': 'manba'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
     <record id="action_soyish_jarayon" model="ir.actions.act_window">
         <field name="name">So'yish jarayoni</field>
         <field name="res_model">agronova.soyish.jarayon</field>
-        <field name="view_mode">list,form,pivot</field>
+        <field name="view_mode">list,form,pivot,graph</field>
+        <field name="search_view_id" ref="view_soyish_jarayon_search"/>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">So'yish hujjatini yarating</p>
             <p>Nechta tovuq so'yilgani va qanday mahsulot chiqqani qayd

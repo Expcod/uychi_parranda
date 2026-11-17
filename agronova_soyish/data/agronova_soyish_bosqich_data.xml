@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Qo'l mehnati bosqichlari. Patdan tozalash, kalla-oyoq olish va
+         ichini tozalashni apparat qiladi — ular bu yerda yo'q.
+         noupdate: mijoz nomini yoki narxini o'zgartirsa, modul
+         yangilanganda qaytib ketmasin. -->
+    <data noupdate="1">
+
+        <record id="bosqich_bolaklash" model="agronova.soyish.bosqich">
+            <field name="name">Bo'laklash (file, qanot, oyoq, bel)</field>
+            <field name="sequence">10</field>
+            <field name="olchov">dona</field>
+            <field name="izoh">Tushka qismlarga ajratiladi. Xodim ajratgan vaznni «kg» ustuniga ham yozish mumkin.</field>
+        </record>
+
+    </data>
+</odoo>

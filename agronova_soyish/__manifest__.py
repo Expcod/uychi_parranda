@@ -19,7 +19,13 @@ lot/seriya orqali. Bu modul faqat standartda yo'q narsalarni qo'shadi:
   (so'yilgan dona × narx), ombor harakati yaratilmaydi;
 * **Sortirovka tannarxi** — chiqqan mahsulotlar orasida tannarx vazn
   yoki qiymat ulushi bo'yicha bo'linadi;
-* **Xarajat taqsimoti** — bosh soni yoki tirik vazn bo'yicha.
+* **Xarajat taqsimoti** — bosh soni yoki tirik vazn bo'yicha;
+* **Xodimlar ishi** — kim nechta tovuqni bo'laklagani (file, qanot,
+  oyoq, bel), brak, dona/soat va ishbay haqi. Tozalash va ichini
+  tozalashni apparat qiladi;
+* **Bosqich vaznlari** — apparatdan keyingi tozalangan va ichi
+  tozalangan tushka, yo'qotish qayerda bo'lgani; bo'laklar chiqishi
+  ulushi.
 
 Vaqtinchalik saqlash (mijoz mulki omborda turishi) uchun Odooning
 konsignatsiya mexanizmi ishlatiladi — custom ombor mantiqi yozilmagan.
@@ -27,7 +33,7 @@ konsignatsiya mexanizmi ishlatiladi — custom ombor mantiqi yozilmagan.
     'author': "NOVA CODE",
     'website': "https://novaodoo.uz",
     'category': 'AgroNova/Manufacturing',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'license': 'LGPL-3',
     'depends': [
         'base', 'mail', 'stock', 'stock_account', 'account', 'analytic',
@@ -37,10 +43,12 @@ konsignatsiya mexanizmi ishlatiladi — custom ombor mantiqi yozilmagan.
         'security/agronova_soyish_groups.xml',
         'security/ir.model.access.csv',
         'data/agronova_soyish_data.xml',
+        'data/agronova_soyish_bosqich_data.xml',
         'views/agronova_soyish_views.xml',
         'views/agronova_soyish_hujjat_views.xml',
         'views/agronova_soyish_pl_views.xml',
         'views/agronova_soyish_hisobot_views.xml',
+        'views/agronova_soyish_ishchi_views.xml',
         'views/agronova_soyish_menus.xml',
     ],
     'installable': True,
